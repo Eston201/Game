@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+		</style>
+	</head>
+	<body>
+		<script src="js/three.js"></script>
+		<script src="js/OrbitControls.js"></script>
+		<script type="module" src="js/GLTFLoader.js"></script>
+		<script type="module">
+
+			import {GLTFLoader} from "./js/GLTFLoader.js";
+
+			const scene = new THREE.Scene();
+			const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+			const renderer = new THREE.WebGLRenderer({antialias:true});
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+			const controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+//controls.update() must be called after any manual changes to the camera's transform
+			camera.position.set( 0, 20, 100 );
+			controls.update();
+			//resize window
+			window.addEventListener('resize',()=>{
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				camera.aspect=window.innerWidth/window.innerHeight;
+				camera.updateProjectionMatrix();
+			})
+
+			const loader = new GLTFLoader();
+
+			loader.load( 'xeno_raven/scene.gltf', function ( gltf ) {
+
+				gltf.scene.scale.set(0.1,0.1,.1)
+				scene.add( gltf.scene );
+
+			}, undefined, function ( error ) {
+
+				console.error( error );
+
+			} );
+
+			const loader1 = new GLTFLoader();
+					var creature;
+			loader1.load( 'resources/cat/scene.gltf', function ( gltf ) {
+				creature = gltf.scene;
+				creature.translate(10,0,0);
+				scene.add( creature );
+
+			}, undefined, function ( error ) {
+
+				console.error( error );
+
+			} );
+
+
+			scene.background = new THREE.Color( 0x808080);
+			var light1 = new THREE.PointLight(0xffffff,1,500);
+			light1.position.set(10,0,0);
+			scene.add(light1);
+
+			const light = new THREE.HemisphereLight( 0xffffff, 0x000000, 100 );
+			scene.add( light );
+			function animate() {
+
+				requestAnimationFrame( animate );
+				controls.update();
+				// required if controls.enableDamping or controls.autoRotate are set to true
+				renderer.render( scene, camera );
+
+			}
+			animate();
+		</script>
+	</body>
+</html>
