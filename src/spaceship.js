@@ -16,7 +16,7 @@ var light = new THREE.PointLight(0xFFFFFF);
 scene.add(light);
 
 
-camera.position.set( 5, 10, 50 );
+camera.position.set( 0, 0, 10 );
 controls.update();
 //camera.add(light);
 window.addEventListener( 'resize', onWindowResize, false );
@@ -172,14 +172,45 @@ shooter.position.y = 35;
 shooter.rotation.x = -Math.PI/2;
 enemy.add(shooter);
 
-
-
-
-
-
-
 enemy.rotateX(Math.PI/2);
+enemy.scale.set(0.2,0.2,0.2);
+
 scene.add(enemy);
+//mouse
+var plasmaBalls = [];
+window.addEventListener("mousedown", onMouseDown);
+
+function onMouseDown() {
+    
+    let laser1 = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 4), new THREE.MeshBasicMaterial({
+      color: "cyan"
+    }));
+    laser1.position.x = enemy.position.x-0.5
+    laser1.position.y = enemy.position.y
+    laser1.position.z = enemy.position.z+8
+
+    let laser2 = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 4), new THREE.MeshBasicMaterial({
+      color: "cyan"
+    }));
+    laser2.position.x = enemy.position.x+0.5
+    laser2.position.y = enemy.position.y
+    laser2.position.z = enemy.position.z+8
+
+    scene.add(laser1);
+    scene.add(laser2);
+    plasmaBalls.push(laser1);
+    plasmaBalls.push(laser2);
+
+
+}
+
+//raycaster
+
+const raycaster = new THREE.Raycaster();
+// const rayOrigin = new THREE.Vector3(-3,0,0)
+// const rayDirction = new THREE.Vector3(1,0,0)
+// rayDirction.normalize();
+// raycaster.set(rayOrigin,rayDirction);
 
 
 
@@ -192,18 +223,27 @@ function move(c){
     return z;
 }
 
+var speed = 50;
+var clock = new THREE.Clock();
+
 const animate = function () {
 requestAnimationFrame( animate );
-t += 0.1;
-
+t += 1;
+const elapsedTime = clock.getElapsedTime();
 //cube.position.x = Math.cos(t)*20;
 //console.log(move(t));
 //cube.position.y = Math.sin(t)*20;
 //cube.position.z = Math.sin(t)*5;
 ring1.rotation.y += 0.04;
 ring2.rotation.x += 0.08;
-shooter.rotation.z += 0.06;
+//shooter.rotation.z += 0.06;
 controls.update();
+//cast raycaster
+  plasmaBalls.forEach(b => {
+    b.position.z +=0.1; // move along the local z-axis
+  });
+
+
 light.position.set(camera.position.x,camera.position.y,camera.position.z);
 //console.log(camera.position.x);
 renderer.render( scene, camera );
