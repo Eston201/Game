@@ -23,7 +23,7 @@ import * as dat from '../js/dat.gui.module.js';
 			renderer = new THREE.WebGLRenderer({antialias:true});
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			document.body.appendChild(renderer.domElement);
-      camera.position.set( 0, 0, 10 );
+      			camera.position.set( 0, 0, 10 );
 
 
 			window.addEventListener('resize',()=>{
@@ -85,25 +85,22 @@ import * as dat from '../js/dat.gui.module.js';
 
     //store the lasers on click
       function shootLaser(scene,enemy,beams){
+	let laser1 = new THREE.Mesh(new THREE.SphereGeometry(0.7, 8, 4), new THREE.MeshBasicMaterial({color: "cyan"}));
+	laser1.position.copy(shooter.getWorldPosition());
+	laser1.quaternion.copy(camera.quaternion);
+   
+	let laser2 = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 4), new THREE.MeshBasicMaterial({
+	  color: "cyan"
+	}));
+	laser2.position.copy(shooter.getWorldPosition());
+	laser2.quaternion.copy(camera.quaternion);
+	
+	scene.add(laser1);
+	//scene.add(laser2);
+	beams.push(laser1);
+	//beams.push(laser2);
+}
 
-      	let laser1 = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 4), new THREE.MeshBasicMaterial({color: "cyan"}))
-      	laser1.position.x = enemy.position.x-0.5
-      	laser1.position.y = enemy.position.y
-      	laser1.position.z = enemy.position.z+8
-
-      	let laser2 = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 4), new THREE.MeshBasicMaterial({
-      	  color: "cyan"
-      	}));
-      	laser2.position.x = enemy.position.x+0.5
-      	laser2.position.y = enemy.position.y
-      	laser2.position.z = enemy.position.z+8
-
-
-      	scene.add(laser1);
-      	scene.add(laser2);
-      	beams.push(laser1);
-      	beams.push(laser2);
-      }
 
     function removefrombeams(beams,b){
       for( var i = 0; i < beams.length; i++){
@@ -142,12 +139,12 @@ import * as dat from '../js/dat.gui.module.js';
 	// rotate left/right/up/down
 
 	if ( keyboard.pressed("A")) {
-		myRocket.translateX( -moveDistance );
+		//myRocket.translateX( -moveDistance );
 		myRocket.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
 	}
 	if ( keyboard.pressed("D") ){
 		myRocket.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
-		myRocket.translateX(  moveDistance );
+		//myRocket.translateX(  moveDistance );
 	}
 	if ( keyboard.pressed("up") ){
 		myRocket.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
@@ -170,44 +167,35 @@ import * as dat from '../js/dat.gui.module.js';
 		//myRocket.rotation.set(0,0,0);
 	}
 
-	if ( keyboard.pressed("space") )  // Reset or respawn still needs fixing
+	if ( keyboard.pressed("space") )  
 	{
 		shootLaser(scene,myRocket,beams);
 	}
 
 
 	//  camera to follow rocket
-	var rotation_matrix = new THREE.Matrix4().identity();
-	var relativeCameraOffset = new THREE.Vector3(-10,-60,-25);
-
-	var cameraOffset = relativeCameraOffset.applyMatrix4( myRocket.matrixWorld);
-
-	camera.position.x = cameraOffset.x;
-	camera.position.y = cameraOffset.y;
-	camera.position.z = cameraOffset.z;
-	camera.rotateX = rotation_matrix.x;
-	camera.rotateX = rotation_matrix.y;
-	camera.rotateX = rotation_matrix.z;
 	camera.lookAt( myRocket.position );
-
+	updateBeam(beams, moveDistance);
 
 	//camera.updateMatrix();
 	//myRocket.updateProjectionMatrix();
-	camera.updateProjectionMatrix();
+	//camera.updateProjectionMatrix();
 
 }
 
-function updateBeam(beams){
-	beams.forEach(b => {
-		if (b.position.z>=20000) {
-		  scene.remove(b);
-		  removefrombeams(beams,b);
+function updateBeam(beams, moveDistance){
+	beams.forEach(myFunction);
+
+	function myFunction(beam){
+		if (beam.position.z>=20000) {
+		  scene.remove(beam);
+		  removefrombeams(beams,beam);
 		}
 		else{
-		  b.position.z += 8;
+		beam.translateZ(-(moveDistance+1.5) ); 
 		}
-
-		});
+	}
+	
 }
 function animate() {
   requestAnimationFrame( animate );
