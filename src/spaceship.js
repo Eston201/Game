@@ -1,5 +1,6 @@
 import * as THREE from '../js/three.module.js';
 export {player}
+
 function player(){
   var enemy = new THREE.Object3D();
   //const enemycolor = new THREE.color(0xe5e5e5);
