@@ -1,84 +1,273 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="main.css">
-</head>
-<body>
+  <head>
+      <style>
+            div.absolute {
+            position: absolute;
+            width: 50%;
+            bottom: 10px;
+            left: 50%;
+            } 
+      </style>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="main.css">
+
+    <title>VOID</title>
+  </head>
+  <body style="background-image: url('https://airbus-h.assetsadobe2.com/is/image/content/dam/channel-specific/website-/company/responsibility-and-sustainability/environment/sustainable-space.jpg?wid=1920&fit=fit,1&qlt=85,0');">
 	<script src="js/three.js"></script>
 	<script src="js/OrbitControls.js"></script>
-
-	<script>
-		let scene, camera, renderer,controls;
-
-		function init(){
-			scene = new THREE.Scene();
-
-			camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 45, 30000);
-			camera.position.set(-900,-200,-900);
-
-			renderer = new THREE.WebGLRenderer({antialias:true});
-			renderer.setSize(window.innerWidth, window.innerHeight);
-			document.body.appendChild(renderer.domElement);
-
-			controls = new THREE.OrbitControls( camera, renderer.domElement );
-
-			camera.position.set( 0, 20, 100 );
-			controls.update();
-			controls.addEventListener('change',renderer);
-			controls.minDistance = 500;
-			controls.maxDistance = 1500;
-
-			window.addEventListener('resize',()=>{
-				renderer.setSize(window.innerWidth, window.innerHeight);
-				camera.aspect=window.innerWidth/window.innerHeight;
-				camera.updateProjectionMatrix();
-			})
-			
-
-			let materialArray =[];
-
-			let texture_ft = new THREE.TextureLoader().load('corona_ft.png');
-			let texture_bk = new THREE.TextureLoader().load('corona_bk.png');
-			let texture_up = new THREE.TextureLoader().load('corona_up.png');
-			let texture_dn = new THREE.TextureLoader().load('corona_dn.png');
-			let texture_rt = new THREE.TextureLoader().load('corona_rt.png');
-			let texture_lf = new THREE.TextureLoader().load('corona_lf.png');
-
-			materialArray.push(new THREE.MeshBasicMaterial({map: texture_ft}));
-			materialArray.push(new THREE.MeshBasicMaterial({map: texture_bk}));
-			materialArray.push(new THREE.MeshBasicMaterial({map: texture_up}));
-			materialArray.push(new THREE.MeshBasicMaterial({map: texture_dn}));
-			materialArray.push(new THREE.MeshBasicMaterial({map: texture_rt}));
-			materialArray.push(new THREE.MeshBasicMaterial({map: texture_lf}));
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+    
+    <div>
+        <button onclick="renderLevel1()"> LEVEL 1 </button>
+        <button onclick="renderLevel2()"> LEVEL 2 </button>
+        <button onclick="renderLevel3()"> LEVEL 3 </button>
+    </div>    
 
 
-			for(let i = 0; i < 6; i++)
-				materialArray[i].side = THREE.BackSide;
+    
 
-			
+    
+    <h1 data-text="void"><span>VOID</span></h1> </body>
 
-			let skyboxGeo = new THREE.BoxGeometry(10000,10000,10000);
-			let skybox = new THREE.Mesh(skyboxGeo, materialArray);
-			scene.add(skybox);
+    <script>
+        document.addEventListener('keydown', function(event){
+
+            if(event.key == "Escape")
+            {
+                // Do the ESC function here
+                alert("ESC pressed");
+                window.history.back();
+                
+            }
+
+        });
+    </script>
+
+    <script>
+        function renderLevel1(){
+            // render level 1 here
+            document.body.innerHTML = '';
+            let scene, camera, renderer,controls;
+
+                function init(){
+                    scene = new THREE.Scene();
+
+                    camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 45, 30000);
+                    camera.position.set(-900,-200,-900);
+
+                    renderer = new THREE.WebGLRenderer({antialias:true});
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                    document.body.appendChild(renderer.domElement);
+
+                    controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+                    camera.position.set( 0, 20, 100 );
+                    controls.update();
+                    controls.addEventListener('change',renderer);
+                    controls.minDistance = 500;
+                    controls.maxDistance = 1500;
+
+                    window.addEventListener('resize',()=>{
+                        renderer.setSize(window.innerWidth, window.innerHeight);
+                        camera.aspect=window.innerWidth/window.innerHeight;
+                        camera.updateProjectionMatrix();
+                    })
+                    
+
+                    let materialArray =[];
+
+                    let texture_ft = new THREE.TextureLoader().load('corona_ft.png');
+                    let texture_bk = new THREE.TextureLoader().load('corona_bk.png');
+                    let texture_up = new THREE.TextureLoader().load('corona_up.png');
+                    let texture_dn = new THREE.TextureLoader().load('corona_dn.png');
+                    let texture_rt = new THREE.TextureLoader().load('corona_rt.png');
+                    let texture_lf = new THREE.TextureLoader().load('corona_lf.png');
+
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_ft}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_bk}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_up}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_dn}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_rt}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_lf}));
 
 
-			animate();
+                    for(let i = 0; i < 6; i++)
+                        materialArray[i].side = THREE.BackSide;
 
-			
-		}
+                    
 
-		function animate() {
-				requestAnimationFrame(animate);
-				renderer.render(scene,camera);
-		}
+                    let skyboxGeo = new THREE.BoxGeometry(10000,10000,10000);
+                    let skybox = new THREE.Mesh(skyboxGeo, materialArray);
+                    scene.add(skybox);
 
-		init();
-	
-	</script>
 
-	
-</body>
+                    animate();
+
+                    
+                }
+
+                function animate() {
+                        requestAnimationFrame(animate);
+                        renderer.render(scene,camera);
+                }
+
+                init();
+        }
+        
+        function renderLevel2(){
+            // render level 2 here           
+            
+                document.body.innerHTML = '';
+                let scene, camera, renderer,controls;
+
+                function init(){
+                    scene = new THREE.Scene();
+
+                    camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 45, 30000);
+                    camera.position.set(-900,-200,-900);
+
+                    renderer = new THREE.WebGLRenderer({antialias:true});
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                    document.body.appendChild(renderer.domElement);
+
+                    controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+                    camera.position.set( 0, 20, 100 );
+                    controls.update();
+                    controls.addEventListener('change',renderer);
+                    controls.minDistance = 500;
+                    controls.maxDistance = 1500;
+
+                    window.addEventListener('resize',()=>{
+                        renderer.setSize(window.innerWidth, window.innerHeight);
+                        camera.aspect=window.innerWidth/window.innerHeight;
+                        camera.updateProjectionMatrix();
+                    })
+                    
+
+                    let materialArray =[];
+
+                    let texture_ft = new THREE.TextureLoader().load('redeclipse_ft.png');
+                    let texture_bk = new THREE.TextureLoader().load('redeclipse_bk.png');
+                    let texture_up = new THREE.TextureLoader().load('redeclipse_up.png');
+                    let texture_dn = new THREE.TextureLoader().load('redeclipse_dn.png');
+                    let texture_rt = new THREE.TextureLoader().load('redeclipse_rt.png');
+                    let texture_lf = new THREE.TextureLoader().load('redeclipse_lf.png');
+
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_ft}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_bk}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_up}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_dn}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_rt}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_lf}));
+
+
+                    for(let i = 0; i < 6; i++)
+                        materialArray[i].side = THREE.BackSide;
+
+                    
+
+                    let skyboxGeo = new THREE.BoxGeometry(10000,10000,10000);
+                    let skybox = new THREE.Mesh(skyboxGeo, materialArray);
+                    scene.add(skybox);
+
+
+                    animate();
+
+                    
+                }
+
+                function animate() {
+                        requestAnimationFrame(animate);
+                        renderer.render(scene,camera);
+                }
+
+                init();
+            
+        }
+
+        function renderLevel3(){
+            // render level 3 here
+            
+                document.body.innerHTML = '';
+                let scene, camera, renderer,controls;
+
+                function init(){
+                    scene = new THREE.Scene();
+
+                    camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 45, 30000);
+                    camera.position.set(-900,-200,-900);
+
+                    renderer = new THREE.WebGLRenderer({antialias:true});
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                    document.body.appendChild(renderer.domElement);
+
+                    controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+                    camera.position.set( 0, 20, 100 );
+                    controls.update();
+                    controls.addEventListener('change',renderer);
+                    controls.minDistance = 500;
+                    controls.maxDistance = 1500;
+
+                    window.addEventListener('resize',()=>{
+                        renderer.setSize(window.innerWidth, window.innerHeight);
+                        camera.aspect=window.innerWidth/window.innerHeight;
+                        camera.updateProjectionMatrix();
+                    })
+                    
+
+                    let materialArray =[];
+
+                    let texture_ft = new THREE.TextureLoader().load('arid2_ft.jpg');
+                    let texture_bk = new THREE.TextureLoader().load('arid2_bk.jpg');
+                    let texture_up = new THREE.TextureLoader().load('arid2_up.jpg');
+                    let texture_dn = new THREE.TextureLoader().load('arid2_dn.jpg');
+                    let texture_rt = new THREE.TextureLoader().load('arid2_rt.jpg');
+                    let texture_lf = new THREE.TextureLoader().load('arid2_lf.jpg');
+
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_ft}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_bk}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_up}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_dn}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_rt}));
+                    materialArray.push(new THREE.MeshBasicMaterial({map: texture_lf}));
+
+
+                    for(let i = 0; i < 6; i++)
+                        materialArray[i].side = THREE.BackSide;
+
+                    
+
+                    let skyboxGeo = new THREE.BoxGeometry(10000,10000,10000);
+                    let skybox = new THREE.Mesh(skyboxGeo, materialArray);
+                    scene.add(skybox);
+
+
+                    animate();
+
+                    
+                }
+
+                function animate() {
+                        requestAnimationFrame(animate);
+                        renderer.render(scene,camera);
+                }
+
+                init();
+            
+        }
+
+
+
+    </script>
+
 </html>
