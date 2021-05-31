@@ -203,5 +203,5 @@ function animate() {
   requestAnimationFrame( animate );
 	renderer.render(scene,camera);
 	update();
-	updateBeam(beams);
+	//updateBeam(beams);
 }
