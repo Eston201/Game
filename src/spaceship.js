@@ -1,6 +1,5 @@
 import * as THREE from '../js/three.module.js';
 export {player}
-
 function player(){
   var enemy = new THREE.Object3D();
   //const enemycolor = new THREE.color(0xe5e5e5);
@@ -10,7 +9,6 @@ function player(){
   const torumaterial = new THREE.MeshLambertMaterial({color:0x171717});
   const shootmaterial = new THREE.MeshLambertMaterial({color:0xffffff});
   const wingmat = new THREE.MeshLambertMaterial({color:0x520703});
-
 
   const cylgeo = new THREE.CylinderGeometry(0.5,6,40,5,1,false);
   const cylinder = new THREE.Mesh(cylgeo,enemymaterial);

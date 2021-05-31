@@ -1,8 +1,14 @@
 
 import * as THREE from '../js/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
-import {player} from './spaceship.js'
+import {player} from './spaceship.js';
+import * as dat from '../js/dat.gui.module.js';
 
+    //debug ui
+    const gui = new dat.GUI();
+    const parameters = {
+      color:0xff0000
+    }
 
     let scene, camera, renderer,controls;
     init();
@@ -25,6 +31,25 @@ import {player} from './spaceship.js'
 				camera.aspect=window.innerWidth/window.innerHeight;
 				camera.updateProjectionMatrix();
 			})
+
+
+      const geometry = new THREE.BoxGeometry();
+      const material = new THREE.MeshBasicMaterial( { color: parameters.color } );
+      const cube = new THREE.Mesh( geometry, material );
+      cube.position.set(10,0,0);
+      scene.add( cube );
+      //testing dat GUI
+      gui
+      .add(cube.position,'y')
+      .min(-3)
+      .max(3)
+      .step(0.01);
+
+      gui
+      .addColor(parameters,'color')
+      .onChange(()=>
+        material.color.set(parameters.color)
+      )
 
       //kinda like a skybox but better
       const loader = new THREE.CubeTextureLoader();
@@ -52,6 +77,9 @@ import {player} from './spaceship.js'
      const ring2 = play.children[7];
      const shooter = play.children[9];
      scene.add(play);
+     //dat ui for spaceship
+     
+
 
      //the lasers
      var beams = [];
@@ -84,7 +112,7 @@ import {player} from './spaceship.js'
 
     //store the lasers on click
     function lasers(scene,enemy,beams){
-      window.addEventListener("mousedown", onMouseDown);
+      window.addEventListener("m", onMouseDown);
 
       function onMouseDown() {
 
