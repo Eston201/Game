@@ -23,7 +23,8 @@ import * as dat from '../js/dat.gui.module.js';
 			renderer = new THREE.WebGLRenderer({antialias:true});
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			document.body.appendChild(renderer.domElement);
-      			camera.position.set( 0, 0, 10 );
+      			//camera.position.set( 0, 0, 10 );
+			camera.position.set( 5, 30, 60 );
 
 
 			window.addEventListener('resize',()=>{
