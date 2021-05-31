@@ -131,7 +131,7 @@ function player(){
   enemy.add(shooter);
 
   enemy.rotateX(Math.PI/2);
-  enemy.scale.set(0.2,0.2,0.2);
+  //enemy.scale.set(0.2,0.2,0.2);
 
   return enemy;
 }
