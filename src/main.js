@@ -125,6 +125,7 @@ import * as dat from '../js/dat.gui.module.js';
 		myRocket.translateY( moveDistance );
 		ring1.rotation.y += 0.04;
 		ring2.rotation.x += 0.08;
+		camera.translateZ(-moveDistance * 0.98);
 	}
 	if ( keyboard.pressed("S") ){
 		myRocket.translateY(  -moveDistance );
