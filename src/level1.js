@@ -37,6 +37,28 @@ class Level1 {
      ]);
      this.scene.background = texture;
 
+     
+
+/*
+     
+     //rings for path
+	 const ringarr = [0,0,-200,
+    100,0,-400,
+    200,0,-600,
+    300,0,-800,
+    400,0,-1000,
+    500,0,-1200];
+for(let i =0;i<18;i+=3){
+var rgeo = new THREE.TorusGeometry(40,2,6,75);
+var rmat = new THREE.MeshPhongMaterial({color: 0xffff00});
+const gring = new THREE.Mesh(rgeo,rmat);
+gring.position.set(ringarr[i],ringarr[i+1],ringarr[i+2]);
+this.scene.add(gring);
+}
+*/
+
+
+
      //Lights
      //directionalLight
      const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
@@ -45,6 +67,7 @@ class Level1 {
      //AmbientLight
      const amblight = new THREE.AmbientLight(0x404040 ,2);
      this.scene.add(amblight);
+     
 
      this.LoadPlayer();
 

@@ -80,10 +80,10 @@ import * as dat from '../js/dat.gui.module.js';
      shooter = myRocket.children[9];
      scene.add(myRocket);
 
-	 //planet1
-	 planet1 = planet1();
-	 planet1.position.set(0,0,0);
-	 scene.add(planet1);
+	 
+	 
+	
+
 
 
      //dat ui for spaceship

@@ -2,7 +2,7 @@ import * as THREE from '../js/three.module.js';
 import {controls} from './controls.js';
 export {player}
 import * as dat from '../js/dat.gui.module.js'
-
+import {is_collision} from '../src/is_collision.js';
 class player {
   constructor(params) {
     this.createplayer(params);
@@ -160,14 +160,14 @@ class player {
         this.enemy.position.z -= moveDistance
 		    this.ring1.rotation.y += 0.2;
 		    this.ring2.rotation.x += 0.1;
-        this.params.camera.position.z-=(moveDistance*0.99);
+        this.params.camera.position.z-=(moveDistance);
 
     }
     if (this.controller._keys.backward ) {
           this.enemy.position.z += moveDistance
     		  this.ring1.rotation.y -= 0.4;
     		  this.ring2.rotation.x -= 0.3;
-          this.params.camera.position.z+=(moveDistance*0.99);
+          this.params.camera.position.z+=(moveDistance);
 
 
     }
@@ -175,17 +175,26 @@ class player {
     if (this.controller._keys.left) {
         this.enemy.rotateOnAxis( new THREE.Vector3(0,1,0), 2*Math.PI-rotateAngle);
         this.enemy.position.x -= moveDistance;
-        this.params.camera.position.x-=(moveDistance*0.98);
+        this.params.camera.position.x-=(moveDistance);
         
 
     }
     if (this.controller._keys.right) {
       this.enemy.rotateOnAxis( new THREE.Vector3(0,1,0), 2*Math.PI + rotateAngle);
       this.enemy.position.x += moveDistance;
-      this.params.camera.position.x+=(moveDistance*0.98);
+      this.params.camera.position.x+=(moveDistance);
+    }
+    if(this.controller._keys.fpc){
+      
+        this.params.camera.position.set(this.enemy.position.x,this.enemy.position.y+15,this.enemy.position.z-16);
+      
+    }
+    if(this.controller._keys.tpc){
+      this.params.camera.position.set(this.enemy.position.x+5,this.enemy.position.y+30,this.enemy.position.z +60);
+        this.params.camera.lookAt( this.enemy.position );
     }
     
-    this.params.camera.lookAt( this.enemy.position );
+    
     
 
   }

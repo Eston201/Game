@@ -1,5 +1,5 @@
 import * as THREE from '../js/three.module.js';
-
+export {is_collision};
 function is_collision(obj1,obj2){
 
     var x1,y1,z1,x2,y2,z2;
