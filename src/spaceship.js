@@ -193,6 +193,10 @@ class player {
       this.params.camera.position.set(this.enemy.position.x+5,this.enemy.position.y+30,this.enemy.position.z +60);
         this.params.camera.lookAt( this.enemy.position );
     }
+    if(this.controller._keys.rvc){
+      this.params.camera.position.set(this.enemy.position.x,this.enemy.position.y+15,this.enemy.position.z+10);
+      this.params.camera.lookAt( this.enemy.position.x,this.enemy.position.y+10,this.enemy.position.z+25 );
+    }
     
     
     

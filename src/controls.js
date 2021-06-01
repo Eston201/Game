@@ -15,7 +15,8 @@ class controls {
       space: false,
       shift: false,
       fpc: false,
-      tpc: false
+      tpc: false,
+      rvc: false
     };
 
     document.addEventListener('keydown', (e) => this.onKeyDown(e), false);
@@ -49,6 +50,9 @@ class controls {
       case 86:
         this._keys.tpc = true;
         break;
+      case 82:
+        this._keys.rvc = true;
+        break;
     }
   }
 
@@ -75,8 +79,11 @@ class controls {
       case 67:
         this._keys.fpc = false;
         break;
-        case 86:
+      case 86:
           this._keys.tpc = false;
+          break;
+      case 82:
+          this._keys.rvc = true;
           break;
     }
   }
