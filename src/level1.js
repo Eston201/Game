@@ -1,6 +1,7 @@
 import * as THREE from '../js/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {player} from './spaceship.js';
+import {planet} from './planet.js';
 
 class Level1 {
   constructor() {
@@ -17,9 +18,9 @@ class Level1 {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(this.renderer.domElement);
 
-      // this.controls = new OrbitControls( this.camera, this.renderer.domElement );
+      this.controls = new OrbitControls( this.camera, this.renderer.domElement );
       this.camera.position.set( 5, 30, 60 );
-      // this.controls.update();
+      this.controls.update();
 
       window.addEventListener('resize',()=>{
       this.OnWindowResize();
@@ -48,6 +49,17 @@ class Level1 {
 
      this.LoadPlayer();
 
+
+     this.planetArr = [];
+
+     this.p1 = this.loadplanets()
+     this.p1.planet.position.set(600,400,500);
+     this.scene.add(this.p1.planet);
+     this.planetArr.push(this.p1);
+
+
+
+
      this.previousFrame = null;//used for counting frames to get delta times
      this.RAF();
 
@@ -61,8 +73,17 @@ class Level1 {
       scene: this.scene,
     }
     this.controls = new player(params);
-  
+
   }
+  loadplanets(){
+    const params = {
+      camera: this.camera,
+      scene: this.scene,
+    }
+    return new planet(params);
+
+  }
+
 
   OnWindowResize(){
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -89,7 +110,9 @@ class Level1 {
     if (this.controls) {
       this.controls.Update(timeElapsedS);
     }
-   
+    for (var i = 0; i < this.planetArr.length; i++) {
+      this.planetArr[i].animate();
+    }
   }
 
 
