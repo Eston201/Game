@@ -2,6 +2,7 @@ import * as THREE from '../js/three.module.js';
 import {controls} from './controls.js';
 export {player}
 import * as dat from '../js/dat.gui.module.js'
+
 class player {
   constructor(params) {
     this.createplayer(params);
@@ -184,3 +185,4 @@ class player {
   }
 
 };
+
