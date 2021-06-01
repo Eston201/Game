@@ -1,7 +1,6 @@
 import * as THREE from '../js/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {player} from './spaceship.js';
-import {ThirdPersonCamera} from './ThirdPersonCamera.js';
 
 class Level1 {
   constructor() {
@@ -62,10 +61,7 @@ class Level1 {
       scene: this.scene,
     }
     this.controls = new player(params);
-    // this.thirdPersonCamera = new ThirdPersonCamera({
-    //   camera: this.camera,
-    //   target: this.controls,
-    // });
+  
   }
 
   OnWindowResize(){
@@ -93,7 +89,7 @@ class Level1 {
     if (this.controls) {
       this.controls.Update(timeElapsedS);
     }
-    // this.thirdPersonCamera.Update(timeElapsedS);
+   
   }
 
 
