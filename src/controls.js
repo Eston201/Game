@@ -14,6 +14,7 @@ class controls {
       right: false,
       space: false,
       shift: false,
+      
     };
 
     document.addEventListener('keydown', (e) => this.onKeyDown(e), false);
@@ -41,6 +42,7 @@ class controls {
       case 16: // SHIFT
         this._keys.shift = true;
         break;
+      
     }
   }
 

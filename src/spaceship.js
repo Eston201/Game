@@ -152,35 +152,41 @@ class player {
   //movement for aircaft
   Update(delta){
     var moveDistance = 300 * delta;   // 300 pixels per second
-  	var rotateAngle = Math.PI/60
+  	var rotateAngle = Math.PI/60;
+    //this.ring1.rotation.y += 0.2;
+		this.ring2.rotation.x += 0.1;
 
     if (this.controller._keys.forward) {
         this.enemy.position.z -= moveDistance
-		    this.ring1.rotation.y += 0.04;
-		    this.ring2.rotation.x += 0.08;
-        this.params.camera.position.z-=(moveDistance)
+		    this.ring1.rotation.y += 0.2;
+		    this.ring2.rotation.x += 0.1;
+        this.params.camera.position.z-=(moveDistance*0.99);
 
     }
     if (this.controller._keys.backward ) {
           this.enemy.position.z += moveDistance
-    		  this.ring1.rotation.y += 0.04;
-    		  this.ring2.rotation.x += 0.08;
+    		  this.ring1.rotation.y -= 0.4;
+    		  this.ring2.rotation.x -= 0.3;
+          this.params.camera.position.z+=(moveDistance*0.99);
 
 
     }
 
     if (this.controller._keys.left) {
-        this.enemy.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
-        this.enemy.position.x -= moveDistance
-        this.params.camera.position.x-=(moveDistance*0.98)
+        this.enemy.rotateOnAxis( new THREE.Vector3(0,1,0), 2*Math.PI-rotateAngle);
+        this.enemy.position.x -= moveDistance;
+        this.params.camera.position.x-=(moveDistance*0.98);
+        
 
     }
     if (this.controller._keys.right) {
-      this.enemy.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
-      this.enemy.position.x += moveDistance
-      this.params.camera.position.x+=(moveDistance*0.98)
+      this.enemy.rotateOnAxis( new THREE.Vector3(0,1,0), 2*Math.PI + rotateAngle);
+      this.enemy.position.x += moveDistance;
+      this.params.camera.position.x+=(moveDistance*0.98);
     }
+    
     this.params.camera.lookAt( this.enemy.position );
+    
 
   }
 

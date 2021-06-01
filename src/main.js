@@ -2,6 +2,7 @@
 import * as THREE from '../js/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {player} from './spaceship.js';
+import {planet1} from './planet1.js';
 import * as dat from '../js/dat.gui.module.js';
     //debug ui
     const gui = new dat.GUI();
@@ -9,7 +10,7 @@ import * as dat from '../js/dat.gui.module.js';
       color:0xff0000
     }
 
-    var scene, camera, renderer,myRocket,ring1, ring2, shooter,clock;
+    var scene, camera, renderer,myRocket,ring1, ring2, shooter,clock,planet1;
     var beams = [];
     var keyboard = new THREEx.KeyboardState();
     clock = new THREE.Clock();
@@ -78,6 +79,13 @@ import * as dat from '../js/dat.gui.module.js';
      ring2 = myRocket.children[7];
      shooter = myRocket.children[9];
      scene.add(myRocket);
+
+	 //planet1
+	 planet1 = planet1();
+	 planet1.position.set(0,0,0);
+	 scene.add(planet1);
+
+
      //dat ui for spaceship
 
 
