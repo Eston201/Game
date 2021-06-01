@@ -24,7 +24,7 @@ import * as dat from '../js/dat.gui.module.js';
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			document.body.appendChild(renderer.domElement);
       camera.position.set( 0, 0, 10 );
-
+      
 
 			window.addEventListener('resize',()=>{
 				renderer.setSize(window.innerWidth, window.innerHeight);
