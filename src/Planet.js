@@ -12,7 +12,7 @@ class planet {
     this.planet = new THREE.Object3D();
 
     this.pgeo = new THREE.SphereGeometry(100,50,50);
-    this.pmat = new THREE.MeshLambertMaterial({color : 0x7A5224});
+    this.pmat = new THREE.MeshLambertMaterial({color : 0x2B7BEA});
     this.planetobj = new THREE.Mesh(this.pgeo,this.pmat);
 
     this.bgeo = new THREE.SphereGeometry(3,32,32);

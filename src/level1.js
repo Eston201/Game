@@ -53,9 +53,29 @@ class Level1 {
      this.planetArr = [];
 
      this.p1 = this.loadplanets()
-     this.p1.planet.position.set(600,400,500);
+     this.p1.planet.position.set(600,-400,500);
      this.scene.add(this.p1.planet);
      this.planetArr.push(this.p1);
+
+     this.p2 = this.loadplanets()
+     this.p2.planet.position.set(-500,50,20);
+     this.scene.add(this.p2.planet);
+     this.planetArr.push(this.p2);
+
+     this.p3 = this.loadplanets()
+     this.p3.planet.position.set(1220,180,-200);
+     this.scene.add(this.p3.planet);
+     this.planetArr.push(this.p3);
+
+     this.p4 = this.loadplanets()
+     this.p4.planet.position.set(700,600,-50);
+     this.scene.add(this.p4.planet);
+     this.planetArr.push(this.p4);
+
+     this.p5 = this.loadplanets()
+     this.p5.planet.position.set(6,40,500);
+     this.scene.add(this.p5.planet);
+     this.planetArr.push(this.p5);
 
 
 
