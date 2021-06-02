@@ -1,13 +1,37 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8">
-		<title>My first three.js app</title>
 		<style>
-			body { margin: 0; }
-		</style>
-	</head>
-	<body>
-		<script src="./src/Level1.js" type="module"></script>
+            div.absolute {
+            position: absolute;
+            width: 50%;
+            bottom: 10px;
+            left: 50%;
+            }
+      </style>
+
+		<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="Game.css">
+
+    <title>VOID</title>
+  </head>
+  <body style="background-image: url('https://airbus-h.assetsadobe2.com/is/image/content/dam/channel-specific/website-/company/responsibility-and-sustainability/environment/sustainable-space.jpg?wid=1920&fit=fit,1&qlt=85,0');">
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.1/gsap.min.js"></script>
+		<script src='./src/LevelManager.js' type="module"></script>
+		<div>
+		<button id="Level1"> LEVEL 1 </button>
+		<button id="Level2"> LEVEL 2 </button>
+		<button id="Level3"> LEVEL 3 </button>
+		</div>
+
+		<h1 data-text="void"><span>VOID</span></h1> </body>
+
+
 	</body>
 </html>

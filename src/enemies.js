@@ -1,9 +1,8 @@
 import * as THREE from '../js/three.module.js';
 import {controls} from './controls.js';
-export {player}
 import * as dat from '../js/dat.gui.module.js'
-
-class player {
+export {enemy}
+class enemy {
   constructor(params) {
     this.createplayer(params);
   }
@@ -12,7 +11,7 @@ class player {
   createplayer(params){
     const gui = new dat.GUI();
     this.params = params;
-    this. beams = [];
+    this.enemy_beams = [];
     this.controller = new controls();
     this.health = 20;
     this.enemy = new THREE.Object3D();
@@ -154,54 +153,10 @@ class player {
   Update(delta){
     var moveDistance = 300 * delta;   // 300 pixels per second
   	var rotateAngle = Math.PI/60
-    this.ring2.rotation.x += 0.1;
-    if (this.controller._keys.forward) {
-        this.enemy.position.z -= moveDistance
-		    this.ring1.rotation.y += 0.04;
-		    this.ring2.rotation.x += 0.08;
-        this.params.camera.position.z-=(moveDistance*0.99)
-
-    }
-    if (this.controller._keys.backward ) {
-      this.enemy.position.z += moveDistance
-      this.ring1.rotation.y -= 0.4;
-      this.ring2.rotation.x -= 0.3;
-      this.params.camera.position.z+=(moveDistance*0.99);
 
 
-    }
 
-    if (this.controller._keys.left) {
-      this.enemy.rotateOnAxis( new THREE.Vector3(0,1,0), 2*Math.PI-rotateAngle);
-      this.enemy.position.x -= moveDistance;
-      this.params.camera.position.x-=(moveDistance*0.98);
-
-    }
-    if (this.controller._keys.right) {
-      this.enemy.rotateOnAxis( new THREE.Vector3(0,1,0), 2*Math.PI + rotateAngle);
-      this.enemy.position.x += moveDistance;
-      this.params.camera.position.x+=(moveDistance*0.98);
-    }
-
-    if(this.controller._keys.space){
-      this.shootLaser();
-    }
-    if(this.controller._keys.fpc){
-
-        this.params.camera.position.set(this.enemy.position.x,this.enemy.position.y+15,this.enemy.position.z-16);
-
-    }
-    if(this.controller._keys.tpc){
-      this.params.camera.position.set(this.enemy.position.x+5,this.enemy.position.y+30,this.enemy.position.z +60);
-        this.params.camera.lookAt( this.enemy.position );
-    }
-    //buggy fix needed
-    // if(this.controller._keys.rvc){
-    //   this.params.camera.position.set(this.enemy.position.x,this.enemy.position.y+15,this.enemy.position.z+10);
-    //   this.params.camera.lookAt( this.enemy.position.x,this.enemy.position.y+10,this.enemy.position.z+25 );
-    // }
-
-    this.updateBeam(moveDistance);
+    this.huntShip(moveDistance);
 
   }
 
@@ -215,16 +170,25 @@ class player {
   	this.beams.push(laser1);
    }
 
-   updateBeam(moveDistance){
-	    var size = this.beams.length;
+   updatebeams(moveDistance){
+     var size = this.enemy_beams.length;
+	   for(var index = 0; index < size; index+=1){
+		     var beam  = this.enemy_beams[index];
 
-	    for(var index = 0; index < size; index = index + 1){
+		     var target = this.params.target.position.clone();
+		     var directionVector = target.sub(beam.position.clone()).normalize();
+		     beam.lookAt(directionVector);
+		     beam.translateOnAxis(directionVector,moveDistance*0.6);
 
-		      this.beam  = this.beams[index];
+		  if(collides(beam,myRocket,3)){
+			     player_health  = player_health - 0.5;
+			     beam.visible = false;
+			     enemy_beams.splice(index,1);
+			     size = enemy_beams.length;
+		    }
+	    }
+   }
 
-            this.beam.translateZ(-(moveDistance+1.5) );
-      }
-  }
 
   updateHealth(){
     if(this.health==0){
@@ -235,6 +199,42 @@ class player {
       this.health-=0.5;
     }
   }
+
+  huntShip(moveDistance){
+	    var dx = this.params.target.position.x - this.enemy.position.x;
+	    var dy = this.params.target.position.y - this.enemy.position.y;
+	    var dz = this.params.target.position.z - this.enemy.position.z;
+	    var vector_distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+	    var speed = 1; var directionVector;
+
+	if(vector_distance > 100){
+		speed = 1.3;
+		directionVector = new THREE.Vector3(dx,dy,dz).normalize();
+		this.enemy.lookAt(directionVector);
+		this.enemy.translateOnAxis(directionVector,moveDistance*speed);
+	}
+	else{
+		dz = this.params.target.position.z - 100 - this.enemy.position.z;     //set fake position
+		directionVector = new THREE.Vector3(dx,dy,dz).normalize();
+		this.enemy.lookAt(directionVector);
+		this.enemy.translateOnAxis(directionVector,moveDistance*speed);
+
+		let randomNum = Math.floor((Math.random() * 100) + 1);
+		if(randomNum == 5){
+			var enemy_shooterWorldPosition = new THREE.Vector3(0,0,0);
+			let laser = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 4), new THREE.MeshLambertMaterial({color: "yellow"}));
+			laser.position.copy(this.shooter.getWorldPosition(enemy_shooterWorldPosition));
+			//laser1.quaternion.copy(camera.quaternion);
+			this.params.scene.add(laser);
+			this.enemy_beams.push(laser);
+		}
+		this.updatebeams(moveDistance);
+	}
+
+
+	this.enemy.rotateOnAxis(new THREE.Vector3(1,0,0), -Math.PI/2);
+
+}
 
 
 };

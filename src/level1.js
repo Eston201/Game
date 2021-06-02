@@ -1,11 +1,13 @@
+export{Level1}
 import * as THREE from '../js/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {player} from './spaceship.js';
 import {planet} from './planet.js';
-
+import {enemy} from './enemies.js'
 class Level1 {
   constructor() {
     this.init();
+
   }
 
   init(){
@@ -18,14 +20,19 @@ class Level1 {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(this.renderer.domElement);
 
-      this.controls = new OrbitControls( this.camera, this.renderer.domElement );
+      // this.controls = new OrbitControls( this.camera, this.renderer.domElement );
       this.camera.position.set( 5, 30, 60 );
-      this.controls.update();
+      // this.controls.update();
 
       window.addEventListener('resize',()=>{
       this.OnWindowResize();
       },false)
 
+
+      this.params = {
+        camera: this.camera,
+        scene: this.scene,
+      }
       //kinda like a skybox but better
       const loader = new THREE.CubeTextureLoader();
       const texture = loader.load([
@@ -51,13 +58,9 @@ class Level1 {
 
 
      this.planetArr = [];
+     this.addplanets();
 
-     this.p1 = this.loadplanets()
-     this.p1.planet.position.set(600,400,500);
-     this.scene.add(this.p1.planet);
-     this.planetArr.push(this.p1);
-
-
+      this.spawnEnemyShip();
 
 
      this.previousFrame = null;//used for counting frames to get delta times
@@ -67,12 +70,15 @@ class Level1 {
 
 
   LoadPlayer(){
-
+    this.myRocket = new player(this.params);
+  }
+  spawnEnemyShip(){
     const params = {
       camera: this.camera,
       scene: this.scene,
+      target: this.myRocket.enemy
     }
-    this.controls = new player(params);
+    this.e1 = new enemy(params);
 
   }
   loadplanets(){
@@ -107,19 +113,48 @@ class Level1 {
   Step(timeElapsed) {
     const timeElapsedS = timeElapsed * 0.001;
 
-    if (this.controls) {
-      this.controls.Update(timeElapsedS);
+    if (this.myRocket) {
+      this.myRocket.Update(timeElapsedS);
+    }
+    if (this.e1) {
+      this.e1.Update(timeElapsedS);
     }
     for (var i = 0; i < this.planetArr.length; i++) {
       this.planetArr[i].animate();
     }
   }
 
+  addplanets(){
+    this.p1 = this.loadplanets()
+    this.p1.planet.position.set(600,-400,500);
+    this.scene.add(this.p1.planet);
+    this.planetArr.push(this.p1);
+
+    this.p2 = this.loadplanets()
+    this.p2.planet.position.set(-500,50,20);
+    this.scene.add(this.p2.planet);
+    this.planetArr.push(this.p2);
+
+    this.p3 = this.loadplanets()
+    this.p3.planet.position.set(1220,180,-200);
+    this.scene.add(this.p3.planet);
+    this.planetArr.push(this.p3);
+
+    this.p4 = this.loadplanets()
+    this.p4.planet.position.set(700,600,-50);
+    this.scene.add(this.p4.planet);
+    this.planetArr.push(this.p4);
+
+    this.p5 = this.loadplanets()
+    this.p5.planet.position.set(6,40,500);
+    this.scene.add(this.p5.planet);
+    this.planetArr.push(this.p5);
+  }
 
 
 };
 
 
-window.addEventListener('DOMContentLoaded', () => {
-  const lv1 = new Level1();
-});
+// window.addEventListener('DOMContentLoaded', () => {
+//   const lv1 = new Level1();
+// });

@@ -14,6 +14,9 @@ class controls {
       right: false,
       space: false,
       shift: false,
+      fpc: false,
+      tpc: false,
+      rvc: false,
     };
 
     document.addEventListener('keydown', (e) => this.onKeyDown(e), false);
@@ -41,6 +44,15 @@ class controls {
       case 16: // SHIFT
         this._keys.shift = true;
         break;
+      case 67://c key
+        this._keys.fpc = true;
+        break;
+      case 86: //v
+        this._keys.tpc = true;
+        break;
+      case 82://r
+        this._keys.rvc = true;
+        break;
     }
   }
 
@@ -64,6 +76,15 @@ class controls {
       case 16: // SHIFT
         this._keys.shift = false;
         break;
+      case 67:
+        this._keys.fpc = false;
+        break;
+      case 86:
+          this._keys.tpc = false;
+          break;
+      case 82:
+          this._keys.rvc = false;
+          break;
     }
   }
 
