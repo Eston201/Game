@@ -11,28 +11,37 @@ class Level1 {
   }
 
   init(){
+
       this.scene = new THREE.Scene();
 
       this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1000);
-
 
       this.renderer = new THREE.WebGLRenderer({antialias:true});
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(this.renderer.domElement);
 
       // this.controls = new OrbitControls( this.camera, this.renderer.domElement );
-      this.camera.position.set( 5, 30, 60 );
+      this.camera.position.set( 2.5,40,80 );
       // this.controls.update();
 
       window.addEventListener('resize',()=>{
       this.OnWindowResize();
       },false)
 
+      this.cursor = {
+        x : 0,
+        y : 0
+      }
+      window.addEventListener( 'mousemove',(event)=>{
+        this.cursor.x =( event.clientX / window.innerWidth ) * 2 - 1;
+        this.cursor.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+      })
 
       this.params = {
         camera: this.camera,
         scene: this.scene,
       }
+
       //kinda like a skybox but better
       const loader = new THREE.CubeTextureLoader();
       const texture = loader.load([
@@ -44,7 +53,8 @@ class Level1 {
        '../resources/skybox/corona_lf.png',
      ]);
      this.scene.background = texture;
-
+     // const axesHelper = new THREE.AxesHelper( 5 );
+     // this.scene.add( axesHelper );
      //Lights
      //directionalLight
      const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
@@ -60,7 +70,7 @@ class Level1 {
      this.planetArr = [];
      this.addplanets();
 
-      this.spawnEnemyShip();
+      // this.spawnEnemyShip();
 
 
      this.previousFrame = null;//used for counting frames to get delta times
@@ -71,6 +81,7 @@ class Level1 {
 
   LoadPlayer(){
     this.myRocket = new player(this.params);
+
   }
   spawnEnemyShip(){
     const params = {
@@ -102,7 +113,7 @@ class Level1 {
       if (this.previousFrame === null) {
         this.previousFrame = t;
       }
-
+      this.updatecamera();
       this.RAF();
       this.Step(t - this.previousFrame);
       this.renderer.render(this.scene, this.camera);
@@ -149,6 +160,15 @@ class Level1 {
     this.p5.planet.position.set(6,40,500);
     this.scene.add(this.p5.planet);
     this.planetArr.push(this.p5);
+  }
+
+  updatecamera(){
+    // this.camera.position.x = (this.cursor.x)*20;
+    this.camera.position.x = -(Math.sin(this.cursor.x*(Math.PI/2))*50);
+    // this.camera.position.z = Math.cos(this.cursor.x*(Math.PI/2))*3;
+    this.camera.position.y= ((this.cursor.y)*20)+30;
+    this.camera.lookAt(this.myRocket.prod.position);
+    // console.log(this.myRocket.prod.position);
   }
 
 

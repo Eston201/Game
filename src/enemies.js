@@ -155,6 +155,7 @@ class enemy {
   	var rotateAngle = Math.PI/60
 
 
+    // console.log(this.params.target.position);
 
     this.huntShip(moveDistance);
 
@@ -180,12 +181,12 @@ class enemy {
 		     beam.lookAt(directionVector);
 		     beam.translateOnAxis(directionVector,moveDistance*0.6);
 
-		  if(collides(beam,myRocket,3)){
-			     player_health  = player_health - 0.5;
-			     beam.visible = false;
-			     enemy_beams.splice(index,1);
-			     size = enemy_beams.length;
-		    }
+		  // if(collides(beam,myRocket,3)){
+			//      player_health  = player_health - 0.5;
+			//      beam.visible = false;
+			//      enemy_beams.splice(index,1);
+			//      size = enemy_beams.length;
+		  //   }
 	    }
    }
 
