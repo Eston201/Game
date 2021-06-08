@@ -14,13 +14,18 @@ class controls {
       right: false,
       space: false,
       shift: false,
+      EKey: false,
+      QKey: false,
       fpc: false,
       tpc: false,
       rvc: false,
+      Lclick:false
     };
 
     document.addEventListener('keydown', (e) => this.onKeyDown(e), false);
     document.addEventListener('keyup', (e) => this.onKeyUp(e), false);
+    document.addEventListener( 'mousedown', (e) => this.onDocumentMouseDown(e), false );
+    document.addEventListener('mouseup', (e) => this.mouseUp(e), false);
 
   }
 
@@ -43,6 +48,12 @@ class controls {
         break;
       case 16: // SHIFT
         this._keys.shift = true;
+        break;
+      case 69: // E key
+        this._keys.EKey = true;
+        break;
+      case 81: // E key
+        this._keys.QKey = true;
         break;
       case 67://c key
         this._keys.fpc = true;
@@ -76,6 +87,12 @@ class controls {
       case 16: // SHIFT
         this._keys.shift = false;
         break;
+      case 69: // E key
+        this._keys.EKey = false;
+        break;
+      case 81: // Q key
+        this._keys.QKey = false;
+        break;
       case 67:
         this._keys.fpc = false;
         break;
@@ -86,6 +103,37 @@ class controls {
           this._keys.rvc = false;
           break;
     }
+  }
+  onDocumentMouseDown(event){
+
+    switch (event.which) {
+       case 1:
+           this._keys.Lclick = true;
+           break;
+       // case 2:
+       //     alert('Middle Mouse button pressed.');
+       //     break;
+       // case 3:
+       //     alert('Right Mouse button pressed.');
+       //     break;
+       // default:
+       //     alert('You have a strange Mouse!');
+   }
+  }
+  mouseUp(){
+    switch (event.which) {
+       case 1:
+           this._keys.Lclick = false;
+           break;
+       // case 2:
+       //     alert('Middle Mouse button pressed.');
+       //     break;
+       // case 3:
+       //     alert('Right Mouse button pressed.');
+       //     break;
+       // default:
+       //     alert('You have a strange Mouse!');
+   }
   }
 
 

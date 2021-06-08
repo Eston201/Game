@@ -2,6 +2,7 @@ import * as THREE from '../js/three.module.js';
 import {controls} from './controls.js';
 export {player}
 import * as dat from '../js/dat.gui.module.js'
+import {ThirdPersonCamera} from './ThirdPersonCamera.js';
 
 class player {
   constructor(params) {
@@ -15,6 +16,9 @@ class player {
     this. beams = [];
     this.controller = new controls();
     this.health = 20;
+
+    this.steerAngle = 0;
+    this.steerAngleTarget = 0;
 
     this.prod = new THREE.Object3D();
     this.aircraft = new THREE.Object3D();
@@ -43,7 +47,7 @@ class player {
     //enemy.add(stabilizer);
     //
     // wings
-
+    gui.add(this.aircraft.rotation,"x").min(0).max(2*Math.PI).step(0.01)
     const length = 12, width = 0.5;
 
     this.shape = new THREE.Shape();
@@ -147,19 +151,23 @@ class player {
 
     this.aircraft.rotateY(Math.PI);
     this.aircraft.rotateX(Math.PI/2);
-
     //reticle for the planes shooter
     this.retgeometry = new THREE.RingGeometry( 4.5, 5, 30 );
     this.retmaterial = new THREE.MeshBasicMaterial( { color: 0xffffff} );
     this.reticle = new THREE.Mesh( this.retgeometry,this.retmaterial );
     this.reticle.position.set(0,0,-150);
 
+    this.tcamera = new ThirdPersonCamera({
+      camera: this.params.camera,
+      target: this.prod
+    });
 
     //add plane camera and reticle to one container for third person camera
     this.prod.add(this.aircraft);
     this.prod.add(this.reticle);
-    params.camera.lookAt(this.reticle.position);
-    this.prod.add(params.camera);
+
+    // params.camera.lookAt(this.reticle.position);
+    // this.prod.add(params.camera);
     this.params.scene.add(this.prod);
 
 
@@ -167,70 +175,132 @@ class player {
 
 
   Update(delta){
-    var moveDistance = 300 * delta;   // 300 pixels per second
-  	var rotateAngle = Math.PI/60
+
+    var moveDistance = 100 * delta;   // 100 pixels per second
+  	var rotateAngle = Math.PI/175
+    //make rings animate
     this.ring2.rotation.x += 0.1;
     this.shooter.rotation.z+=0.1;
-    this.prod.position.z -=0.5
+    //get the direction the plane is facing to make the plane move forward
+    var direction = new THREE.Vector3( 0, 0, -1 ).applyQuaternion( this.prod.quaternion ).normalize();
+    //default speed when not pressing W
+    // this.prod.position.add(direction.multiplyScalar(1))
+
+
     //controls for the plane on key press using imported controlls class
     //movement for aircaft
-    if (this.controller._keys.shift && this.controller._keys.left ) {
-       this.aircraft.rotateOnAxis( new THREE.Vector3(0,1,0), 2*Math.PI-rotateAngle);
-    }
-    //if w key is pressed
-    if (this.controller._keys.forward) {
-
-        this.prod.rotation.x+=0.02;
-        this.prod.rotation.x-=0.01;
-		    this.ring1.rotation.y += 0.04;
-		    this.ring2.rotation.x += 0.08;
-        // this.params.camera.position.z-=(moveDistance*0.99)
-
-    }
-    if (this.controller._keys.backward ) {
-      this.prod.rotation.x-=0.01;
-      this.ring1.rotation.y -= 0.4;
-      this.ring2.rotation.x -= 0.3;
-      // this.params.camera.position.z+=(moveDistance*0.99);
 
 
-    }
-
-    if (this.controller._keys.left) {
-      this.aircraft.rotateOnAxis( new THREE.Vector3(0,1,0),Math.PI/2);
-
-      this.prod.position.x -= moveDistance;
-      // this.params.camera.position.x-=(moveDistance*0.98);
-      // this.params.camera.rotateOnAxis( new THREE.Vector3(0,0,1), -(2*Math.PI-rotateAngle));
-
-    }
-    if (this.controller._keys.right) {
-      this.aircraft.rotateOnAxis( new THREE.Vector3(0,1,0), 2*Math.PI + rotateAngle);
-      this.prod.position.x += moveDistance;
-      // this.params.camera.position.x+=(moveDistance*0.98);
-    }
-
-    if(this.controller._keys.space){
+    //if mouse left click button is pressed
+    if (this.controller._keys.Lclick ) {
+      //fire lasers
       this.shootLaser();
 
     }
+
+    //if W key is pressed
+    if (this.controller._keys.forward) {
+      //increase the forward speed of the aircraft look above for befault speed
+        this.prod.position.add(direction.multiplyScalar(3))
+    }
+
+    // if A key is pressed
+    if (this.controller._keys.left) {
+      //set the maximum/target angle to rotate the plane
+      this.steerAngleTarget = Math.PI / 2.5;
+      //lerp is interploating so that we get a smooth rotation to the target angle
+      this.steerAngle = THREE.MathUtils.lerp(this.steerAngle, this.steerAngleTarget, 0.1);
+      //set the z rotation to this interpolated value so it slowly reaches target value
+      this.prod.rotation.z = this.steerAngle
+      this.prod.rotation.y+=rotateAngle;
+      this.prod.position.x-=moveDistance;
+
+    }
+
+    // if S key is pressed
+    if (this.controller._keys.backward ) {
+      //reduce the speed of the aircraft..doesnt make sense to actually move an aircraft backwards
+      this.prod.position.add(direction.multiplyScalar(0.2))
+
+    }
+
+    // if D key is pressed
+    if (this.controller._keys.right) {
+      //set the maximum/target angle to rotate the plane
+      this.steerAngleTarget = -Math.PI / 2.5;
+      //lerp is interploating so that we get a smooth rotation to the target angle
+      this.steerAngle = THREE.MathUtils.lerp(this.steerAngle, this.steerAngleTarget, 0.1);
+      //set the z rotation to this interpolated value so it slowly reaches target value
+      this.prod.rotation.z = this.steerAngle
+      this.prod.rotation.y-=rotateAngle;
+      this.prod.position.x+=moveDistance;
+    }
+
+    //if E key is pressed
+    if (this.controller._keys.EKey ) {
+      //uses gasap to rotate the aircraft about the y axis... this is a barrel roll!
+       gsap.to(this.aircraft.rotation,{duration:1,delay:0,y:-2*Math.PI});
+       //reset the angle otherwise gsap wont work on key press again
+       this.aircraft.rotation.y =0;
+
+    }
+
+    //if Q key is pressed
+    if (this.controller._keys.QKey ) {
+      //uses gasap to rotate the aircraft about the y axis... this is a barrel roll!
+      gsap.to(this.aircraft.rotation,{duration:1,delay:0.1,y:2*Math.PI});
+       //reset the angle otherwise gsap wont work on key press again
+      this.aircraft.rotation.y =0;
+
+
+    }
+
+
     if(this.controller._keys.fpc){
-
-        this.params.camera.position.set(this.aircraft.position.x,this.aircraft.position.y+15,this.aircraft.position.z-16);
+      this.steerAngleTarget = -8.2
+      this.steerAngle = THREE.MathUtils.lerp(0, this.steerAngleTarget, 0.001);
+      this.aircraft.rotation.x = this.steerAngle
+      this.prod.position.y += moveDistance
 
     }
-    if(this.controller._keys.tpc){
-      this.params.camera.position.set(this.aircraft.position.x+5,this.aircraft.position.y+30,this.aircraft.position.z +60);
-        // this.params.camera.lookAt( this.enemy.position );
-    }
+    //need a way to implement this properly with current camera setup
+    // if(this.controller._keys.tpc){
+    //   this.params.camera.position.set(this.aircraft.position.x+5,this.aircraft.position.y+30,this.aircraft.position.z +60);
+    //     // this.params.camera.lookAt( this.enemy.position );
+    // }
     //buggy fix needed
     // if(this.controller._keys.rvc){
     //   this.params.camera.position.set(this.enemy.position.x,this.enemy.position.y+15,this.enemy.position.z+10);
     //   this.params.camera.lookAt( this.enemy.position.x,this.enemy.position.y+10,this.enemy.position.z+25 );
     // }
-    // this.params.camera.lookAt(this.enemy)
-    this.updateBeam(moveDistance);
-    // this.params.camera.lookAt(this.reticle);
+    if(this.controller._keys.space){
+      this.steerAngleTarget = 0.6;
+      //lerp is interploating so that we get a smooth rotation to the target angle
+      this.steerAngle = THREE.MathUtils.lerp(this.steerAngle , this.steerAngleTarget, 0.01);
+      //set the z rotation to this interpolated value so it slowly reaches target value
+      this.prod.rotation.x =  this.steerAngle;
+      console.log(this.prod.rotation);
+
+    }
+    // if(this.controller._keys.shift){
+    //   this.steerAngleTarget = Math.PI / 2.5;
+    //   //lerp is interploating so that we get a smooth rotation to the target angle
+    //   this.steerAngle = THREE.MathUtils.lerp(this.steerAngle, this.steerAngleTarget, 0.1);
+    //   //set the z rotation to this interpolated value so it slowly reaches target value
+    //   this.prod.rotation.z = this.steerAngle
+    //   this.prod.rotation.y+=rotateAngle;
+    //   this.prod.position.x-=moveDistance;
+    // }
+
+
+    //if we are not pressing a or d then tilt the plane slowly back to its positon
+    if(!this.controller._keys.left || !this.controller._keys.right ){
+      this.steerAngleTarget = 0;
+      this.steerAngle = THREE.MathUtils.lerp(this.steerAngle, this.steerAngleTarget, 0.1);
+      this.prod.rotation.z = this.steerAngle
+    }
+    this.updateBeam(moveDistance);//update beams position in world
+    this.tcamera.Update(delta);//update the camera to follow plane
 
   }
 

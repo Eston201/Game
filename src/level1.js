@@ -3,6 +3,7 @@ import * as THREE from '../js/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {player} from './spaceship.js';
 import {planet} from './planet.js';
+import{cube} from './Cube.js'
 import {enemy} from './enemies.js'
 class Level1 {
   constructor() {
@@ -14,23 +15,23 @@ class Level1 {
 
       this.scene = new THREE.Scene();
 
-      this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1000);
+      this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);
 
       this.renderer = new THREE.WebGLRenderer({antialias:true});
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(this.renderer.domElement);
 
-      // this.controls = new OrbitControls( this.camera, this.renderer.domElement );
-      this.camera.position.set( 2.5,40,80 );
-      // this.controls.update();
+      this.controls = new OrbitControls( this.camera, this.renderer.domElement );
+      this.camera.position.set( 0,30,60 );
+      this.controls.update()
 
       window.addEventListener('resize',()=>{
       this.OnWindowResize();
       },false)
 
       this.cursor = {
-        x : 0,
-        y : 0
+        x : this.camera.position.x,
+        y : this.camera.position.y
       }
       window.addEventListener( 'mousemove',(event)=>{
         this.cursor.x =( event.clientX / window.innerWidth ) * 2 - 1;
@@ -53,8 +54,8 @@ class Level1 {
        '../resources/skybox/corona_lf.png',
      ]);
      this.scene.background = texture;
-     // const axesHelper = new THREE.AxesHelper( 5 );
-     // this.scene.add( axesHelper );
+     const axesHelper = new THREE.AxesHelper( 5 );
+     this.scene.add( axesHelper );
      //Lights
      //directionalLight
      const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
@@ -65,7 +66,7 @@ class Level1 {
      this.scene.add(amblight);
 
      this.LoadPlayer();
-
+     // this.loadCube();
 
      this.planetArr = [];
      this.addplanets();
@@ -78,7 +79,9 @@ class Level1 {
 
   }
 
-
+  loadCube(){
+    this.mycube = new cube(this.params);
+  }
   LoadPlayer(){
     this.myRocket = new player(this.params);
 
@@ -113,11 +116,12 @@ class Level1 {
       if (this.previousFrame === null) {
         this.previousFrame = t;
       }
-      this.updatecamera();
       this.RAF();
       this.Step(t - this.previousFrame);
+      // this.updatecamera();
       this.renderer.render(this.scene, this.camera);
       this.previousFrame = t;
+
     });
   }
 
@@ -130,6 +134,7 @@ class Level1 {
     if (this.e1) {
       this.e1.Update(timeElapsedS);
     }
+    // this.mycube.Update(timeElapsedS);
     for (var i = 0; i < this.planetArr.length; i++) {
       this.planetArr[i].animate();
     }
@@ -167,6 +172,8 @@ class Level1 {
     this.camera.position.x = -(Math.sin(this.cursor.x*(Math.PI/2))*50);
     // this.camera.position.z = Math.cos(this.cursor.x*(Math.PI/2))*3;
     this.camera.position.y= ((this.cursor.y)*20)+30;
+
+    // this.camera.lookAt(this.mycube.cube.position);
     this.camera.lookAt(this.myRocket.prod.position);
     // console.log(this.myRocket.prod.position);
   }
