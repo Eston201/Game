@@ -47,7 +47,7 @@ class player {
     //enemy.add(stabilizer);
     //
     // wings
-    gui.add(this.aircraft.rotation,"x").min(0).max(2*Math.PI).step(0.01)
+    // gui.add(this.aircraft.rotation,"x").min(0).max(2*Math.PI).step(0.01)
     const length = 12, width = 0.5;
 
     this.shape = new THREE.Shape();
@@ -184,7 +184,7 @@ class player {
     //get the direction the plane is facing to make the plane move forward
     var direction = new THREE.Vector3( 0, 0, -1 ).applyQuaternion( this.prod.quaternion ).normalize();
     //default speed when not pressing W
-    this.prod.position.add(direction.multiplyScalar(1))
+    // this.prod.position.add(direction.multiplyScalar(1))
 
 
     //controls for the plane on key press using imported controlls class
@@ -201,7 +201,7 @@ class player {
     //if W key is pressed
     if (this.controller._keys.forward) {
       //increase the forward speed of the aircraft look above for befault speed
-        this.prod.position.add(direction.multiplyScalar(3))
+        this.prod.position.add(direction.multiplyScalar(150*delta))
     }
 
     // if A key is pressed
@@ -220,7 +220,7 @@ class player {
     // if S key is pressed
     if (this.controller._keys.backward ) {
       //reduce the speed of the aircraft..doesnt make sense to actually move an aircraft backwards
-      this.prod.position.add(direction.multiplyScalar(0.2))
+      this.prod.position.add(direction.multiplyScalar(10*delta))
 
     }
 
@@ -291,6 +291,7 @@ class player {
       this.steerAngle = THREE.MathUtils.lerp(this.steerAngle, this.steerAngleTarget, 0.1);
       this.prod.rotation.z = this.steerAngle
     }
+
     this.updateBeam(moveDistance);//update beams position in world
     this.tcamera.Update(delta);//update the camera to follow plane
 

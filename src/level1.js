@@ -3,7 +3,7 @@ import * as THREE from '../js/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {player} from './spaceship.js';
 import {planet} from './planet.js';
-import{cube} from './Cube.js'
+
 import {enemy} from './enemies.js'
 class Level1 {
   constructor() {
@@ -66,7 +66,7 @@ class Level1 {
      this.scene.add(amblight);
 
      this.LoadPlayer();
-     // this.loadCube();
+
 
      this.planetArr = [];
      this.addplanets();
@@ -79,9 +79,6 @@ class Level1 {
 
   }
 
-  loadCube(){
-    this.mycube = new cube(this.params);
-  }
   LoadPlayer(){
     this.myRocket = new player(this.params);
 
