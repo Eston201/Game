@@ -256,13 +256,13 @@ class player {
     }
 
 
-    if(this.controller._keys.fpc){
-      this.steerAngleTarget = -8.2
-      this.steerAngle = THREE.MathUtils.lerp(0, this.steerAngleTarget, 0.001);
-      this.aircraft.rotation.x = this.steerAngle
-      this.prod.position.y += moveDistance
+//     if(this.controller._keys.fpc){
+//       this.steerAngleTarget = -8.2
+//       this.steerAngle = THREE.MathUtils.lerp(0, this.steerAngleTarget, 0.001);
+//       this.aircraft.rotation.x = this.steerAngle
+//       this.prod.position.y += moveDistance
 
-    }
+//     }
     //need a way to implement this properly with current camera setup
     // if(this.controller._keys.tpc){
     //   this.params.camera.position.set(this.aircraft.position.x+5,this.aircraft.position.y+30,this.aircraft.position.z +60);
