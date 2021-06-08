@@ -184,7 +184,7 @@ class player {
     //get the direction the plane is facing to make the plane move forward
     var direction = new THREE.Vector3( 0, 0, -1 ).applyQuaternion( this.prod.quaternion ).normalize();
     //default speed when not pressing W
-    // this.prod.position.add(direction.multiplyScalar(1))
+    this.prod.position.add(direction.multiplyScalar(1))
 
 
     //controls for the plane on key press using imported controlls class
