@@ -274,23 +274,15 @@ class player {
     //   this.params.camera.lookAt( this.enemy.position.x,this.enemy.position.y+10,this.enemy.position.z+25 );
     // }
     if(this.controller._keys.space){
-      this.steerAngleTarget = 0.6;
-      //lerp is interploating so that we get a smooth rotation to the target angle
-      this.steerAngle = THREE.MathUtils.lerp(this.steerAngle , this.steerAngleTarget, 0.01);
-      //set the z rotation to this interpolated value so it slowly reaches target value
-      this.prod.rotation.x =  this.steerAngle;
-      console.log(this.prod.rotation);
 
+      direction.y += 70 * delta;
+      this.prod.position.add(direction)
     }
-    // if(this.controller._keys.shift){
-    //   this.steerAngleTarget = Math.PI / 2.5;
-    //   //lerp is interploating so that we get a smooth rotation to the target angle
-    //   this.steerAngle = THREE.MathUtils.lerp(this.steerAngle, this.steerAngleTarget, 0.1);
-    //   //set the z rotation to this interpolated value so it slowly reaches target value
-    //   this.prod.rotation.z = this.steerAngle
-    //   this.prod.rotation.y+=rotateAngle;
-    //   this.prod.position.x-=moveDistance;
-    // }
+
+    if(this.controller._keys.shift){
+      direction.y -= 70 * delta;
+      this.prod.position.add(direction)
+    }
 
 
     //if we are not pressing a or d then tilt the plane slowly back to its positon

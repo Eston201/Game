@@ -172,7 +172,7 @@ class Level1 {
     this.camera.position.x = -(Math.sin(this.cursor.x*(Math.PI/2))*50);
     // this.camera.position.z = Math.cos(this.cursor.x*(Math.PI/2))*3;
     this.camera.position.y= ((this.cursor.y)*20)+30;
-
+    this.camera.position.z = (this.myRocket.prod.position.z)+60
     // this.camera.lookAt(this.mycube.cube.position);
     this.camera.lookAt(this.myRocket.prod.position);
     // console.log(this.myRocket.prod.position);
