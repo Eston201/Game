@@ -27,6 +27,8 @@ class ThirdPersonCamera {
   }
 
   Update(timeElapsed) {
+
+    
     const idealOffset = this._CalculateIdealOffset();
     const idealLookat = this._CalculateIdealLookat();
 

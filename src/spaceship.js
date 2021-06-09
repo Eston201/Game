@@ -22,43 +22,41 @@ class player {
 
     this.prod = new THREE.Object3D();
     this.aircraft = new THREE.Object3D();
+    gui.add(this.aircraft.rotation,"y").min(0).max(2*Math.PI).step(0.1)
+    const aircraftmaterial = new THREE.MeshLambertMaterial({color:0x171717});
+    const cpitmaterial = new THREE.MeshLambertMaterial({color:0x2674a1});
+    const ringsmaterial = new THREE.MeshLambertMaterial({color:0x00ff04});
+    const torumaterial = new THREE.MeshLambertMaterial({color:0x171717});
+    const shootmaterial = new THREE.MeshLambertMaterial({color:0xffffff});
+    const wingmat = new THREE.MeshLambertMaterial({color:0x520703});
 
-    this.aircraftmaterial = new THREE.MeshLambertMaterial({color:0x171717});
-    this.cpitmaterial = new THREE.MeshLambertMaterial({color:0x2674a1});
-    this.ringsmaterial = new THREE.MeshLambertMaterial({color:0x00ff04});
-    this.torumaterial = new THREE.MeshLambertMaterial({color:0x171717});
-    this.shootmaterial = new THREE.MeshLambertMaterial({color:0xffffff});
-    this.wingmat = new THREE.MeshLambertMaterial({color:0x520703});
+    const cylgeo = new THREE.CylinderGeometry(0.5,6,40,5,1,false);
+    const cylinder = new THREE.Mesh(cylgeo,aircraftmaterial);
+    cylinder.position.y = 15;
+    cylinder.rotateY(Math.PI/5);
 
-    this.cylgeo = new THREE.CylinderGeometry(0.5,6,40,5,1,false);
-    this.cylinder = new THREE.Mesh(this.cylgeo,this.aircraftmaterial);
-    this.cylinder.position.y = 15;
-    this.cylinder.rotateY(Math.PI/5);
-    this.aircraft.add(this.cylinder);
+    this.aircraft.add(cylinder);
 
-    this.stageo = new THREE.CylinderGeometry(5,5,1,3,5,false,0,Math.PI);
-    this.stabilizer = new THREE.Mesh(this.stageo,this.aircraftmaterial);
-    this.stabilizer.position.z = -4;
-    this.stabilizer.position.y = -0.6;
-    this.stabilizer.rotateZ(Math.PI/2);
-    this.stabilizer.rotateY(Math.PI/2);
+    const stageo = new THREE.CylinderGeometry(5,5,1,3,5,false,0,Math.PI);
+    const stabilizer = new THREE.Mesh(stageo,aircraftmaterial);
+    stabilizer.position.z = -4;
+    stabilizer.position.y = -0.6;
+    stabilizer.rotateZ(Math.PI/2);
+    stabilizer.rotateY(Math.PI/2);
 
 
-    //enemy.add(stabilizer);
-    //
-    // wings
-    // gui.add(this.aircraft.rotation,"x").min(0).max(2*Math.PI).step(0.01)
+
     const length = 12, width = 0.5;
 
-    this.shape = new THREE.Shape();
-    this.shape.moveTo( 0,0 );
-    this.shape.lineTo( 0, width );
-    this.shape.lineTo( length-5, width );
-    this.shape.lineTo( length+5, width/2 );
-    this.shape.lineTo(length-5,0);
-    this.shape.lineTo( 0, 0 );
+    const shape = new THREE.Shape();
+    shape.moveTo( 0,0 );
+    shape.lineTo( 0, width );
+    shape.lineTo( length-5, width );
+    shape.lineTo( length+5, width/2 );
+    shape.lineTo(length-5,0);
+    shape.lineTo( 0, 0 );
 
-    this.extrudeSettings = {
+    const extrudeSettings = {
       steps: 2,
       depth: 16,
       bevelEnabled: true,
@@ -68,78 +66,78 @@ class player {
       bevelSegments: 1
     };
 
-    this.exgeo = new THREE.ExtrudeGeometry( this.shape, this.extrudeSettings );
+    const exgeo = new THREE.ExtrudeGeometry( shape, extrudeSettings );
 
-    this.wing = new THREE.Mesh( this.exgeo, this.wingmat ) ;
-    this.wing.scale.set(1,0.2,0.7);
-    this.wing.rotateX(-Math.PI/2);
-    this.wing.rotateZ(Math.PI/8);
-    this.wing.position.set(5,3,-1);
-    this.aircraft.add( this.wing );
+    const wing0 = new THREE.Mesh( exgeo, wingmat ) ;
+    wing0.scale.set(1,0.2,0.7);
+    wing0.rotateX(-Math.PI/2);
+    wing0.rotateZ(Math.PI/8);
+    wing0.position.set(5,3,-1);
+    this.aircraft.add( wing0 );
 
-    this.wing1 = new THREE.Mesh( this.exgeo, this.wingmat ) ;
-    this.wing1.scale.set(1,0.2,0.7);
-    this.wing1.rotateX(-Math.PI/2);
-    this.wing1.rotateZ(-Math.PI/8);
-    this.wing1.position.set(5,3,2);
-    this.aircraft.add( this.wing1 );
+    const wing1 = new THREE.Mesh( exgeo, wingmat ) ;
+    wing1.scale.set(1,0.2,0.7);
+    wing1.rotateX(-Math.PI/2);
+    wing1.rotateZ(-Math.PI/8);
+    wing1.position.set(5,3,2);
+    this.aircraft.add( wing1 );
 
-    this.wing2 = new THREE.Mesh( this.exgeo, this.wingmat ) ;
-    this.wing2.scale.set(1,0.2,0.7);
-    this.wing2.rotateX(-Math.PI/2);
-    this.wing2.rotateZ(Math.PI/8);
-    this.wing2.rotateY(Math.PI);
-    this.wing2.position.set(-5,14,2);
-    this.aircraft.add( this.wing2 );
+    const wing2 = new THREE.Mesh( exgeo, wingmat ) ;
+    wing2.scale.set(1,0.2,0.7);
+    wing2.rotateX(-Math.PI/2);
+    wing2.rotateZ(Math.PI/8);
+    wing2.rotateY(Math.PI);
+    wing2.position.set(-5,14,2);
+    this.aircraft.add( wing2 );
 
-    this.wing3 = new THREE.Mesh( this.exgeo, this.wingmat ) ;
-    this.wing3.scale.set(1,0.2,0.7);
-    this.wing3.rotateX(-Math.PI/2);
-    this.wing3.rotateZ(-Math.PI/8);
-    this.wing3.rotateY(Math.PI);
-    this.wing3.position.set(-5,14,-1);
-    this.aircraft.add( this.wing3 );
+    const wing3 = new THREE.Mesh( exgeo, wingmat ) ;
+    wing3.scale.set(1,0.2,0.7);
+    wing3.rotateX(-Math.PI/2);
+    wing3.rotateZ(-Math.PI/8);
+    wing3.rotateY(Math.PI);
+    wing3.position.set(-5,14,-1);
+    this.aircraft.add( wing3 );
 
-    this.torgeo = new THREE.TorusGeometry(14,2,5,40);
-    this.torus = new THREE.Mesh(this.torgeo,this.torumaterial);
-    this.torus.position.y = -16;
-    this.torus.rotateX(Math.PI);
-    this.torus.rotateZ(-Math.PI/6);
-    this.aircraft.add(this.torus);
+    const torgeo = new THREE.TorusGeometry(14,2,5,40);
+    const torus = new THREE.Mesh(torgeo,torumaterial);
+    torus.position.y = -16;
+    torus.rotateX(Math.PI);
+    torus.rotateZ(-Math.PI/6);
+    this.aircraft.add(torus);
 
-    this.ring1geo = new THREE.TorusGeometry(9,1,3,70);
-    this.ring1 = new THREE.Mesh(this.ring1geo,this.ringsmaterial);
+    const ring1geo = new THREE.TorusGeometry(9,1,3,70);
+    this.ring1 = new THREE.Mesh(ring1geo,ringsmaterial);
     this.ring1.position.y = -16;
     this.aircraft.add(this.ring1);
 
-    this.ring2geo = new THREE.TorusGeometry(5,1,3,70);
-    this.ring2 = new THREE.Mesh(this.ring2geo,this.ringsmaterial);
+    const ring2geo = new THREE.TorusGeometry(5,1,3,70);
+    this.ring2 = new THREE.Mesh(ring2geo,ringsmaterial);
     this.ring2.position.y = -16;
     this.aircraft.add(this.ring2);
 
-    this.cpgeo = new THREE.SphereGeometry(5,5,30,-0.3,3.6,0,3.14);
-    this.cpit = new THREE.Mesh(this.cpgeo,this.cpitmaterial);
-    this.cpit.position.z = -2.5;
-    this.cpit.rotateY(Math.PI);
-    this.aircraft.add(this.cpit);
+    const cpgeo = new THREE.SphereGeometry(5,5,30,-0.3,3.6,0,3.14);
+    const cpit = new THREE.Mesh(cpgeo,cpitmaterial);
+    cpit.position.z = -2.5;
+    cpit.rotateY(Math.PI);
+    this.aircraft.add(cpit);
 
 
 
     this.shooter = new THREE.Object3D();
 
-    this.splanegeo = new THREE.BoxGeometry(5,1,0.5);
-    this.shplane = new THREE.Mesh(this.splanegeo,this.aircraftmaterial);
-    this.shooter.add(this.shplane);
+    const splanegeo = new THREE.BoxGeometry(5,1,0.5);
+    const shplane = new THREE.Mesh(splanegeo,aircraftmaterial);
+    this.shooter.add(shplane);
 
-    this.blast1geo = new THREE.CylinderGeometry(0.1,0.3,3,20,20);
-    this.blaster1 = new THREE.Mesh(this.blast1geo,this.shootmaterial);
+    const blast1geo = new THREE.CylinderGeometry(0.1,0.3,3,20,20);
+    this.blaster1 = new THREE.Mesh(blast1geo,shootmaterial);
     this.blaster1.position.x = -2;
     this.blaster1.position.z = 1.65;
     this.blaster1.rotation.x = Math.PI/2;
     this.shooter.add(this.blaster1);
 
-    this.blast2geo = new THREE.CylinderGeometry(0.1,0.3,3,20,20);
-    this.blaster2 = new THREE.Mesh(this.blast1geo,this.shootmaterial);
+    const blast2geo = new THREE.CylinderGeometry(0.1,0.3,3,20,20);
+    this.blaster2 = new THREE.Mesh(blast1geo,shootmaterial);
     this.blaster2.position.x = 2;
     this.blaster2.position.z = 1.65;
     this.blaster2.rotation.x = Math.PI/2;
@@ -149,43 +147,47 @@ class player {
     this.shooter.rotation.x = -Math.PI/2;
     this.aircraft.add(this.shooter);
 
+    //third person camera to follow plane
+    this.tcamera = new ThirdPersonCamera({
+      camera: this.params.camera,
+      target: this.prod
+    });
+
+
     this.aircraft.rotateY(Math.PI);
     this.aircraft.rotateX(Math.PI/2);
     //reticle for the planes shooter
     this.retgeometry = new THREE.RingGeometry( 4.5, 5, 30 );
     this.retmaterial = new THREE.MeshBasicMaterial( { color: 0xffffff} );
     this.reticle = new THREE.Mesh( this.retgeometry,this.retmaterial );
-    this.reticle.position.set(0,0,-150);
+    //orientate the reticle to be infront of the plane
+    this.reticle.rotation.x=Math.PI/2
+    this.reticle.position.set(0,150,0);
+    this.aircraft.add(this.reticle);
 
-    this.tcamera = new ThirdPersonCamera({
-      camera: this.params.camera,
-      target: this.prod
-    });
+
 
     //add plane camera and reticle to one container for third person camera
     this.prod.add(this.aircraft);
-    this.prod.add(this.reticle);
 
-    // params.camera.lookAt(this.reticle.position);
-    // this.prod.add(params.camera);
     this.params.scene.add(this.prod);
-
+    this.state = this.aircraft.quaternion.clone();
 
   }
 
 
   Update(delta){
 
-    var moveDistance = 100 * delta;   // 100 pixels per second
+    var moveDistance = 150 * delta;   // 100 pixels per second
   	var rotateAngle = Math.PI/175
-    //make rings animate
+    //make rings  and planes shooter animate
     this.ring2.rotation.x += 0.1;
+    this.ring1.rotation.y += 0.05;
     this.shooter.rotation.z+=0.1;
     //get the direction the plane is facing to make the plane move forward
     var direction = new THREE.Vector3( 0, 0, -1 ).applyQuaternion( this.prod.quaternion ).normalize();
     //default speed when not pressing W
-    // this.prod.position.add(direction.multiplyScalar(1))
-
+    this.prod.position.add(direction.multiplyScalar(1))
 
     //controls for the plane on key press using imported controlls class
     //movement for aircaft
@@ -201,7 +203,8 @@ class player {
     //if W key is pressed
     if (this.controller._keys.forward) {
       //increase the forward speed of the aircraft look above for befault speed
-        this.prod.position.add(direction.multiplyScalar(150*delta))
+        this.prod.position.add(direction.multiplyScalar(200*delta))
+        this.ring1.rotation.y += 0.15;
     }
 
     // if A key is pressed
@@ -236,33 +239,32 @@ class player {
       this.prod.position.x+=moveDistance;
     }
 
+    //need a better barrel roll
+
     //if E key is pressed
     if (this.controller._keys.EKey ) {
       //uses gasap to rotate the aircraft about the y axis... this is a barrel roll!
-       gsap.to(this.aircraft.rotation,{duration:1,delay:0,y:-2*Math.PI});
+       gsap.to(this.aircraft.rotation,{duration:1.5,delay:0.1,y:-2*Math.PI});
        //reset the angle otherwise gsap wont work on key press again
-       this.aircraft.rotation.y =0;
-
+       this.aircraft.rotation.y = 0;
     }
+
 
     //if Q key is pressed
     if (this.controller._keys.QKey ) {
-      //uses gasap to rotate the aircraft about the y axis... this is a barrel roll!
-      gsap.to(this.aircraft.rotation,{duration:1,delay:0.1,y:2*Math.PI});
-       //reset the angle otherwise gsap wont work on key press again
-      this.aircraft.rotation.y =0;
 
+      //uses gasap to rotate the aircraft about the y axis... this is a barrel roll!
+      gsap.to(this.aircraft.rotation,{duration:1.5,delay:0.1,y:2*Math.PI});
+      //reset the angle otherwise gsap wont work on key press again
+      this.aircraft.rotation.y = 0;
 
     }
 
 
-//     if(this.controller._keys.fpc){
-//       this.steerAngleTarget = -8.2
-//       this.steerAngle = THREE.MathUtils.lerp(0, this.steerAngleTarget, 0.001);
-//       this.aircraft.rotation.x = this.steerAngle
-//       this.prod.position.y += moveDistance
-
-//     }
+    //still to implement
+    // if(this.controller._keys.fpc){
+    //
+    // }
     //need a way to implement this properly with current camera setup
     // if(this.controller._keys.tpc){
     //   this.params.camera.position.set(this.aircraft.position.x+5,this.aircraft.position.y+30,this.aircraft.position.z +60);
@@ -273,15 +275,32 @@ class player {
     //   this.params.camera.position.set(this.enemy.position.x,this.enemy.position.y+15,this.enemy.position.z+10);
     //   this.params.camera.lookAt( this.enemy.position.x,this.enemy.position.y+10,this.enemy.position.z+25 );
     // }
-    if(this.controller._keys.space){
 
+    //if space bar is pressed make plane go up
+    if(this.controller._keys.space && !this.controller._keys.shift ){
+
+      // rotate plane up
+      gsap.to(this.aircraft.rotation,{duration:0.8,delay:0,x:2});
+      //increase vertical position
       direction.y += 70 * delta;
+      this.prod.position.y+=direction.y;
+      
+    }
+
+
+
+    if(this.controller._keys.shift && !this.controller._keys.space){
+      // rotate plane down
+      gsap.to(this.aircraft.rotation,{duration:0.8,delay:0,x:0});
+      //decrease vertical position
+      direction.y -= 100 * delta;
       this.prod.position.add(direction)
     }
 
-    if(this.controller._keys.shift){
-      direction.y -= 70 * delta;
-      this.prod.position.add(direction)
+    //put plane back into orignal rotation state if we are not moving up or down
+    //DO NOT CHANGE
+    if(!this.controller._keys.space ){
+      gsap.to(this.aircraft.rotation,{duration:0.8,delay:0,x:1.5});
     }
 
 
@@ -291,6 +310,8 @@ class player {
       this.steerAngle = THREE.MathUtils.lerp(this.steerAngle, this.steerAngleTarget, 0.1);
       this.prod.rotation.z = this.steerAngle
     }
+
+
 
     this.updateBeam(moveDistance);//update beams position in world
     this.tcamera.Update(delta);//update the camera to follow plane
