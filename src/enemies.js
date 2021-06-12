@@ -16,12 +16,15 @@ class enemy {
     this.health = 20;
     this.enemy = new THREE.Object3D();
 
-    this.enemymaterial = new THREE.MeshLambertMaterial({color:0x171717});
+    this.btte = new THREE.TextureLoader().load(
+      './resources/textures/blackstripes.jpg'
+    );
+    this.enemymaterial = new THREE.MeshLambertMaterial({map: this.btte});
     this.cpitmaterial = new THREE.MeshLambertMaterial({color:0x2674a1});
-    this.ringsmaterial = new THREE.MeshLambertMaterial({color:0x00ff04});
-    this.torumaterial = new THREE.MeshLambertMaterial({color:0x171717});
+    this.ringsmaterial = new THREE.MeshLambertMaterial({color:0x220000});
+    this.torumaterial = new THREE.MeshLambertMaterial({color:0xffffff});
     this.shootmaterial = new THREE.MeshLambertMaterial({color:0xffffff});
-    this.wingmat = new THREE.MeshLambertMaterial({color:0x520703});
+    this.wingmat = new THREE.MeshLambertMaterial({color:0x3B3D3D});
 
     this.cylgeo = new THREE.CylinderGeometry(0.5,6,40,5,1,false);
     this.cylinder = new THREE.Mesh(this.cylgeo,this.enemymaterial);
