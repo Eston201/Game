@@ -14,7 +14,7 @@ class Level1 {
   init(){
 
       this.scene = new THREE.Scene();
-
+      this.GreatLight , this.torus , this.cone, this.reachedGoal = false;
       this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);
 
       this.renderer = new THREE.WebGLRenderer({antialias:true});
@@ -55,6 +55,7 @@ class Level1 {
      ]);
 
      this.scene.background = texture;
+     
      const axesHelper = new THREE.AxesHelper( 5 );
      this.scene.add( axesHelper );
      //Lights
@@ -71,6 +72,8 @@ class Level1 {
 
      this.planetArr = [];
      this.addplanets();
+
+     this.loadGreatLight();
 
       // this.spawnEnemyShip();
 
@@ -117,6 +120,8 @@ class Level1 {
       this.RAF();
       this.Step(t - this.previousFrame);
       // this.updatecamera();
+      this.torus.rotateY(Math.PI/100);
+      this.updateGreatLight();
       this.renderer.render(this.scene, this.camera);
       this.previousFrame = t;
 
@@ -163,6 +168,35 @@ class Level1 {
     this.p5.planet.position.set(6,40,500);
     this.scene.add(this.p5.planet);
     this.planetArr.push(this.p5);
+  }
+
+  loadGreatLight(){   // spot light, transparent cone and spinning torus
+    this.GreatLight = new THREE.SpotLight( 0xffffff, 10, 5000, Math.PI/3 ); 
+    this.GreatLight.position.set(0,50,-100);
+    this.scene.add(this.GreatLight);
+
+    const geometry = new THREE.TorusGeometry( 10, 3, 16, 100 );
+    const material = new THREE.MeshPhongMaterial( { color: 0xffff00 , opacity: 1, transparent: true} );
+    this.torus = new THREE.Mesh( geometry, material );
+    this.torus.position.set(0,0,-100);
+    this.scene.add( this.torus );
+    this.GreatLight.target = this.torus;
+
+    const coneGeometry = new THREE.ConeGeometry( 100, 10000, 50, 32 );
+    const coneMaterial = new THREE.MeshPhongMaterial( {color: 0xffffff, opacity: 0.3, transparent: true } );
+    this.cone = new THREE.Mesh( coneGeometry, coneMaterial );
+    this.cone.position.set(0,50,-100);
+    this.scene.add( this.cone );
+  }
+
+  updateGreatLight(){ // stay 300 units ahead of player until reachedGoal
+    if(!this.reachedGoal){
+    this.torus.position.set(0,0,this.myRocket.prod.position.z-300); 
+
+    //light and cone continuously follow torus
+    this.GreatLight.position.set(this.torus.position.x,this.torus.position.y+100,this.torus.position.z);
+    this.cone.position.set(this.torus.position.x,this.torus.position.y,this.torus.position.z);
+    }
   }
 
   updatecamera(){
