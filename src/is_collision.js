@@ -1,6 +1,6 @@
 import * as THREE from '../js/three.module.js';
 export {is_collision};
-function is_collision(obj1,obj2){
+function is_collision(obj1,obj2,distance){ //distance: specify how close you want the objects to be for it to count as a collision
 
     var x1,y1,z1,x2,y2,z2;
 
@@ -19,7 +19,7 @@ function is_collision(obj1,obj2){
 
     const ed = Math.sqrt(xd+yd+zd);
 
-    if (ed < 5){
+    if (ed < distance){          //specify how close you want the objects to be for it to count as a collision
         return true;
     }else{
         return false
