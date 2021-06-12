@@ -1,13 +1,10 @@
 
 
-canvas {
-    display: block;
 
-}
 
 body {
     margin: 0;
-    height: 100vh;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,6 +14,9 @@ body {
 }
 
 h1 {
+    top: -100px;
+    left: 100px;
+    text-align: center;
     position: relative;
     font-family: 'Montserrat', Arial, sans-serif;
     font-size: calc(20px + 5vw);
@@ -158,8 +158,8 @@ button {
     border: 0.08em solid;
     background-color: rgb(37, 49, 104);
     display: flex;
-    align-items: center;
-    justify-content: center;
+    /* align-items: center; */
+    /* justify-content: center; */
     font-family: sans-serif;
     text-transform: capitalize;
     transform: translateX(calc(-0.15em * 3 - 0.08em * 2));
@@ -168,4 +168,37 @@ button {
 
 button:hover {
     transform: translateX(0.15em);
+}
+
+.bg {
+  /* The image used */
+  background-image: url("https://airbus-h.assetsadobe2.com/is/image/content/dam/channel-specific/website-/company/responsibility-and-sustainability/environment/sustainable-space.jpg?wid=1920&fit=fit,1&qlt=85,0");
+
+  /* Full height */
+  height: 100%;
+  width: 100%;
+  /* Center and scale the image nicely */
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: visible;
+}
+.center {
+   margin: 0;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   -ms-transform: translate(-50%, -50%);
+   transform: translate(-50%, -50%);
+}
+
+#div{
+  visibility: visible;
+}
+.container {
+  height: 100%;
+  width: 100%;
+  top:0;
+  left:0;
+
 }
