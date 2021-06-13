@@ -3,6 +3,7 @@ import {controls} from './controls.js';
 export {player}
 import * as dat from '../js/dat.gui.module.js'
 import {ThirdPersonCamera} from './ThirdPersonCamera.js';
+import {is_collision} from './is_collision.js';
 
 class player {
   constructor(params) {
@@ -13,9 +14,14 @@ class player {
   createplayer(params){
     const gui = new dat.GUI();
     this.params = params;
+    this.enemyplanes = this.params.enemyplanes;     // keep track of enemies
     this. beams = [];
     this.controller = new controls();
     this.health = 20;
+    this.dead = false; //check whether dead or alive
+    this.takeDamage = function(damage){
+      this.health = this.health - damage;
+    }
 
     this.steerAngle = 0;
     this.steerAngleTarget = 0;
@@ -315,12 +321,13 @@ class player {
 
     this.updateBeam(moveDistance);//update beams position in world
     this.tcamera.Update(delta);//update the camera to follow plane
+    this.updateHealth();
 
   }
 
-  //cretaes a laser beam and adds it to the beams array and the world
+  //creates a laser beam and adds it to the beams array and the world
   shootLaser(){
-    let laser = new THREE.Mesh(new THREE.SphereGeometry(0.7, 8, 4), new THREE.MeshLambertMaterial({color: "cyan"}));
+    let laser = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 4), new THREE.MeshLambertMaterial({color: "cyan"}));
     //used to remove  laser from the scene and from the beams array
     laser.isalive=true;
     //get the planes shooter world position  on every shot
@@ -351,35 +358,44 @@ class player {
 
    //loop through the beams array to update beams position or remove any beams
    updateBeam(moveDistance){
-	    var size = this.beams.length;
+    var size = this.beams.length;
 
-	    for(var index = 0; index < size; index = index + 1){
-		      var beam  = this.beams[index];
-          //if there is no "beam at this position skip"
-          if( this.beams[index] === undefined ){
+    for(var index = 0; index < size; index = index + 1){
+        var beam  = this.beams[index];
+        //if there is no "beam at this position skip"
+        if( this.beams[index] === undefined ){
+          continue;
+        }
+        //if there is and its isalive is false remove beam from scene and array
+        if(beam.isalive==false){
+            this.params.scene.remove(beam);
+            this.beams.splice(index,1);
             continue;
-          }
-          //if there is and its isalive is false remove beam from scene and array
-          if(beam.isalive==false){
-              this.params.scene.remove(beam);
-              this.beams.splice(index,1);
-			        continue;
-          }
-          //if there is a beam and its still alive translate it
-           beam.position.add(beam.velocity);
-      }
-  }
+        }
+        //if there is a beam and its still alive translate it
+         beam.position.add(beam.velocity);
+         for( var i = 0; i < this.enemyplanes.length; i = i + 1){
+           //console.log(this.enemyplanes.length);
+           var enemy = this.enemyplanes[i];
+           if(is_collision(beam,enemy.enemy,15)){ 
+             console.log("enemy hit");
+             enemy.takeDamage(1);
+             this.params.scene.remove(beam);
+             this.beams.splice(index,1);
+           }
+         }
+    }
+}
 
-  //players health need to implement collison check
   updateHealth(){
     if(this.health==0){
-      this.enemy.visible = false;
-      this.params.scene.remove(this.enemy);
-    }
-    else{
-      this.health-=0.5;
+      //console.log(this.health);
+      this.dead = true;
+      this.prod.visible = false;
+      this.params.scene.remove(this.prod);
     }
   }
 
 
 };
+
