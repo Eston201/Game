@@ -1,9 +1,9 @@
 import * as THREE from '../js/three.module.js';
 
-export{planetBelt,planetA, portal};
+export{PlanetBelt,PlanetA, Portal};
 
 
-function planetBelt() {
+function PlanetBelt() {
 
     
     const gravplanet = new THREE.Object3D();
@@ -31,7 +31,7 @@ function planetBelt() {
     
 }
 
-function planetA(pval){
+function PlanetA(pval){
     const earthtext = new THREE.TextureLoader().load(
         'resources/textures/earth.jpeg'
       );
@@ -58,7 +58,7 @@ function planetA(pval){
 
 }
 
-function portal(v) {
+function Portal(v) {
     const portal2text = new THREE.TextureLoader().load(
         'resources/textures/redeclipse_ft.png'
     );
