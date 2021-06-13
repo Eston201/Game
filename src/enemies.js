@@ -1,6 +1,7 @@
 import * as THREE from '../js/three.module.js';
 import {controls} from './controls.js';
 import * as dat from '../js/dat.gui.module.js'
+import {is_collision} from './is_collision.js'
 export {enemy}
 class enemy {
   constructor(params) {
@@ -11,17 +12,24 @@ class enemy {
   createplayer(params){
     const gui = new dat.GUI();
     this.params = params;
-    this.enemy_beams = [];
+    this.beams = [];
     this.controller = new controls();
     this.health = 20;
+    this.takeDamage = function(damage){
+      this.health = this.health - damage;
+    }
+    this.dead = false;
     this.enemy = new THREE.Object3D();
-
-    this.enemymaterial = new THREE.MeshLambertMaterial({color:0x171717});
+    this.target = this.params.target.prod;
+    this.btte = new THREE.TextureLoader().load(
+      './resources/textures/blackstripes.jpg'
+    );
+    this.enemymaterial = new THREE.MeshLambertMaterial({map: this.btte});
     this.cpitmaterial = new THREE.MeshLambertMaterial({color:0x2674a1});
-    this.ringsmaterial = new THREE.MeshLambertMaterial({color:0x00ff04});
-    this.torumaterial = new THREE.MeshLambertMaterial({color:0x171717});
+    this.ringsmaterial = new THREE.MeshLambertMaterial({color:0x220000});
+    this.torumaterial = new THREE.MeshLambertMaterial({color:0xffffff});
     this.shootmaterial = new THREE.MeshLambertMaterial({color:0xffffff});
-    this.wingmat = new THREE.MeshLambertMaterial({color:0x520703});
+    this.wingmat = new THREE.MeshLambertMaterial({color:0x3B3D3D});
 
     this.cylgeo = new THREE.CylinderGeometry(0.5,6,40,5,1,false);
     this.cylinder = new THREE.Mesh(this.cylgeo,this.enemymaterial);
@@ -151,17 +159,37 @@ class enemy {
 
   //movement for aircaft
   Update(delta){
-    var moveDistance = 300 * delta;   // 300 pixels per second
-  	var rotateAngle = Math.PI/60
-
-
-    // console.log(this.params.target.position);
-
+    if(!this.dead){
+      //console.log(this.health);
+    var moveDistance = 200 * delta;   // 300 pixels per second
     this.huntShip(moveDistance);
-
+    }
+    this.updatebeams(moveDistance);
+    this.updateHealth();
   }
 
   shootLaser(){
+          // if i select '5' at random between 1-100 then shoot
+    let randomNum = Math.floor((Math.random() * 100) + 1);   // to decrease frequency of shots
+		if(randomNum == 5){
+			var enemy_shooterWorldPosition = new THREE.Vector3(0,0,0);
+			//let laser = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 4), new THREE.MeshLambertMaterial({color: "yellow"}));
+      let laser = new THREE.Mesh( new THREE.ConeGeometry( 3, 10, 32 ) ,  new THREE.MeshLambertMaterial( {color: 0x9934eb} ) );
+			laser.position.copy(this.shooter.getWorldPosition(enemy_shooterWorldPosition));
+      //laser.lookAt(this.target.position);
+      //laser.rotateX(Math.PI/2);
+			//laser.quaternion.copy(this.params.camera.quaternion);
+         
+      laser.isalive=true;   //used to remove  laser from the scene and from the beams array
+       
+      setTimeout(function(){   //sets a timer to set this particular bullet isalive to false
+        laser.isalive = false;
+      }, 5000);
+			this.params.scene.add(laser);
+			this.beams.push(laser);
+		}
+
+    /*
     let laser1 = new THREE.Mesh(new THREE.SphereGeometry(0.7, 8, 4), new THREE.MeshLambertMaterial({color: "cyan"}));
   	var shooterWorldPosition = new THREE.Vector3(0,0,0);
   	laser1.position.copy(this.shooter.getWorldPosition());
@@ -169,24 +197,40 @@ class enemy {
 
   	this.params.scene.add(laser1);
   	this.beams.push(laser1);
+    */
    }
 
    updatebeams(moveDistance){
-     var size = this.enemy_beams.length;
+     var size = this.beams.length;
 	   for(var index = 0; index < size; index+=1){
-		     var beam  = this.enemy_beams[index];
 
-		     var target = this.params.target.position.clone();
-		     var directionVector = target.sub(beam.position.clone()).normalize();
-		     beam.lookAt(directionVector);
-		     beam.translateOnAxis(directionVector,moveDistance*0.6);
+      var beam  = this.beams[index];
+      //if there is no "beam at this position skip"
+      if( this.beams[index] === undefined ){
+        continue;
+      }
+      //if there is and its isalive is false remove beam from scene and array
+      if(beam.isalive==false){
+          beam.visible = false;
+          this.params.scene.remove(beam);
+          this.beams.splice(index,1);
+          size = this.beams.length;
+          continue;
+      }
 
-		  // if(collides(beam,myRocket,3)){
-			//      player_health  = player_health - 0.5;
-			//      beam.visible = false;
-			//      enemy_beams.splice(index,1);
-			//      size = enemy_beams.length;
-		  //   }
+		  var target = this.target.position.clone();
+		  var directionVector = target.sub(beam.position.clone()).normalize();
+		  beam.lookAt(this.target.position);
+      beam.rotateX(Math.PI/2);
+		  beam.translateOnAxis(directionVector,moveDistance*0.6);
+
+		  if(is_collision(beam,this.target,6)){
+              this.params.target.takeDamage(1);  //specify damage
+              //console.log("player hit")
+			        beam.visible = false;
+		         this.beams.splice(index,1);
+			       size = this.beams.length;
+		    }
 	    }
    }
 
@@ -194,46 +238,64 @@ class enemy {
   updateHealth(){
     if(this.health==0){
       this.enemy.visible = false;
+      this.dead = true;
       this.params.scene.remove(this.enemy);
-    }
-    else{
-      this.health-=0.5;
     }
   }
 
   huntShip(moveDistance){
-	    var dx = this.params.target.position.x - this.enemy.position.x;
-	    var dy = this.params.target.position.y - this.enemy.position.y;
-	    var dz = this.params.target.position.z - this.enemy.position.z;
-	    var vector_distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-	    var speed = 1; var directionVector;
+	    var dx = this.target.position.x - this.enemy.position.x;
+	    var dy = this.target.position.y - this.enemy.position.y;
+	    var dz = this.target.position.z - this.enemy.position.z;
+        //console.log(dx,dy,dz);
+	    //var vector_distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+	    var forward_speed = 1.9,  vertical_speed = 0.5, horizontal_speed = 0.9;
 
-	if(vector_distance > 100){
-		speed = 1.3;
-		directionVector = new THREE.Vector3(dx,dy,dz).normalize();
-		this.enemy.lookAt(directionVector);
-		this.enemy.translateOnAxis(directionVector,moveDistance*speed);
-	}
-	else{
-		dz = this.params.target.position.z - 100 - this.enemy.position.z;     //set fake position
-		directionVector = new THREE.Vector3(dx,dy,dz).normalize();
-		this.enemy.lookAt(directionVector);
-		this.enemy.translateOnAxis(directionVector,moveDistance*speed);
+        if(dy == 0 || dy == 100){ // if one the same y plane
+            //if(dx != 0){             // look at target
+            // this.enemy.lookAt(this.target.position)
+           // this.enemy.rotateX(Math.PI/2);
+           // }
+            
+            this.enemy.quaternion.copy(this.target.quaternion);
+            this.enemy.rotateY(Math.PI);
+            this.enemy.rotateX(Math.PI/2);
+       }
 
-		let randomNum = Math.floor((Math.random() * 100) + 1);
-		if(randomNum == 5){
-			var enemy_shooterWorldPosition = new THREE.Vector3(0,0,0);
-			let laser = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 4), new THREE.MeshLambertMaterial({color: "yellow"}));
-			laser.position.copy(this.shooter.getWorldPosition(enemy_shooterWorldPosition));
-			//laser1.quaternion.copy(camera.quaternion);
-			this.params.scene.add(laser);
-			this.enemy_beams.push(laser);
-		}
-		this.updatebeams(moveDistance);
-	}
+      
+        if(dz < 0){ //my rocket is ahead of enemy
+            this.enemy.position.z += Math.max( -forward_speed, dz);  // go forward
+        }
+        if(dz > 100){ //my rocket is more than 100 units behind the enemy
+            this.enemy.position.z += Math.min( forward_speed, dz);
+        }
+        if(dy < 0){  // my rocket (target) is below
+            this.enemy.rotateX(this.target.rotation.x);
+            this.enemy.position.y += Math.max(-vertical_speed, dy);
+        }
+        if(dy > 0){  // my rocket (target) is above
+            this.enemy.rotateX(this.target.rotation.x);
+            this.enemy.position.y += Math.min( vertical_speed, dy);  
+        }
+        if(Math.abs(dx) > 400){   // keep a certain distance from target
+          if(dx < 0){ // if my rocket (target) is leftwards
+              this.enemy.position.x += Math.max( -horizontal_speed, dx);
+          }
+          if(dx > 0){ //my rocket is rightwards
+              this.enemy.position.x += Math.min( horizontal_speed, dx);
+          }
+      }
+      else{   // if target is close
+          this.shootLaser();
+      }
+        
+        //directionVector = new THREE.Vector3(dx,dy,dz).normalize();
+        //this.enemy.lookAt(this.target.position);
+        //this.enemy.translateOnAxis(directionVector, moveDistance*speed);
+        //console.log(this.enemy.position.x, this.enemy.position.y, this.enemy.position.z)
+        //this.enemy.position.set(this.target.position.x, this.target.position.y,this.target.position.z);
 
-
-	this.enemy.rotateOnAxis(new THREE.Vector3(1,0,0), -Math.PI/2);
+	
 
 }
 
