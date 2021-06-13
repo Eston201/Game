@@ -14,9 +14,10 @@ class Level1 {
   init(){
 
       this.scene = new THREE.Scene();
-      this.GreatLight , this.torus , this.cone, this.reachedGoal = false;
+      this.GreatLight , this.torus , this.cone, this.reachedGoal = false, this.enemyplanes = [], this.gameOver = false;
+      
       this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);
-
+      
       this.renderer = new THREE.WebGLRenderer({antialias:true});
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(this.renderer.domElement);
@@ -41,6 +42,7 @@ class Level1 {
       this.params = {
         camera: this.camera,
         scene: this.scene,
+        enemyplanes: this.enemyplanes
       }
 
       //kinda like a skybox but better
@@ -75,9 +77,10 @@ class Level1 {
 
      this.loadGreatLight();
 
-      // this.spawnEnemyShip();
-
-
+    this.e1 = this.spawnEnemyShip();
+    this.e1.enemy.position.set(this.myRocket.prod.position.x, this.myRocket.prod.position.y, this.myRocket.prod.position.z);
+   
+    this.enemyplanes.push(this.e1);
      this.previousFrame = null;//used for counting frames to get delta times
      this.RAF();
 
@@ -91,9 +94,9 @@ class Level1 {
     const params = {
       camera: this.camera,
       scene: this.scene,
-      target: this.myRocket.enemy
+      target: this.myRocket
     }
-    this.e1 = new enemy(params);
+    return new enemy(params);
 
   }
   loadplanets(){
@@ -121,7 +124,9 @@ class Level1 {
       this.Step(t - this.previousFrame);
       // this.updatecamera();
       this.torus.rotateY(Math.PI/100);
+      this.checkPlayerHealth();                           
       this.updateGreatLight();
+      this.updateEnemyPlanes();
       this.renderer.render(this.scene, this.camera);
       this.previousFrame = t;
 
@@ -135,11 +140,14 @@ class Level1 {
       this.myRocket.Update(timeElapsedS);
     }
     if (this.e1) {
-      this.e1.Update(timeElapsedS);
+     // this.e1.Update(timeElapsedS);
     }
     // this.mycube.Update(timeElapsedS);
     for (var i = 0; i < this.planetArr.length; i++) {
       this.planetArr[i].animate();
+    }
+    for (var i = 0; i < this.enemyplanes.length; i++) {
+      this.enemyplanes[i].Update(timeElapsedS);
     }
   }
 
@@ -208,6 +216,21 @@ class Level1 {
     // this.camera.lookAt(this.mycube.cube.position);
     this.camera.lookAt(this.myRocket.prod.position);
     // console.log(this.myRocket.prod.position);
+  }
+
+  checkPlayerHealth(){  //check if player is dead
+    if(this.myRocket.dead){
+      this.gameOver = true;
+    }
+  }
+
+  updateEnemyPlanes(){  
+    for(var index = 0; index < this.enemyplanes.length; index = index+1){
+      var enemy = this.enemyplanes[index];
+      if(enemy.dead){
+        this.enemyplanes.splice(index,1);  // remove dead enemy plane from list
+      }
+    }
   }
 
 
