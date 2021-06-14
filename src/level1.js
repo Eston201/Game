@@ -31,7 +31,7 @@ class Level1 {
       this.scene = new THREE.Scene();
       this.reachedGoal = false;
       this.enemyplanes = [];
-      this.gameOver = false;
+
       this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);
 
       this.renderer = new THREE.WebGLRenderer({antialias:true});
@@ -159,7 +159,7 @@ class Level1 {
       this.RAF();
       this.Updates(t - this.previousFrame);
       // this.updatecamera();
-      this.torus.rotateY(Math.PI/100);
+
       this.checkPlayerHealth();
       this.updateGreatLight();
       this.updateEnemyPlanes();
@@ -187,7 +187,7 @@ class Level1 {
     }
     //enemy update still needs work
     if (this.e1) {
-     // this.e1.Update(timeElapsedS);
+     this.e1.Update(timeElapsedS);
     }
 
     for (var i = 0; i < this.planetArr.length; i++) {
@@ -278,7 +278,7 @@ class Level1 {
   }
   checkPlayerHealth(){  //check if player is dead
     if(this.myRocket.dead){
-      this.gameOver = true;
+      this.GameOver = true;
     }
   }
 

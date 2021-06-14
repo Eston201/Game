@@ -290,7 +290,7 @@ class player {
       //increase vertical position
       direction.y += 70 * delta;
       this.prod.position.y+=direction.y;
-      
+
     }
 
 
@@ -378,7 +378,6 @@ class player {
            //console.log(this.enemyplanes.length);
            var enemy = this.enemyplanes[i];
            if(is_collision(beam,enemy.enemy,15)){ 
-             console.log("enemy hit");
              enemy.takeDamage(1);
              this.params.scene.remove(beam);
              this.beams.splice(index,1);
@@ -398,4 +397,3 @@ class player {
 
 
 };
-
