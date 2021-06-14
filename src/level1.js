@@ -3,7 +3,6 @@ import * as THREE from '../js/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {player} from './spaceship.js';
 import {Planet} from './planet.js';
-import { PlanetA, PlanetBelt } from './Objects.js';
 import { Portal} from './Objects.js';
 import {enemy} from './enemies.js'
 import {is_collision} from './is_collision.js';
