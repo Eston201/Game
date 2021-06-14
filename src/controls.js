@@ -19,7 +19,8 @@ class controls {
       fpc: false,
       tpc: false,
       rvc: false,
-      Lclick:false
+      Lclick:false,
+      Esc:false
     };
 
     document.addEventListener('keydown', (e) => this.onKeyDown(e), false);
@@ -64,6 +65,9 @@ class controls {
       case 82://r
         this._keys.rvc = true;
         break;
+      case 27://ESC
+        this._keys.Esc = true;
+        break;
     }
   }
 
@@ -101,6 +105,9 @@ class controls {
           break;
       case 82:
           this._keys.rvc = false;
+          break;
+      case 27://ESC
+          this._keys.Esc = false;
           break;
     }
   }

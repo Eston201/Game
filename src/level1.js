@@ -3,18 +3,33 @@ import * as THREE from '../js/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {player} from './spaceship.js';
 import {planet} from './planet.js';
-
 import {enemy} from './enemies.js'
 class Level1 {
   constructor() {
-    this.init();
 
+    this.init();
   }
+
+
 
   init(){
 
+      this.pause =false;
+      this.GameOver = false;
+
+
+
+      //listens for Esc to pause the game
+      window.addEventListener("keydown", (e)=>{
+        this.isPaused(e);
+      }, true);
+      //get the pause menu in the html file
+      this.pauseMenu=document.getElementById('pauseMenu');
+
+
+
       this.scene = new THREE.Scene();
-      this.GreatLight , this.torus , this.cone, this.reachedGoal = false;
+      this.reachedGoal = false;
       this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);
 
       this.renderer = new THREE.WebGLRenderer({antialias:true});
@@ -55,7 +70,7 @@ class Level1 {
      ]);
 
      this.scene.background = texture;
-     
+
      const axesHelper = new THREE.AxesHelper( 5 );
      this.scene.add( axesHelper );
      //Lights
@@ -73,13 +88,30 @@ class Level1 {
      this.planetArr = [];
      this.addplanets();
 
+     //guide to the end
      this.loadGreatLight();
 
       // this.spawnEnemyShip();
 
 
      this.previousFrame = null;//used for counting frames to get delta times
+     //resume button
+     this.btnResume = document.getElementById("Resume");
+     this.btnResume.onclick =()=>{
+       //set pause to false to resume animation
+       this.pause=false;
+     }
+     
+     //restart button still needs work
+     // var Restart = document.getElementById("Restart");
+     // Restart.onclick = ()=>{
+     //   lv1=new Level1();
+     // }
+
+
      this.RAF();
+
+
 
   }
 
@@ -117,30 +149,48 @@ class Level1 {
       if (this.previousFrame === null) {
         this.previousFrame = t;
       }
+
+
+
       this.RAF();
-      this.Step(t - this.previousFrame);
-      // this.updatecamera();
-      this.torus.rotateY(Math.PI/100);
-      this.updateGreatLight();
+
+
+
+      this.Updates(t - this.previousFrame);
+
       this.renderer.render(this.scene, this.camera);
       this.previousFrame = t;
 
     });
   }
 
-  Step(timeElapsed) {
-    const timeElapsedS = timeElapsed * 0.001;
+  //update the scene/ objects /player..etc
+  Updates(timeElapsed) {
+    if(this.pause){
+      this.pauseMenu.style.visibility = "visible";
 
+      return;
+  }
+  else{
+    this.pauseMenu.style.visibility = "hidden";
+  }
+
+    const timeElapsedS = timeElapsed * 0.001;
+    //update the players ship
     if (this.myRocket) {
       this.myRocket.Update(timeElapsedS);
     }
+    //enemy update still needs work
     if (this.e1) {
       this.e1.Update(timeElapsedS);
     }
-    // this.mycube.Update(timeElapsedS);
+
     for (var i = 0; i < this.planetArr.length; i++) {
       this.planetArr[i].animate();
     }
+    this.updateGreatLight();
+
+
   }
 
   addplanets(){
@@ -171,7 +221,7 @@ class Level1 {
   }
 
   loadGreatLight(){   // spot light, transparent cone and spinning torus
-    this.GreatLight = new THREE.SpotLight( 0xffffff, 10, 5000, Math.PI/3 ); 
+    this.GreatLight = new THREE.SpotLight( 0xffffff, 10, 5000, Math.PI/3 );
     this.GreatLight.position.set(0,50,-100);
     this.scene.add(this.GreatLight);
 
@@ -191,12 +241,13 @@ class Level1 {
 
   updateGreatLight(){ // stay 300 units ahead of player until reachedGoal
     if(!this.reachedGoal){
-    this.torus.position.set(0,0,this.myRocket.prod.position.z-300); 
+    this.torus.position.set(0,0,this.myRocket.prod.position.z-300);
 
     //light and cone continuously follow torus
     this.GreatLight.position.set(this.torus.position.x,this.torus.position.y+100,this.torus.position.z);
     this.cone.position.set(this.torus.position.x,this.torus.position.y,this.torus.position.z);
     }
+    this.torus.rotateY(Math.PI/100);
   }
 
   updatecamera(){
@@ -208,6 +259,13 @@ class Level1 {
     // this.camera.lookAt(this.mycube.cube.position);
     this.camera.lookAt(this.myRocket.prod.position);
     // console.log(this.myRocket.prod.position);
+  }
+
+  //check  if user pauses and stops animation in loop
+  isPaused(e){
+    if(e.keyCode==27){
+      this.pause = !this.pause;
+    }
   }
 
 

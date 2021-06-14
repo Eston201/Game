@@ -15,7 +15,7 @@ body {
 
 h1 {
     top: -100px;
-    left: 100px;
+    left: -50px;
     text-align: center;
     position: relative;
     font-family: 'Montserrat', Arial, sans-serif;
@@ -188,17 +188,52 @@ button:hover {
    position: absolute;
    top: 50%;
    left: 50%;
-   -ms-transform: translate(-50%, -50%);
+   z-index: 1;
+   background-size: cover;
+   justify-content: center;
+   align-items: center;
    transform: translate(-50%, -50%);
+}
+.center2 {
+   margin: 0;
+   position: absolute;
+   top: 60%;
+   left: 40%;
+
+   transform: translate(-50%, -100%);
 }
 
 #div{
-  visibility: visible;
-}
-.container {
   height: 100%;
   width: 100%;
-  top:0;
-  left:0;
+  visibility: visible;
+}
+.container{
 
+  height: 100%;
+  width: 100%;
+
+
+}
+#pauseMenu {
+	width: 100px;
+	height: 100px;
+	position: absolute;
+	top: 90;
+	left: 10;
+  visibility: hidden;
+}
+
+.content{
+    /* z-index: 1; */
+    /* position:relative; */
+    display: flex;
+    background-image: url('./resources/Background/Background.jpg');
+    background-size: cover;
+
+}
+
+p {
+    color: aquamarine;
+    text-shadow: 0 0 0.15em #e0610c;
 }

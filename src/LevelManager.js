@@ -6,9 +6,9 @@ var LV3 = document.getElementById("Level3");
 
 LV1.onclick = function(){
   document.getElementById('div').style.display = 'none';
-  const lv1 = new Level1();
+  let lv1 = new Level1();
 }
-//for later 
+//for later
 // LV2.onclick = function(){
 //   document.getElementById('div').style.display = 'none';
 //   const lv2 = new Level2();
