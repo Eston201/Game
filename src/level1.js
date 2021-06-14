@@ -157,7 +157,7 @@ class Level1 {
 
 
       this.RAF();
-      this.Step(t - this.previousFrame);
+      this.Updates(t - this.previousFrame);
       // this.updatecamera();
       this.torus.rotateY(Math.PI/100);
       this.checkPlayerHealth();
@@ -270,12 +270,12 @@ class Level1 {
     // console.log(this.myRocket.prod.position);
   }
 
-<<<<<<< HEAD
   //check  if user pauses and stops animation in loop
   isPaused(e){
     if(e.keyCode==27){
       this.pause = !this.pause;
-=======
+    }
+  }
   checkPlayerHealth(){  //check if player is dead
     if(this.myRocket.dead){
       this.gameOver = true;
@@ -288,7 +288,6 @@ class Level1 {
       if(enemy.dead){
         this.enemyplanes.splice(index,1);  // remove dead enemy plane from list
       }
->>>>>>> 337d48d3f1b21d667baba274f7ed04da5d6cc401
     }
   }
 
