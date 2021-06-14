@@ -30,6 +30,8 @@ class Level1 {
 
       this.scene = new THREE.Scene();
       this.reachedGoal = false;
+      this.enemyplanes = [];
+      this.gameOver = false;
       this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);
 
       this.renderer = new THREE.WebGLRenderer({antialias:true});
@@ -56,6 +58,7 @@ class Level1 {
       this.params = {
         camera: this.camera,
         scene: this.scene,
+        enemyplanes: this.enemyplanes
       }
 
       //kinda like a skybox but better
@@ -91,9 +94,10 @@ class Level1 {
      //guide to the end
      this.loadGreatLight();
 
-      // this.spawnEnemyShip();
+    this.e1 = this.spawnEnemyShip();
+    this.e1.enemy.position.set(this.myRocket.prod.position.x, this.myRocket.prod.position.y, this.myRocket.prod.position.z);
 
-
+    this.enemyplanes.push(this.e1);
      this.previousFrame = null;//used for counting frames to get delta times
      //resume button
      this.btnResume = document.getElementById("Resume");
@@ -101,7 +105,7 @@ class Level1 {
        //set pause to false to resume animation
        this.pause=false;
      }
-     
+
      //restart button still needs work
      // var Restart = document.getElementById("Restart");
      // Restart.onclick = ()=>{
@@ -123,9 +127,9 @@ class Level1 {
     const params = {
       camera: this.camera,
       scene: this.scene,
-      target: this.myRocket.enemy
+      target: this.myRocket
     }
-    this.e1 = new enemy(params);
+    return new enemy(params);
 
   }
   loadplanets(){
@@ -153,11 +157,12 @@ class Level1 {
 
 
       this.RAF();
-
-
-
-      this.Updates(t - this.previousFrame);
-
+      this.Step(t - this.previousFrame);
+      // this.updatecamera();
+      this.torus.rotateY(Math.PI/100);
+      this.checkPlayerHealth();
+      this.updateGreatLight();
+      this.updateEnemyPlanes();
       this.renderer.render(this.scene, this.camera);
       this.previousFrame = t;
 
@@ -182,7 +187,7 @@ class Level1 {
     }
     //enemy update still needs work
     if (this.e1) {
-      this.e1.Update(timeElapsedS);
+     // this.e1.Update(timeElapsedS);
     }
 
     for (var i = 0; i < this.planetArr.length; i++) {
@@ -191,7 +196,11 @@ class Level1 {
     this.updateGreatLight();
 
 
+    for (var i = 0; i < this.enemyplanes.length; i++) {
+      this.enemyplanes[i].Update(timeElapsedS);
+    }
   }
+
 
   addplanets(){
     this.p1 = this.loadplanets()
@@ -261,10 +270,25 @@ class Level1 {
     // console.log(this.myRocket.prod.position);
   }
 
+<<<<<<< HEAD
   //check  if user pauses and stops animation in loop
   isPaused(e){
     if(e.keyCode==27){
       this.pause = !this.pause;
+=======
+  checkPlayerHealth(){  //check if player is dead
+    if(this.myRocket.dead){
+      this.gameOver = true;
+    }
+  }
+
+  updateEnemyPlanes(){
+    for(var index = 0; index < this.enemyplanes.length; index = index+1){
+      var enemy = this.enemyplanes[index];
+      if(enemy.dead){
+        this.enemyplanes.splice(index,1);  // remove dead enemy plane from list
+      }
+>>>>>>> 337d48d3f1b21d667baba274f7ed04da5d6cc401
     }
   }
 
