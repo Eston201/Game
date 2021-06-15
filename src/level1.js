@@ -20,6 +20,7 @@ class Level1 {
 
     this.pause = false;
     this.GameOver = false;  
+    this.keyboard = new THREEx.KeyboardState(); // for capturing key presses
 
     //listens for Esc to pause the game
     window.addEventListener("keydown", (e)=>{
@@ -33,8 +34,11 @@ class Level1 {
     this.reachedGoal = false;
     this.enemyplanes = [];
     this.delay = 0;  // delay before spawning new enemyplane
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 5000);
+    this.camera = new THREE.PerspectiveCamera(100, window.innerWidth/window.innerHeight,0.1, 5000);
+    this.rearcamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);  // press b
+    this.frontcamera = new THREE.PerspectiveCamera(100, window.innerWidth/window.innerHeight,0.1, 1500);  //press v
     this.objects = []; //objects in space except planet
+    this.healthboxes = [];
 
     this.renderer = new THREE.WebGLRenderer({antialias:true});
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -95,6 +99,7 @@ class Level1 {
 
     //guide to the end
    this.loadGreatLight();
+   this.loadHealthBoxes();
 
    this.previousFrame = null;//used for counting frames to get delta times
    //resume button
@@ -125,7 +130,11 @@ class Level1 {
 
   LoadPlayer(){
     this.myRocket = new player(this.params);
-
+    this.rearcamera.position.set(this.myRocket.prod.position.x, this.myRocket.prod.position.y+20, this.myRocket.prod.position.z-70);
+    this.frontcamera.position.set(this.myRocket.prod.position.x, this.myRocket.prod.position.y, this.myRocket.prod.position.z-30);
+    this.rearcamera.lookAt(this.myRocket.prod.position);
+    this.myRocket.prod.add(this.rearcamera);
+    this.myRocket.prod.add(this.frontcamera);
   }
   spawnEnemyShip(){
     const params = {
@@ -157,6 +166,7 @@ class Level1 {
       // this.updatecamera();
       this.torus.rotateY(Math.PI/100);
       this.updateSpaceObjects();
+      this.updateHealthBoxes();
       if(!this.pause){
         this.checkIfReachedGoal();
         this.checkPlayerHealth();
@@ -165,7 +175,15 @@ class Level1 {
         this.updateEnemyPlanes();
         this.checkCollision();
       }
-      this.renderer.render(this.scene, this.camera);
+      if(this.keyboard.pressed("b")){
+      this.renderer.render(this.scene, this.rearcamera);
+      }
+      else if(this.keyboard.pressed("v")){
+        this.renderer.render(this.scene, this.frontcamera);
+      }
+      else{
+        this.renderer.render(this.scene,this.camera);
+      }
       this.previousFrame = t;
       
 
@@ -201,7 +219,7 @@ class Level1 {
   }
 
   createCylinder(){
-    var cyl = new THREE.Mesh(new THREE.CylinderGeometry( 200, 200, 500, 32 ), new THREE.MeshPhongMaterial({color: 0xfc038c, opacity: 0.9, transparent: true}));
+    var cyl = new THREE.Mesh(new THREE.CylinderGeometry( 200, 200, 500, 32 ), new THREE.MeshPhongMaterial({color: 0x5fed98, opacity: 0.9, transparent: true}));
     this.scene.add(cyl);
     this.objects.push(cyl);
     return cyl;
@@ -209,7 +227,7 @@ class Level1 {
 
   loadPlanets(){
 
-    for(var z = -5000; z < 10000; z = z + 200){
+    for(var z = -10000; z < 20000; z = z + 500){
       var texture = Math.floor(Math.random() * (4 - 1) + 1); 
       var x = Math.floor(Math.random() * (1500 - (-1500)) + (-1500)); 
       var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000)); 
@@ -238,6 +256,31 @@ class Level1 {
         }
     }
   }
+
+  loadHealthBoxes(){
+    // cube to guide the player to goal
+    const geometry = new THREE.BoxGeometry(50,50,50);
+    const material = new THREE.MeshPhongMaterial( { color: 0x48e2f0 ,opacity: 0.6, transparent: true} );
+    var healthBox1 = new THREE.Mesh( geometry, material );
+    healthBox1.position.set(0,-300,-5000);
+    var healthBox2 = new THREE.Mesh( geometry, material );
+    healthBox2.position.set(200,300,-10000);
+    var healthBox3 = new THREE.Mesh( geometry, material );
+    healthBox3.position.set(200,300,-15000);
+    this.scene.add( healthBox1 );
+    this.scene.add( healthBox2 );
+    this.scene.add( healthBox3)
+    this.healthboxes.push(healthBox1);
+    this.healthboxes.push(healthBox2);
+    this.healthboxes.push(healthBox3);
+}
+
+updateHealthBoxes(){
+  for(var i = 0; i < this.healthboxes.length; i++){
+    var healthbox = this.healthboxes[i];
+    healthbox.rotation.y += 0.01;
+  }
+}
 
   loadGreatLight(){   // spot light, transparent cone and spinning torus
     this.GreatLight = new THREE.SpotLight( 0xffffff, 10, 5000, Math.PI/3 );
@@ -309,6 +352,17 @@ class Level1 {
         e.takeDamage(5);
       }
     }
+
+    for(var i = 0; i < this.healthboxes.length; i++){
+      var healthbox = this.healthboxes[i];
+      if(is_collision(healthbox, this.myRocket.prod, 20)){
+        
+        this.myRocket.health = 20;  // replenish health
+        console.log(this.myRocket.health);
+        healthbox.visible = false;
+      }
+    }
+    
   }
 
   spawnEnemies(){
@@ -338,8 +392,8 @@ class Level1 {
     this.portal = new Portal(0);
     this.portal.rotateX(Math.PI/2);
     this.portal.scale.set(2,2,2);
-    this.portal.position.set(0,0,-10000);  //set portal position
-    this.scene.add(this.portal);
+    this.portal.position.set(0,0,-20000);  //set portal position if you change this remember to change other stuff 
+    this.scene.add(this.portal);           //                                            like healthboxes positions
   }
 
   RestartLevel(){    //clear the scene then reload everything
