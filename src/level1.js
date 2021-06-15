@@ -3,7 +3,7 @@ import * as THREE from '../js/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {player} from './spaceship.js';
 import {planet} from './planet.js';
-
+import { asteroid } from './asteroids.js';
 import {enemy} from './enemies.js'
 class Level1 {
   constructor() {
@@ -67,8 +67,10 @@ class Level1 {
      const amblight = new THREE.AmbientLight(0x404040 ,2);
      this.scene.add(amblight);
 
+     
      this.LoadPlayer();
 
+     
 
      this.planetArr = [];
      this.addplanets();
@@ -76,10 +78,50 @@ class Level1 {
      this.loadGreatLight();
 
       // this.spawnEnemyShip();
+     //console.log(this.myRocket);
+     
+     this.a = new asteroid(this.myRocket);
+     this.scene.add(this.a);
+     
+     this.a1 = new asteroid(this.myRocket);
+     this.a1.position.x -= 50;
+     this.a1.position.y -= 20;
+     this.scene.add(this.a1);
+     
+     this.a2 = new asteroid(this.myRocket);
+     this.a2.position.x -= 40;
+     this.a2.position.y -= 30;
+     this.scene.add(this.a2);
+
+     this.a3 = new asteroid(this.myRocket);
+     this.a3.position.x += 40;
+     this.a3.position.y -= 20;
+     this.scene.add(this.a3);
+
+     this.a4 = new asteroid(this.myRocket);
+     this.a4.position.x -= 40;
+     this.a4.position.y += 20;
+     this.scene.add(this.a4);
+
+     this.a5 = new asteroid(this.myRocket);
+     this.a5.position.x += 40;
+     this.a5.position.y += 30;
+     this.scene.add(this.a5);
+
+     this.a6 = new asteroid(this.myRocket);
+     this.a6.position.x -= 10;
+     this.a6.position.y -= 40;
+     this.scene.add(this.a6);
+
+     this.a7 = new asteroid(this.myRocket);
+     this.a7.position.x += 10;
+     this.a7.position.y += 20;
+     this.scene.add(this.a7);
 
 
      this.previousFrame = null;//used for counting frames to get delta times
      this.RAF();
+     
 
   }
 
@@ -125,7 +167,19 @@ class Level1 {
       this.renderer.render(this.scene, this.camera);
       this.previousFrame = t;
 
+
+      this.a.position.z += 10;
+      this.a1.position.z += 8;
+      this.a2.position.z += 6;
+      this.a3.position.z += 5;
+      this.a4.position.z += 4;
+      this.a5.position.z += 3;
+      this.a6.position.z += 2;
+      this.a7.position.z += 1;
+
     });
+    
+    
   }
 
   Step(timeElapsed) {
