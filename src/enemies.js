@@ -1,7 +1,8 @@
 import * as THREE from '../js/three.module.js';
 import {controls} from './controls.js';
-import * as dat from '../js/dat.gui.module.js'
-import {is_collision} from './is_collision.js'
+import * as dat from '../js/dat.gui.module.js';
+import {is_collision} from './is_collision.js';
+
 export {enemy}
 class enemy {
   constructor(params) {
@@ -18,6 +19,8 @@ class enemy {
     this.takeDamage = function(damage){
       this.health = this.health - damage;
     }
+    this.variant = Math.floor(Math.random() * (4 - 1) + 1);   // random number between 3 and 1 to determine which hunt variant to use
+    console.log("variant: ", this.variant);
     this.dead = false;
     this.enemy = new THREE.Object3D();
     this.target = this.params.target.prod;
@@ -242,8 +245,18 @@ class enemy {
       this.params.scene.remove(this.enemy);
     }
   }
-
-  huntShip(moveDistance){
+  huntShip(moveDistance){ // enemy plane is given a random hunt variant to simulate non-repetitive multi-agent behaviour
+    if(this.variant == 1){
+      this.huntShipVariant1(moveDistance);
+    }
+    if(this.variant == 2){
+      this.huntShipVariant2(moveDistance);
+    }
+    else{
+      this.huntShipVariant3(moveDistance);
+    }
+  }
+  huntShipVariant1(moveDistance){
 	    var dx = this.target.position.x - this.enemy.position.x;
 	    var dy = this.target.position.y - this.enemy.position.y;
 	    var dz = this.target.position.z - this.enemy.position.z;
@@ -295,9 +308,103 @@ class enemy {
         //console.log(this.enemy.position.x, this.enemy.position.y, this.enemy.position.z)
         //this.enemy.position.set(this.target.position.x, this.target.position.y,this.target.position.z);
 
-	
+	} 
+
+  huntShipVariant2(moveDistance){
+    var dx = this.target.position.x - this.enemy.position.x;
+    var dy = this.target.position.y - this.enemy.position.y;
+    var dz = this.target.position.z - this.enemy.position.z;
+      //console.log(dx,dy,dz);
+    //var vector_distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    var forward_speed = 1.4,  vertical_speed = 0.6, horizontal_speed = 0.5;
+
+    if(dy == 0 || dy == 100){ // if one the same y plane
+       if(dx != 0){             // look at target
+       this.enemy.lookAt(this.target.position)
+      this.enemy.rotateX(Math.PI/2);
+      }
+      
+      //this.enemy.quaternion.copy(this.target.quaternion);
+      //this.enemy.rotateY(Math.PI);
+      //this.enemy.rotateX(Math.PI/2);
+    }
+
+
+      if(dz < 0){ //my rocket is ahead of enemy
+          this.enemy.position.z += Math.max( -forward_speed, dz);  // go forward
+      }
+      if(dz > 100){ //my rocket is more than 100 units behind the enemy
+          this.enemy.position.z += Math.min( forward_speed, dz);
+      }
+      if(dy < 0){  // my rocket (target) is below
+          this.enemy.rotateX(this.target.rotation.x);
+          this.enemy.position.y += Math.max(-vertical_speed, dy);
+      }
+      if(dy > 0){  // my rocket (target) is above
+          this.enemy.rotateX(this.target.rotation.x);
+          this.enemy.position.y += Math.min( vertical_speed, dy);  
+      }
+      if(Math.abs(dx) > 400){   // keep a certain distance from target
+        if(dx < 0){ // if my rocket (target) is leftwards
+            this.enemy.position.x += Math.max( -horizontal_speed, dx);
+        }
+        if(dx > 0){ //my rocket is rightwards
+            this.enemy.position.x += Math.min( horizontal_speed, dx);
+        }
+    }
+    else{   // if target is close
+        this.shootLaser();
+    }
 
 }
 
+huntShipVariant3(moveDistance){
+  var dx = this.target.position.x - this.enemy.position.x;
+  var dy = this.target.position.y - this.enemy.position.y;
+  var dz = this.target.position.z - this.enemy.position.z;
+    //console.log(dx,dy,dz);
+  //var vector_distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+  var forward_speed = 0.7,  vertical_speed = 0.8, horizontal_speed = 1.4;
+
+  if(dy == 0 || dy == 100){ // if one the same y plane
+    if(dx != 0){             // look at target
+    this.enemy.lookAt(this.target.position)
+    this.enemy.rotateX(Math.PI/2);
+    }
+    
+    //this.enemy.quaternion.copy(this.target.quaternion);
+    //this.enemy.rotateY(Math.PI);
+    //this.enemy.rotateX(Math.PI/2);
+  }
+
+
+    if(dz < 0){ //my rocket is ahead of enemy
+        this.enemy.position.z += Math.max( -forward_speed, dz);  // go forward
+    }
+    if(dz > 100){ //my rocket is more than 100 units behind the enemy
+        this.enemy.position.z += Math.min( forward_speed, dz);
+    }
+    if(dy < 0){  // my rocket (target) is below
+        this.enemy.rotateX(this.target.rotation.x);
+        this.enemy.position.y += Math.max(-vertical_speed, dy);
+    }
+    if(dy > 0){  // my rocket (target) is above
+        this.enemy.rotateX(this.target.rotation.x);
+        this.enemy.position.y += Math.min( vertical_speed, dy);  
+    }
+    if(Math.abs(dx) > 400){   // keep a certain distance from target
+      if(dx < 0){ // if my rocket (target) is leftwards
+          this.enemy.position.x += Math.max( -horizontal_speed, dx);
+      }
+      if(dx > 0){ //my rocket is rightwards
+          this.enemy.position.x += Math.min( horizontal_speed, dx);
+      }
+    }
+    else{   // if target is close
+      this.shootLaser();
+    }
+        
+
+}
 
 };
