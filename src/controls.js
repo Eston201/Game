@@ -17,8 +17,8 @@ class controls {
       EKey: false,
       QKey: false,
       fpc: false,
-      tpc: false,
-      rvc: false,
+      VKey: false,
+      BKey: false,
       Lclick:false,
       Esc:false
     };
@@ -60,10 +60,10 @@ class controls {
         this._keys.fpc = true;
         break;
       case 86: //v
-        this._keys.tpc = true;
+        this._keys.VKey = true;
         break;
-      case 82://r
-        this._keys.rvc = true;
+      case 66://r
+        this._keys.BKey = true;
         break;
       case 27://ESC
         this._keys.Esc = true;
@@ -101,10 +101,10 @@ class controls {
         this._keys.fpc = false;
         break;
       case 86:
-          this._keys.tpc = false;
+          this._keys.VKey = false;
           break;
-      case 82:
-          this._keys.rvc = false;
+      case 66:
+          this._keys.BKey = false;
           break;
       case 27://ESC
           this._keys.Esc = false;

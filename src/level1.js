@@ -19,7 +19,7 @@ class Level1 {
   init(){
 
     this.pause = false;
-    this.GameOver = false;  
+    this.GameOver = false;
     this.keyboard = new THREEx.KeyboardState(); // for capturing key presses
 
     //listens for Esc to pause the game
@@ -81,9 +81,6 @@ class Level1 {
    ]);
 
    this.scene.background = texture;
-
-   const axesHelper = new THREE.AxesHelper( 5 );
-   this.scene.add( axesHelper );
    //Lights
    //directionalLight
    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
@@ -113,7 +110,7 @@ class Level1 {
      Restart.onclick = ()=>{
       this.RestartLevel();
   }
-     
+
  this.RAF();
 
 
@@ -145,7 +142,7 @@ class Level1 {
     return new enemy(params);
 
   }
-  
+
 
   OnWindowResize(){
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -163,18 +160,7 @@ class Level1 {
 
       this.RAF();
       this.Updates(t - this.previousFrame);
-      // this.updatecamera();
-      this.torus.rotateY(Math.PI/100);
-      this.updateSpaceObjects();
-      this.updateHealthBoxes();
-      if(!this.pause){
-        this.checkIfReachedGoal();
-        this.checkPlayerHealth();
-        this.updateGreatLight();
-        this.spawnEnemies();
-        this.updateEnemyPlanes();
-        this.checkCollision();
-      }
+
       if(this.keyboard.pressed("b")){
       this.renderer.render(this.scene, this.rearcamera);
       }
@@ -185,7 +171,7 @@ class Level1 {
         this.renderer.render(this.scene,this.camera);
       }
       this.previousFrame = t;
-      
+
 
     });
   }
@@ -216,6 +202,14 @@ class Level1 {
     for (var i = 0; i < this.enemyplanes.length; i++) {
       this.enemyplanes[i].Update(timeElapsedS);
     }
+    this.checkIfReachedGoal();
+    this.checkPlayerHealth();
+    this.updateGreatLight();
+    this.spawnEnemies();
+    this.updateEnemyPlanes();
+    this.checkCollision();
+    this.updateSpaceObjects();
+    this.updateHealthBoxes();
   }
 
   createCylinder(){
@@ -228,17 +222,17 @@ class Level1 {
   loadPlanets(){
 
     for(var z = -10000; z < 20000; z = z + 500){
-      var texture = Math.floor(Math.random() * (4 - 1) + 1); 
-      var x = Math.floor(Math.random() * (1500 - (-1500)) + (-1500)); 
-      var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000)); 
+      var texture = Math.floor(Math.random() * (4 - 1) + 1);
+      var x = Math.floor(Math.random() * (1500 - (-1500)) + (-1500));
+      var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000));
       var planetObject = this.newPlanet(texture);
       planetObject.planet.position.set(x,y,-z);
       planetObject.addBelt();
       this.planetArr.push(planetObject);
      }
      for(var z = 5000; z < 10000; z = z + 1000){
-       var x = Math.floor(Math.random() * (-1500 - (-5000)) + (-5000)); 
-       var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000)); 
+       var x = Math.floor(Math.random() * (-1500 - (-5000)) + (-5000));
+       var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000));
        var cyl = this.createCylinder();
        cyl.position.set(x,y,-z);
      }
@@ -356,19 +350,19 @@ updateHealthBoxes(){
     for(var i = 0; i < this.healthboxes.length; i++){
       var healthbox = this.healthboxes[i];
       if(is_collision(healthbox, this.myRocket.prod, 20)){
-        
+
         this.myRocket.health = 20;  // replenish health
         console.log(this.myRocket.health);
         healthbox.visible = false;
       }
     }
-    
+
   }
 
   spawnEnemies(){
     //console.log(this.delay);
-    if(this.delay == 1000){  // spawn new enemy 
-      let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between 
+    if(this.delay == 1000){  // spawn new enemy
+      let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between
       var enemyPlane = this.spawnEnemyShip();
       enemyPlane.enemy.position.set(this.myRocket.prod.position.x + randomNum, this.myRocket.prod.position.y, this.myRocket.prod.position.z);
       this.enemyplanes.push(enemyPlane);
@@ -392,7 +386,7 @@ updateHealthBoxes(){
     this.portal = new Portal(0);
     this.portal.rotateX(Math.PI/2);
     this.portal.scale.set(2,2,2);
-    this.portal.position.set(0,0,-20000);  //set portal position if you change this remember to change other stuff 
+    this.portal.position.set(0,0,-20000);  //set portal position if you change this remember to change other stuff
     this.scene.add(this.portal);           //                                            like healthboxes positions
   }
 
@@ -407,7 +401,7 @@ updateHealthBoxes(){
      this.LoadPlayer();
      this.loadGreatLight();
      this.loadPlanets();
-     this.enemyplanes = []; this.enemyplanes.length = 0; 
+     this.enemyplanes = []; this.enemyplanes.length = 0;
      this.pause = false;
   }
 

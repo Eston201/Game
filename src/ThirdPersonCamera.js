@@ -8,12 +8,11 @@ class ThirdPersonCamera {
   init(params){
     this._params = params;
     this._camera = params.camera;
-    console.log(this._camera.position);
     this._currentPosition = new THREE.Vector3();
     this._currentLookat = new THREE.Vector3();
   }
   _CalculateIdealOffset() {
-    const idealOffset = new THREE.Vector3(0,30,80);
+    const idealOffset = new THREE.Vector3(0,30,70);
     idealOffset.applyQuaternion(this._params.target.quaternion);
     idealOffset.add(this._params.target.position);
     return idealOffset;
@@ -28,7 +27,7 @@ class ThirdPersonCamera {
 
   Update(timeElapsed) {
 
-    
+
     const idealOffset = this._CalculateIdealOffset();
     const idealLookat = this._CalculateIdealLookat();
 

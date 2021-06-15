@@ -1,7 +1,7 @@
 import * as THREE from '../js/three.module.js';
 import {controls} from './controls.js';
 export {player}
-import * as dat from '../js/dat.gui.module.js'
+// import * as dat from '../js/dat.gui.module.js'
 import {ThirdPersonCamera} from './ThirdPersonCamera.js';
 import {is_collision} from './is_collision.js';
 
@@ -12,7 +12,6 @@ class player {
 
 
   createplayer(params){
-    const gui = new dat.GUI();
     this.params = params;
     this.enemyplanes = this.params.enemyplanes;     // keep track of enemies
     this. beams = [];
@@ -28,7 +27,6 @@ class player {
 
     this.prod = new THREE.Object3D();
     this.aircraft = new THREE.Object3D();
-    gui.add(this.aircraft.rotation,"y").min(0).max(2*Math.PI).step(0.1)
     const aircraftmaterial = new THREE.MeshLambertMaterial({color:0x171717});
     const cpitmaterial = new THREE.MeshLambertMaterial({color:0x2674a1});
     const ringsmaterial = new THREE.MeshLambertMaterial({color:0x00ff04});
@@ -193,7 +191,7 @@ class player {
     //get the direction the plane is facing to make the plane move forward
     var direction = new THREE.Vector3( 0, 0, -1 ).applyQuaternion( this.prod.quaternion ).normalize();
     //default speed when not pressing W
-    this.prod.position.add(direction.multiplyScalar(1))
+    // this.prod.position.add(direction.multiplyScalar(2))
 
     //controls for the plane on key press using imported controlls class
     //movement for aircaft
@@ -377,7 +375,7 @@ class player {
          for( var i = 0; i < this.enemyplanes.length; i = i + 1){
            //console.log(this.enemyplanes.length);
            var enemy = this.enemyplanes[i];
-           if(is_collision(beam,enemy.enemy,15)){ 
+           if(is_collision(beam,enemy.enemy,15)){
              enemy.takeDamage(1);
              this.params.scene.remove(beam);
              this.beams.splice(index,1);
