@@ -3,6 +3,7 @@ import * as THREE from '../js/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {player} from './spaceship.js';
 import {Planet} from './planet.js';
+import { PlanetA, PlanetBelt } from './Objects.js';
 import { Portal} from './Objects.js';
 import {enemy} from './enemies.js'
 import {is_collision} from './is_collision.js';
@@ -33,7 +34,7 @@ class Level1 {
     this.enemyplanes = [];
     this.delay = 0;  // delay before spawning new enemyplane
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 5000);
-    this.objects = []; //objects in space except planets
+    this.objects = []; //objects in space except planet
 
     this.renderer = new THREE.WebGLRenderer({antialias:true});
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -162,6 +163,7 @@ class Level1 {
         this.updateGreatLight();
         this.spawnEnemies();
         this.updateEnemyPlanes();
+        this.checkCollision();
       }
       this.renderer.render(this.scene, this.camera);
       this.previousFrame = t;
@@ -208,15 +210,15 @@ class Level1 {
   loadPlanets(){
 
     for(var z = -5000; z < 10000; z = z + 200){
-      var texture = Math.floor(Math.random() * (3 - 1) + 1); 
+      var texture = Math.floor(Math.random() * (4 - 1) + 1); 
       var x = Math.floor(Math.random() * (1500 - (-1500)) + (-1500)); 
       var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000)); 
       var planetObject = this.newPlanet(texture);
-      planetObject.addBelt();
       planetObject.planet.position.set(x,y,-z);
+      planetObject.addBelt();
       this.planetArr.push(planetObject);
      }
-     for(var z = 0; z < 10000; z = z + 1000){
+     for(var z = 5000; z < 10000; z = z + 1000){
        var x = Math.floor(Math.random() * (-1500 - (-5000)) + (-5000)); 
        var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000)); 
        var cyl = this.createCylinder();
@@ -227,9 +229,13 @@ class Level1 {
   updateSpaceObjects(){
     for(var index = 0; index < this.objects.length; index = index+1){
         var object = this.objects[index];
-        object.rotateX(Math.PI/250);
-        object.rotateZ(Math.PI/200);
-        object.translateX(1);
+        object.rotateZ(Math.PI/250);
+        if(object.position.x < 2000){
+        object.translateX(10);
+        }
+        else{
+          object.translateX(-10);
+        }
     }
   }
 
@@ -285,6 +291,26 @@ class Level1 {
     }
   }
 
+  checkCollision(){
+    for(var index=0; index< this.planetArr.length; index++){
+      var p = this.planetArr[index];
+      if(is_collision(this.myRocket.prod, p.planet, 250)){
+       // console.log("hit planet");
+        this.myRocket.dead = true;
+        this.GameOver = true;
+      }
+    }
+
+    for(var index = 0; index < this.enemyplanes.length; index++){
+      var e = this.enemyplanes[index];
+      if(is_collision(this.myRocket.prod, e.enemy, 15)){
+        //console.log("hit enemy plane");
+        this.myRocket.takeDamage(2);
+        e.takeDamage(5);
+      }
+    }
+  }
+
   spawnEnemies(){
     //console.log(this.delay);
     if(this.delay == 1000){  // spawn new enemy 
@@ -306,6 +332,7 @@ class Level1 {
       }
     }
   }
+
 
   placePortal(){  //set portal location
     this.portal = new Portal(0);
