@@ -15,15 +15,23 @@ class player {
     this.params = params;
     this.enemyplanes = this.params.enemyplanes;     // keep track of enemies
     this. beams = [];
+    this.laserColor = "cyan";
     this.controller = new controls();
-    this.maxHealth = 20;     //set max health player can have here
-    this.health = this.maxHealth;
+    this.maxHealth = 20;     //set max health player can have here 
     this.dead = false; //check whether dead or alive
+    this.setMaxHealth = function(maxHealth){
+      this.maxHealth = maxHealth;
+      this.health = this.maxHealth;
+    }
+    this.health = this.maxHealth;
     this.takeDamage = function(damage){
       this.health = this.health - damage;
     }
-    this.refillHealth = function(){     //when called set current health to max health to refill
+    this.refillHealth = function(){
       this.health = this.maxHealth;
+    }
+    this.setLaserColor = function(color){
+      this.laserColor = color;
     }
     this.steerAngle = 0;
     this.steerAngleTarget = 0;
@@ -357,7 +365,7 @@ class player {
 
   //creates a laser beam and adds it to the beams array and the world
   shootLaser(){
-    let laser = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 4), new THREE.MeshLambertMaterial({color: "cyan"}));
+    let laser = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 4), new THREE.MeshLambertMaterial({color: this.laserColor}));
     //used to remove  laser from the scene and from the beams array
     laser.isalive=true;
     //get the planes shooter world position  on every shot
@@ -407,7 +415,7 @@ class player {
          for( var i = 0; i < this.enemyplanes.length; i = i + 1){
            //console.log(this.enemyplanes.length);
            var enemy = this.enemyplanes[i];
-           if(is_collision(beam,enemy.enemy,15)){
+           if(is_collision(beam,enemy.enemy,25)){
              enemy.takeDamage(1);
              this.params.scene.remove(beam);
              this.beams.splice(index,1);
