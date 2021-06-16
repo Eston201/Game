@@ -14,12 +14,25 @@ class enemy {
     const gui = new dat.GUI();
     this.params = params;
     this.beams = [];
+    this.laserColor = 0x9934eb;
     this.controller = new controls();
-    this.health = 20;
+    this.maxHealth = 20;     //set max health player can have here 
+    this.setMaxHealth = function(maxHealth){
+      this.maxHealth = maxHealth;
+      this.health = this.maxHealth;
+    }
+    this.health = this.maxHealth;
+    this.refillHealth = function(){
+      this.health = this.maxHealth;
+    }
     this.takeDamage = function(damage){
       this.health = this.health - damage;
     }
-    this.variant = Math.floor(Math.random() * (4 - 1) + 1);   // random number between 3 and 1 to determine which hunt variant to 
+    this.setLaserColor = function(color){
+      this.laserColor = color;
+    }
+    this.variant = Math.floor(Math.random() * (4 - 1) + 1);   // random number between 3 and 1 to determine which hunt variant to use
+    console.log("variant: ", this.variant);
     this.dead = false;
     this.enemy = new THREE.Object3D();
     this.target = this.params.target.prod;
@@ -176,17 +189,17 @@ class enemy {
 		if(randomNum == 5){
 			var enemy_shooterWorldPosition = new THREE.Vector3(0,0,0);
 			//let laser = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 4), new THREE.MeshLambertMaterial({color: "yellow"}));
-      let laser = new THREE.Mesh( new THREE.ConeGeometry( 3, 10, 32 ) ,  new THREE.MeshLambertMaterial( {color: 0x9934eb} ) );
+      let laser = new THREE.Mesh( new THREE.ConeGeometry( 3, 10, 32 ) ,  new THREE.MeshLambertMaterial( {color: this.laserColor} ) );
 			laser.position.copy(this.shooter.getWorldPosition(enemy_shooterWorldPosition));
       //laser.lookAt(this.target.position);
       //laser.rotateX(Math.PI/2);
 			//laser.quaternion.copy(this.params.camera.quaternion);
-
+         
       laser.isalive=true;   //used to remove  laser from the scene and from the beams array
-
+       
       setTimeout(function(){   //sets a timer to set this particular bullet isalive to false
         laser.isalive = false;
-      }, 5000);
+      }, 6000);
 			this.params.scene.add(laser);
 			this.beams.push(laser);
 		}
@@ -244,7 +257,7 @@ class enemy {
       this.params.scene.remove(this.enemy);
     }
   }
-  huntShip(moveDistance){ // enemy plane is given a random hunt variant to simulate non-repetitive multi-agent behaviour
+  huntShip(moveDistance){
     if(this.variant == 1){
       this.huntShipVariant1(moveDistance);
     }
@@ -268,13 +281,13 @@ class enemy {
             // this.enemy.lookAt(this.target.position)
            // this.enemy.rotateX(Math.PI/2);
            // }
-
+            
             this.enemy.quaternion.copy(this.target.quaternion);
             this.enemy.rotateY(Math.PI);
             this.enemy.rotateX(Math.PI/2);
        }
 
-
+      
         if(dz < 0){ //my rocket is ahead of enemy
             this.enemy.position.z += Math.max( -forward_speed, dz);  // go forward
         }
@@ -287,7 +300,7 @@ class enemy {
         }
         if(dy > 0){  // my rocket (target) is above
             this.enemy.rotateX(this.target.rotation.x);
-            this.enemy.position.y += Math.min( vertical_speed, dy);
+            this.enemy.position.y += Math.min( vertical_speed, dy);  
         }
         if(Math.abs(dx) > 400){   // keep a certain distance from target
           if(dx < 0){ // if my rocket (target) is leftwards
@@ -300,14 +313,14 @@ class enemy {
       else{   // if target is close
           this.shootLaser();
       }
-
+        
         //directionVector = new THREE.Vector3(dx,dy,dz).normalize();
         //this.enemy.lookAt(this.target.position);
         //this.enemy.translateOnAxis(directionVector, moveDistance*speed);
         //console.log(this.enemy.position.x, this.enemy.position.y, this.enemy.position.z)
         //this.enemy.position.set(this.target.position.x, this.target.position.y,this.target.position.z);
 
-	}
+	} 
 
   huntShipVariant2(moveDistance){
     var dx = this.target.position.x - this.enemy.position.x;
@@ -322,7 +335,7 @@ class enemy {
        this.enemy.lookAt(this.target.position)
       this.enemy.rotateX(Math.PI/2);
       }
-
+      
       //this.enemy.quaternion.copy(this.target.quaternion);
       //this.enemy.rotateY(Math.PI);
       //this.enemy.rotateX(Math.PI/2);
@@ -341,7 +354,7 @@ class enemy {
       }
       if(dy > 0){  // my rocket (target) is above
           this.enemy.rotateX(this.target.rotation.x);
-          this.enemy.position.y += Math.min( vertical_speed, dy);
+          this.enemy.position.y += Math.min( vertical_speed, dy);  
       }
       if(Math.abs(dx) > 400){   // keep a certain distance from target
         if(dx < 0){ // if my rocket (target) is leftwards
@@ -370,7 +383,7 @@ huntShipVariant3(moveDistance){
     this.enemy.lookAt(this.target.position)
     this.enemy.rotateX(Math.PI/2);
     }
-
+    
     //this.enemy.quaternion.copy(this.target.quaternion);
     //this.enemy.rotateY(Math.PI);
     //this.enemy.rotateX(Math.PI/2);
@@ -389,7 +402,7 @@ huntShipVariant3(moveDistance){
     }
     if(dy > 0){  // my rocket (target) is above
         this.enemy.rotateX(this.target.rotation.x);
-        this.enemy.position.y += Math.min( vertical_speed, dy);
+        this.enemy.position.y += Math.min( vertical_speed, dy);  
     }
     if(Math.abs(dx) > 400){   // keep a certain distance from target
       if(dx < 0){ // if my rocket (target) is leftwards
@@ -402,7 +415,7 @@ huntShipVariant3(moveDistance){
     else{   // if target is close
       this.shootLaser();
     }
-
+        
 
 }
 
