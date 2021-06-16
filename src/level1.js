@@ -7,6 +7,7 @@ import { PlanetA, PlanetBelt } from './Objects.js';
 import { Portal} from './Objects.js';
 import {enemy} from './enemies.js'
 import {is_collision} from './is_collision.js';
+import {FontLoader} from '../js/three.module.js'
 
 class Level1 {
   constructor() {
@@ -14,12 +15,10 @@ class Level1 {
     this.init();
   }
 
-
-
   init(){
 
     this.pause = false;
-    this.GameOver = false;
+    this.GameOver = false;  
     this.keyboard = new THREEx.KeyboardState(); // for capturing key presses
 
     //listens for Esc to pause the game
@@ -30,6 +29,7 @@ class Level1 {
     this.pauseMenu=document.getElementById('pauseMenu');
 
     this.scene = new THREE.Scene();
+    this.portal;
     this.reachedGoal = false;
     this.enemyplanes = [];
     this.delay = 0;  // delay before spawning new enemyplane
@@ -113,11 +113,50 @@ class Level1 {
      Restart.onclick = ()=>{
       this.RestartLevel();
   }
-
+ this.loadIntro();
  this.RAF();
 
 
 }
+
+loadIntro(){
+  const loader1 = new FontLoader();
+  let myscene = this;
+  loader1.load( '/resources/fonts/helvetiker_regular.typeface.json', function ( font ) {
+  
+      const tgeometry = new THREE.TextGeometry( 'Milky Way Galaxy', {
+          font: font,
+          size: 80,
+          height: 5,
+          curveSegments: 12,
+          bevelEnabled: false,
+          bevelThickness: 5,
+          bevelSize: 8,
+          bevelOffset: 0,
+          bevelSegments: 5
+      } );
+      const tgeometry2 = new THREE.TextGeometry( 'Void Axis', {
+        font: font,
+        size: 80,
+        height: 5,
+        curveSegments: 12,
+        bevelEnabled: false,
+        bevelThickness: 5,
+        bevelSize: 8,
+        bevelOffset: 0,
+        bevelSegments: 5
+    } );
+    var mat = new THREE.MeshLambertMaterial({color:0x44cee3});
+    var textmesh = new THREE.Mesh(tgeometry,mat);
+    textmesh.position.set(-300,0,-400);
+    var textmesh2 = new THREE.Mesh(tgeometry2,mat)
+    textmesh2.position.set(-300,0,-9000);
+    myscene.scene.add(textmesh);
+    myscene.scene.add(textmesh2);
+  } );
+}
+
+
 
   newPlanet(texture){
     const params = {
@@ -164,10 +203,10 @@ class Level1 {
       this.RAF();
       this.Updates(t - this.previousFrame);
       // this.updatecamera();
-      this.updateSpaceObjects();
       this.updateHealthBoxes();
       if(!this.pause){
         //console.log(this.myRocket.health);
+        this.updateSpaceObjects();
         this.checkIfReachedGoal();
         this.checkPlayerHealth();
         this.updateGreatLight();
@@ -219,8 +258,12 @@ class Level1 {
   }
 
   createCylinder(timeout){
-    var cyl = new THREE.Mesh(new THREE.CylinderGeometry( 50, 100, 150, 32 ), new THREE.MeshPhongMaterial({color: 0x5fed98, opacity: 0.9, transparent: true}));
+    const cyltext = new THREE.TextureLoader().load(
+        'resources/textures/cone1.jpg'
+      );
+    var cyl = new THREE.Mesh(new THREE.CylinderGeometry( 50, 100, 150, 32 ), new THREE.MeshBasicMaterial({map: cyltext}));
     cyl.isalive = true;
+    cyl.type = 0; //type of space object to diiferentiate between space objects
     setTimeout(function(){
       cyl.isalive = false;
     }, timeout);
@@ -243,13 +286,13 @@ class Level1 {
   }
 
   updateSpaceObjects(){
-
+    
     //console.log(this.delay2);
       if(this.delay2 == 500){
 
       console.log("object created");
       for(var i = 0; i < 3; i++){
-      var cyl = this.createCylinder(30000);  // set timeout/lifetime
+      var cyl = this.createCylinder(15000);  // set timeout/lifetime
       cyl.position.set(this.myRocket.prod.position.x+250-(i * 250), this.myRocket.prod.position.y, this.myRocket.prod.position.z-600+ (i*200));
     }
 
@@ -267,17 +310,16 @@ class Level1 {
     }
   }
 
-
   loadHealthBoxes(){
     // cube to guide the player to goal
     const geometry = new THREE.BoxGeometry(50,50,50);
     const material = new THREE.MeshPhongMaterial( { color: 0x48e2f0 ,opacity: 0.6, transparent: true} );
     var healthBox1 = new THREE.Mesh( geometry, material );
-    healthBox1.position.set(0,-300,-5000);
+    healthBox1.position.set(0,-300,-4000);
     var healthBox2 = new THREE.Mesh( geometry, material );
-    healthBox2.position.set(200,300,-10000);
+    healthBox2.position.set(200,300,-8000);
     var healthBox3 = new THREE.Mesh( geometry, material );
-    healthBox3.position.set(200,300,-15000);
+    healthBox3.position.set(200,300,-13000);
     this.scene.add( healthBox1 );
     this.scene.add( healthBox2 );
     this.scene.add( healthBox3)
@@ -383,7 +425,7 @@ updateHealthBoxes(){
         this.myRocket.prod.position.set(this.myRocket.prod.position.x-50, this.myRocket.prod.position.y-100, this.myRocket.prod.position.z+150);
       }
     }
-
+    
   }
 
   spawnEnemies(){  // delay to set a delay before spawning a new enemy
@@ -412,12 +454,15 @@ updateHealthBoxes(){
     this.portal = new Portal(0);
     this.portal.rotateX(Math.PI/2);
     this.portal.scale.set(2,2,2);
-    this.portal.position.set(0,0,-20000);  //set portal position if you change this remember to change other stuff
+    this.portal.position.set(0,0,-15000);  //set portal position if you change this remember to change other stuff
     this.scene.add(this.portal);           //                                            like healthboxes positions
   }
 
   RestartLevel(){    //clear the scene then reload everything
     this.scene.clear();
+    this.loadIntro();
+    this.delay = 0;
+    this.delay2 = 0;
      const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
      directionalLight.position.set(0,10,0)
      this.scene.add( directionalLight );
