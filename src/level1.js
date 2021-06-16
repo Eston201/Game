@@ -251,7 +251,7 @@ class Level1 {
 
       console.log("object created");
       for(var i = 0; i < 3; i++){
-      var cyl = this.createCylinder(15000);  // set timeout/lifetime
+      var cyl = this.createCylinder(30000);  // set timeout/lifetime
       cyl.position.set(this.myRocket.prod.position.x+250-(i * 250), this.myRocket.prod.position.y, this.myRocket.prod.position.z-600+ (i*200));
     }
 
