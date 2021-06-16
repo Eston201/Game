@@ -16,12 +16,15 @@ class player {
     this.enemyplanes = this.params.enemyplanes;     // keep track of enemies
     this. beams = [];
     this.controller = new controls();
-    this.health = 20;
+    this.maxHealth = 20;     //set max health player can have here 
+    this.health = this.maxHealth;  
     this.dead = false; //check whether dead or alive
     this.takeDamage = function(damage){
       this.health = this.health - damage;
     }
-
+    this.refillHealth = function(){     //when called set current health to max health to refill 
+      this.health = this.maxHealth;
+    }
     this.steerAngle = 0;
     this.steerAngleTarget = 0;
 
