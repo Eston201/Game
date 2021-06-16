@@ -16,13 +16,13 @@ class player {
     this.enemyplanes = this.params.enemyplanes;     // keep track of enemies
     this. beams = [];
     this.controller = new controls();
-    this.maxHealth = 20;     //set max health player can have here 
-    this.health = this.maxHealth;  
+    this.maxHealth = 20;     //set max health player can have here
+    this.health = this.maxHealth;
     this.dead = false; //check whether dead or alive
     this.takeDamage = function(damage){
       this.health = this.health - damage;
     }
-    this.refillHealth = function(){     //when called set current health to max health to refill 
+    this.refillHealth = function(){     //when called set current health to max health to refill
       this.health = this.maxHealth;
     }
     this.steerAngle = 0;
@@ -178,7 +178,36 @@ class player {
     this.prod.add(this.aircraft);
 
     this.params.scene.add(this.prod);
-    this.state = this.aircraft.quaternion.clone();
+
+    const listener = new THREE.AudioListener();
+    this.params.camera.add( listener );
+
+    const audioLoader = new THREE.AudioLoader();
+
+    //load laser sound
+    this.LaserSound = new THREE.Audio( listener );
+
+    audioLoader.load( '../resources/Audio/Shooter/laserSmall_000.ogg',( buffer ) =>{
+
+        this.LaserSound.setBuffer( buffer );
+        this.LaserSound.setVolume( 0.5 );
+        this.LaserSound.setPlaybackRate(3)
+
+
+      } );
+
+    //load engine sound
+    this.EngineSound = new THREE.Audio( listener );
+    audioLoader.load( '../resources/Audio/Engine/spaceEngineLow_000.ogg',( b2 ) =>{
+
+          this.EngineSound.setBuffer( b2 );
+          this.EngineSound.setVolume( 0.5);
+          // this.EngineSound.setLoop(true)
+          this.EngineSound.setPlaybackRate(0.3);
+          //play the engine sound
+
+
+      } );
 
   }
 
@@ -196,15 +225,14 @@ class player {
     //default speed when not pressing W
     // this.prod.position.add(direction.multiplyScalar(2))
 
+    this.EngineSound.play();
     //controls for the plane on key press using imported controlls class
     //movement for aircaft
-
-
     //if mouse left click button is pressed
     if (this.controller._keys.Lclick ) {
       //fire lasers
       this.shootLaser();
-
+      this.LaserSound.play();
     }
 
     //if W key is pressed
@@ -323,6 +351,7 @@ class player {
     this.updateBeam(moveDistance);//update beams position in world
     this.tcamera.Update(delta);//update the camera to follow plane
     this.updateHealth();
+
 
   }
 

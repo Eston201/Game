@@ -19,7 +19,7 @@ class Level1 {
   init(){
 
     this.pause = false;
-    this.GameOver = false;  
+    this.GameOver = false;
     this.keyboard = new THREEx.KeyboardState(); // for capturing key presses
 
     //listens for Esc to pause the game
@@ -30,7 +30,6 @@ class Level1 {
     this.pauseMenu=document.getElementById('pauseMenu');
 
     this.scene = new THREE.Scene();
-    this.portal;
     this.reachedGoal = false;
     this.enemyplanes = [];
     this.delay = 0;  // delay before spawning new enemyplane
@@ -114,7 +113,7 @@ class Level1 {
      Restart.onclick = ()=>{
       this.RestartLevel();
   }
-     
+
  this.RAF();
 
 
@@ -146,7 +145,7 @@ class Level1 {
     return new enemy(params);
 
   }
-  
+
 
   OnWindowResize(){
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -165,7 +164,6 @@ class Level1 {
       this.RAF();
       this.Updates(t - this.previousFrame);
       // this.updatecamera();
-      this.torus.rotateY(Math.PI/100);
       this.updateSpaceObjects();
       this.updateHealthBoxes();
       if(!this.pause){
@@ -187,7 +185,7 @@ class Level1 {
         this.renderer.render(this.scene,this.camera);
       }
       this.previousFrame = t;
-      
+
 
     });
   }
@@ -234,9 +232,9 @@ class Level1 {
   loadPlanets(){
 
     for(var z = -10000; z < 20000; z = z + 1000){
-      var texture = Math.floor(Math.random() * (4 - 1) + 1); 
-      var x = Math.floor(Math.random() * (2500 - (-2500)) + (-2500)); 
-      var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000)); 
+      var texture = Math.floor(Math.random() * (4 - 1) + 1);
+      var x = Math.floor(Math.random() * (2500 - (-2500)) + (-2500));
+      var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000));
       var planetObject = this.newPlanet(texture);
       planetObject.planet.position.set(x,y,-z);
       planetObject.addBelt();
@@ -245,7 +243,7 @@ class Level1 {
   }
 
   updateSpaceObjects(){
-    
+
     //console.log(this.delay2);
       if(this.delay2 == 500){
 
@@ -385,12 +383,12 @@ updateHealthBoxes(){
         this.myRocket.prod.position.set(this.myRocket.prod.position.x-50, this.myRocket.prod.position.y-100, this.myRocket.prod.position.z+150);
       }
     }
-    
+
   }
 
   spawnEnemies(){  // delay to set a delay before spawning a new enemy
-    if(this.delay == 1000){  // spawn new enemy 
-      let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between 
+    if(this.delay == 1000){  // spawn new enemy
+      let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between
       var enemyPlane = this.spawnEnemyShip();
       enemyPlane.enemy.position.set(this.myRocket.prod.position.x + randomNum, this.myRocket.prod.position.y, this.myRocket.prod.position.z);
       this.enemyplanes.push(enemyPlane);
@@ -414,7 +412,7 @@ updateHealthBoxes(){
     this.portal = new Portal(0);
     this.portal.rotateX(Math.PI/2);
     this.portal.scale.set(2,2,2);
-    this.portal.position.set(0,0,-20000);  //set portal position if you change this remember to change other stuff 
+    this.portal.position.set(0,0,-20000);  //set portal position if you change this remember to change other stuff
     this.scene.add(this.portal);           //                                            like healthboxes positions
   }
 
@@ -429,7 +427,7 @@ updateHealthBoxes(){
      this.LoadPlayer();
      this.loadGreatLight();
      this.loadPlanets();
-     this.enemyplanes = []; this.enemyplanes.length = 0; 
+     this.enemyplanes = []; this.enemyplanes.length = 0;
      this.pause = false;
   }
 

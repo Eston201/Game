@@ -57,7 +57,7 @@ class Particles {
 
     else{
       this.params.scene.remove(this.particles);
-      
+
     }
 
 

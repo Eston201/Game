@@ -15,7 +15,7 @@ class Level3 {
   init(){
       this.enemyplanes = [];
       this.scene = new THREE.Scene();
-
+      this.animate = true;
       // const axesHelper = new THREE.AxesHelper( 5 );
       // this.scene.add( axesHelper );
       this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);
@@ -45,16 +45,17 @@ class Level3 {
       const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
       directionalLight.position.set(0,10,0)
       this.scene.add( directionalLight );
+      this.loader = new GLTFLoader();
 
+      this.loadobjects();
       //particles
       this.particles();
       //white flash after hyperspace
       this.whiteflash();
       //players model
       this.LoadPlayer();
-
-      this.loader = new GLTFLoader();
-
+      //load the thruster sound
+      this.ThrusterSound();
 
 
       this.previousFrame = null;//used for counting frames to get delta times
@@ -85,16 +86,21 @@ class Level3 {
 
 
       this.RAF();
-      this.Updates(t - this.previousFrame);
+      if(this.animate){
+
+        this.Update(t - this.previousFrame);
+      }
+      else{
+        this.Updates(t - this.previousFrame);
+      }
 
       this.renderer.render(this.scene, this.camera);
       this.previousFrame = t;
 
     });
   }
-
   // update the scene/ objects /player..etc
-  Updates(timeElapsed) {
+  Update(timeElapsed) {
     // if(this.pause){
     //
     //   this.pauseMenu.style.visibility = "visible";
@@ -107,7 +113,6 @@ class Level3 {
 
     const timeElapsedS = timeElapsed * 0.001;
     //update the players ship
-
     //traveling through hyperspace
     this.particle.update(timeElapsedS);
     if(this.particle.particles.position.z<10000){
@@ -116,21 +121,27 @@ class Level3 {
       this.myRocket.ring2.rotation.x += 0.1;
       this.myRocket.shooter.rotation.z+=0.1;
     }
+
     //exiting...all the animations of stuff goes here
     else{
       //white flash is vissible
       this.flash.visible=true;
       //slowly decrease the value of alpha of the flash material to be transparent
-      gsap.to(this.flashmat.uniforms.uAlpha,{duration:4,value:0});
-      //update players movement ..etc
-      this.myRocket.Update(timeElapsedS);
-      //load objects
-      this.loadobjects();
+      gsap.to(this.flashmat.uniforms.uAlpha,{duration:2,delay:1,value:0});
+      //stop the animation of particles
+      this.animate = false;
     }
 
+  }
 
+  Updates(timeElapsed){
+    const timeElapsedS = timeElapsed * 0.001;
+    //remove particles animation over
+    this.scene.remove(this.particle.particles);
+    //update players ship
+    this.myRocket.Update(timeElapsedS);
 
-
+    this.makeVisible();
 
   }
 
@@ -159,13 +170,39 @@ class Level3 {
     this.scene.add(this.flash)
   }
   loadobjects(){
-    this.loader.load( '../resources/Earth/scene.gltf',( gltf ) =>{
-      gltf.scene.scale.set(0.2,0.2,0.2);
-
-      this.scene.add( gltf.scene );
+    //load the earth model
+    this.loader.load( '../resources/Planets/Earth/scene.gltf',( gltf ) =>{
+      this.Earth=gltf.scene;
+      //set the scale,position and visibility(for later)
+      this.Earth.scale.set(0.5,0.5,0.5);
+      this.Earth.position.set(-100,0,-200);
+      this.Earth.visible=false;
+      this.scene.add( this.Earth );
 
      });
   }
 
+  makeVisible(){
+    this.Earth.visible=true;
+  }
+
+  ThrusterSound(){
+    const listener = new THREE.AudioListener();
+    this.camera.add( listener );
+
+    const audioLoader = new THREE.AudioLoader();
+
+    //load laser sound
+    this.Thruster = new THREE.Audio( listener );
+
+    audioLoader.load( '../resources/Audio/Thruster/thrusterFire_000.ogg',( buffer ) =>{
+
+        this.Thruster.setBuffer( buffer );
+        this.Thruster.setVolume( 0.5 );
+        this.Thruster.setPlaybackRate(0.6);
+        this.Thruster.play();
+
+      } );
+  }
 
 };
