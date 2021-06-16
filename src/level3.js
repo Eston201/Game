@@ -1,10 +1,11 @@
 
 import * as THREE from '../js/three.module.js';
 import {player} from './spaceship.js';
+import {SolarSystem} from './SolarSystem.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {Particles} from './particles.js'
 import {GLTFLoader} from '../js/GLTFLoader.js';
-
+import * as dat from '../js/dat.gui.module.js'
 export{Level3}
 
 class Level3 {
@@ -13,12 +14,15 @@ class Level3 {
   }
 
   init(){
+      this.frameNo=0;
+      //debugging
+      this.gui = new dat.GUI();
       this.enemyplanes = [];
       this.scene = new THREE.Scene();
       this.animate = true;
       // const axesHelper = new THREE.AxesHelper( 5 );
       // this.scene.add( axesHelper );
-      this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);
+      this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 10000);
       this.rearcamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);  // press b
       this.frontcamera = new THREE.PerspectiveCamera(100, window.innerWidth/window.innerHeight,0.1, 1500);  //press v
 
@@ -43,8 +47,12 @@ class Level3 {
 
       //directionalLight
       const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
-      directionalLight.position.set(0,10,0)
+      directionalLight.position.set(0,20,0)
       this.scene.add( directionalLight );
+      const directionalLight2 = new THREE.DirectionalLight( 0xffffff, 2.5 );
+      directionalLight2.position.set(0,-40,0)
+      this.scene.add( directionalLight2 );
+
       this.loader = new GLTFLoader();
 
       this.loadobjects();
@@ -56,8 +64,8 @@ class Level3 {
       this.LoadPlayer();
       //load the thruster sound
       this.ThrusterSound();
-
-
+      this.loadBoss();
+      //debugging
       this.previousFrame = null;//used for counting frames to get delta times
       this.RAF();
   }
@@ -140,8 +148,15 @@ class Level3 {
     this.scene.remove(this.particle.particles);
     //update players ship
     this.myRocket.Update(timeElapsedS);
+    if(this.frameNo==0){
+      this.SolarSystem.makeVisible();
+      this.Boss.visible=true;
+      this.gui.add(this.Boss.position,'x').min(-1000000).max(1000000).step(0.1).name('Boss X');
+      this.gui.add(this.Boss.position,'y').min(-1000000).max(1000000).step(0.1).name('Boss Y');
+      this.gui.add(this.Boss.position,'z').min(-1000000).max(1000000).step(0.1).name('Boss Z');
+    }
 
-    this.makeVisible();
+      this.frameNo++
 
   }
 
@@ -169,22 +184,16 @@ class Level3 {
     this.flash.visible=false;
     this.scene.add(this.flash)
   }
+  //load all the models
   loadobjects(){
-    //load the earth model
-    this.loader.load( '../resources/Planets/Earth/scene.gltf',( gltf ) =>{
-      this.Earth=gltf.scene;
-      //set the scale,position and visibility(for later)
-      this.Earth.scale.set(0.5,0.5,0.5);
-      this.Earth.position.set(-100,0,-200);
-      this.Earth.visible=false;
-      this.scene.add( this.Earth );
 
-     });
+    this.SolarSystem = new SolarSystem({
+      scene:this.scene,
+      camera:this.camera
+    });
+
   }
 
-  makeVisible(){
-    this.Earth.visible=true;
-  }
 
   ThrusterSound(){
     const listener = new THREE.AudioListener();
@@ -192,7 +201,7 @@ class Level3 {
 
     const audioLoader = new THREE.AudioLoader();
 
-    //load laser sound
+    //load ThrusterSound
     this.Thruster = new THREE.Audio( listener );
 
     audioLoader.load( '../resources/Audio/Thruster/thrusterFire_000.ogg',( buffer ) =>{
@@ -203,6 +212,18 @@ class Level3 {
         this.Thruster.play();
 
       } );
+  }
+
+  loadBoss(){
+    this.loader.load( '../resources/Boss/scene.gltf',( gltf ) =>{
+      this.Boss=gltf.scene;
+      //set the scale,position and visibility(for later)
+      this.Boss.scale.set(20,50,20);
+      this.Boss.position.set(-1000,-250,-4000);
+      this.Boss.visible=false;
+      this.params.scene.add( this.Boss );
+
+     });
   }
 
 };
