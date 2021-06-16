@@ -202,6 +202,23 @@ button:hover {
 
    transform: translate(-50%, -100%);
 }
+.center3{
+    margin: 0;
+    position: absolute;
+    top: 60%;
+    left: 40%;
+
+    transform:translate(-50%,-100%);
+}
+.center4{
+    margin: 0;
+   position: absolute;
+   top: 60%;
+   left: 40%;
+
+   transform: translate(-50%, -100%);
+}
+
 
 #div{
   height: 100%;
@@ -217,6 +234,22 @@ button:hover {
 }
 #pauseMenu {
 	width: 100px;
+	height: 100px;
+	position: absolute;
+	top: 90;
+	left: 10;
+  visibility: hidden;
+}
+#GameOverMenu{
+    width: 100px;
+	height: 100px;
+	position: absolute;
+	top: 90;
+	left: 10;
+  visibility: hidden;
+}
+#ReachedGoalMenu{
+    width: 100px;
 	height: 100px;
 	position: absolute;
 	top: 90;

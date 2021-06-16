@@ -28,6 +28,8 @@ class Level1 {
     }, true);
     //get the pause menu in the html file
     this.pauseMenu=document.getElementById('pauseMenu');
+    this.gameOverMenu=document.getElementById('GameOverMenu');
+    this.reachedGoalMenu=document.getElementById('ReachedGoalMenu');
 
     this.scene = new THREE.Scene();
     this.reachedGoal = false;
@@ -114,6 +116,17 @@ class Level1 {
       this.RestartLevel();
   }
 
+  var RestartfromGameOver = document.getElementById("restart1");
+      RestartfromGameOver.onclick=()=>{
+        //this.gameOver = false;
+        this.RestartLevel();
+      }
+  
+  var RestartfromReachedGoal = document.getElementById("restart2");
+  RestartfromReachedGoal.onclick=()=>{
+    this.reachedGoal = false;
+    this.RestartLevel();
+  }
  this.RAF();
 
 
@@ -199,6 +212,20 @@ class Level1 {
   }
   else{
     this.pauseMenu.style.visibility = "hidden";
+  }
+
+  if(this.reachedGoal){
+    this.reachedGoalMenu.style.visibility = "visible";
+
+    return;
+  }else{
+    this.reachedGoalMenu.style.visibility = "hidden";
+  }
+  if(this.GameOver){
+    this.gameOverMenu.style.visibility = "visible";
+    return;
+  }else{
+    this.gameOverMenu.style.visibility = "hidden";
   }
 
     const timeElapsedS = timeElapsed * 0.001;
@@ -429,6 +456,9 @@ updateHealthBoxes(){
      this.loadPlanets();
      this.enemyplanes = []; this.enemyplanes.length = 0;
      this.pause = false;
+     this.reachedGoal = false;
+     this.gameOver = false;
+     this.gameOverMenu.style.visibility = "hidden";
   }
 
 
