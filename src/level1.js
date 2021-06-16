@@ -19,7 +19,7 @@ class Level1 {
   init(){
 
     this.pause = false;
-    this.GameOver = false;
+    this.GameOver = false;  
     this.keyboard = new THREEx.KeyboardState(); // for capturing key presses
 
     //listens for Esc to pause the game
@@ -34,7 +34,8 @@ class Level1 {
     this.reachedGoal = false;
     this.enemyplanes = [];
     this.delay = 0;  // delay before spawning new enemyplane
-    this.camera = new THREE.PerspectiveCamera(100, window.innerWidth/window.innerHeight,0.1, 5000);
+    this.delay2 = 0;  //delay before spawning incoming space object
+    this.camera = new THREE.PerspectiveCamera(90, window.innerWidth/window.innerHeight,0.1, 5000);
     this.rearcamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);  // press b
     this.frontcamera = new THREE.PerspectiveCamera(100, window.innerWidth/window.innerHeight,0.1, 1500);  //press v
     this.objects = []; //objects in space except planet
@@ -81,6 +82,9 @@ class Level1 {
    ]);
 
    this.scene.background = texture;
+
+   const axesHelper = new THREE.AxesHelper( 5 );
+   this.scene.add( axesHelper );
    //Lights
    //directionalLight
    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
@@ -110,7 +114,7 @@ class Level1 {
      Restart.onclick = ()=>{
       this.RestartLevel();
   }
-
+     
  this.RAF();
 
 
@@ -142,7 +146,7 @@ class Level1 {
     return new enemy(params);
 
   }
-
+  
 
   OnWindowResize(){
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -160,7 +164,19 @@ class Level1 {
 
       this.RAF();
       this.Updates(t - this.previousFrame);
-
+      // this.updatecamera();
+      this.torus.rotateY(Math.PI/100);
+      this.updateSpaceObjects();
+      this.updateHealthBoxes();
+      if(!this.pause){
+        //console.log(this.myRocket.health);
+        this.checkIfReachedGoal();
+        this.checkPlayerHealth();
+        this.updateGreatLight();
+        this.spawnEnemies();
+        this.updateEnemyPlanes();
+        this.checkCollision();
+      }
       if(this.keyboard.pressed("b")){
       this.renderer.render(this.scene, this.rearcamera);
       }
@@ -171,7 +187,7 @@ class Level1 {
         this.renderer.render(this.scene,this.camera);
       }
       this.previousFrame = t;
-
+      
 
     });
   }
@@ -202,18 +218,14 @@ class Level1 {
     for (var i = 0; i < this.enemyplanes.length; i++) {
       this.enemyplanes[i].Update(timeElapsedS);
     }
-    this.checkIfReachedGoal();
-    this.checkPlayerHealth();
-    this.updateGreatLight();
-    this.spawnEnemies();
-    this.updateEnemyPlanes();
-    this.checkCollision();
-    this.updateSpaceObjects();
-    this.updateHealthBoxes();
   }
 
-  createCylinder(){
-    var cyl = new THREE.Mesh(new THREE.CylinderGeometry( 200, 200, 500, 32 ), new THREE.MeshPhongMaterial({color: 0x5fed98, opacity: 0.9, transparent: true}));
+  createCylinder(timeout){
+    var cyl = new THREE.Mesh(new THREE.CylinderGeometry( 50, 100, 150, 32 ), new THREE.MeshPhongMaterial({color: 0x5fed98, opacity: 0.9, transparent: true}));
+    cyl.isalive = true;
+    setTimeout(function(){
+      cyl.isalive = false;
+    }, timeout);
     this.scene.add(cyl);
     this.objects.push(cyl);
     return cyl;
@@ -221,35 +233,42 @@ class Level1 {
 
   loadPlanets(){
 
-    for(var z = -10000; z < 20000; z = z + 500){
-      var texture = Math.floor(Math.random() * (4 - 1) + 1);
-      var x = Math.floor(Math.random() * (1500 - (-1500)) + (-1500));
-      var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000));
+    for(var z = -10000; z < 20000; z = z + 1000){
+      var texture = Math.floor(Math.random() * (4 - 1) + 1); 
+      var x = Math.floor(Math.random() * (2500 - (-2500)) + (-2500)); 
+      var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000)); 
       var planetObject = this.newPlanet(texture);
       planetObject.planet.position.set(x,y,-z);
       planetObject.addBelt();
       this.planetArr.push(planetObject);
      }
-     for(var z = 5000; z < 10000; z = z + 1000){
-       var x = Math.floor(Math.random() * (-1500 - (-5000)) + (-5000));
-       var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000));
-       var cyl = this.createCylinder();
-       cyl.position.set(x,y,-z);
-     }
   }
 
   updateSpaceObjects(){
+    
+    //console.log(this.delay2);
+      if(this.delay2 == 500){
+
+      console.log("object created");
+      for(var i = 0; i < 3; i++){
+      var cyl = this.createCylinder(15000);  // set timeout/lifetime
+      cyl.position.set(this.myRocket.prod.position.x+250-(i * 250), this.myRocket.prod.position.y, this.myRocket.prod.position.z-600+ (i*200));
+    }
+
+        this.delay2 = 0;
+     }
+     this.delay2 ++;
+    //console.log(this.objects.length);
     for(var index = 0; index < this.objects.length; index = index+1){
         var object = this.objects[index];
-        object.rotateZ(Math.PI/250);
-        if(object.position.x < 2000){
-        object.translateX(10);
+        if(!object.isalive){
+          this.objects.splice(index,1);
         }
-        else{
-          object.translateX(-10);
-        }
+        object.rotateX(Math.PI/100);
+        object.position.set(object.position.x,object.position.y,object.position.z+1);
     }
   }
+
 
   loadHealthBoxes(){
     // cube to guide the player to goal
@@ -329,7 +348,7 @@ updateHealthBoxes(){
   }
 
   checkCollision(){
-    for(var index=0; index< this.planetArr.length; index++){
+    for(var index=0; index< this.planetArr.length; index++){       //collide with planets
       var p = this.planetArr[index];
       if(is_collision(this.myRocket.prod, p.planet, 250)){
        // console.log("hit planet");
@@ -338,31 +357,40 @@ updateHealthBoxes(){
       }
     }
 
-    for(var index = 0; index < this.enemyplanes.length; index++){
+    for(var index = 0; index < this.enemyplanes.length; index++){     //collide with enemy planes
       var e = this.enemyplanes[index];
       if(is_collision(this.myRocket.prod, e.enemy, 15)){
-        //console.log("hit enemy plane");
         this.myRocket.takeDamage(2);
         e.takeDamage(5);
+                                   //simulate collision
+        this.myRocket.prod.position.set(this.myRocket.prod.position.x, this.myRocket.prod.position.y-50, this.myRocket.prod.position.z+150);
+        e.enemy.position.set(e.enemy.position.x,e.enemy.position.y+50,e.enemy.position.z-150)
       }
     }
 
-    for(var i = 0; i < this.healthboxes.length; i++){
+    for(var i = 0; i < this.healthboxes.length; i++){                    //collide with health boxes
       var healthbox = this.healthboxes[i];
-      if(is_collision(healthbox, this.myRocket.prod, 20)){
-
-        this.myRocket.health = 20;  // replenish health
+      if(is_collision(healthbox, this.myRocket.prod, 30)){
+        this.myRocket.refillHealth();  // replenish health
         console.log(this.myRocket.health);
         healthbox.visible = false;
       }
     }
 
+    for(var i = 0; i < this.objects.length; i++){                       //collide with space objects
+      var spaceobject = this.objects[i];
+      if(is_collision(this.myRocket.prod,spaceobject,130)){
+        this.myRocket.takeDamage(3);
+                                            // simulate collision
+        this.myRocket.prod.position.set(this.myRocket.prod.position.x-50, this.myRocket.prod.position.y-100, this.myRocket.prod.position.z+150);
+      }
+    }
+    
   }
 
-  spawnEnemies(){
-    //console.log(this.delay);
-    if(this.delay == 1000){  // spawn new enemy
-      let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between
+  spawnEnemies(){  // delay to set a delay before spawning a new enemy
+    if(this.delay == 1000){  // spawn new enemy 
+      let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between 
       var enemyPlane = this.spawnEnemyShip();
       enemyPlane.enemy.position.set(this.myRocket.prod.position.x + randomNum, this.myRocket.prod.position.y, this.myRocket.prod.position.z);
       this.enemyplanes.push(enemyPlane);
@@ -376,7 +404,7 @@ updateHealthBoxes(){
     for(var index = 0; index < this.enemyplanes.length; index = index+1){
       var enemy = this.enemyplanes[index];
       if(enemy.dead){
-        this.enemyplanes.splice(index,1);  // remove dead enemy plane from list
+        this.enemyplanes.splice(index,1);  // remove dead enemy plane from list of enemy planes
       }
     }
   }
@@ -386,7 +414,7 @@ updateHealthBoxes(){
     this.portal = new Portal(0);
     this.portal.rotateX(Math.PI/2);
     this.portal.scale.set(2,2,2);
-    this.portal.position.set(0,0,-20000);  //set portal position if you change this remember to change other stuff
+    this.portal.position.set(0,0,-20000);  //set portal position if you change this remember to change other stuff 
     this.scene.add(this.portal);           //                                            like healthboxes positions
   }
 
@@ -401,7 +429,7 @@ updateHealthBoxes(){
      this.LoadPlayer();
      this.loadGreatLight();
      this.loadPlanets();
-     this.enemyplanes = []; this.enemyplanes.length = 0;
+     this.enemyplanes = []; this.enemyplanes.length = 0; 
      this.pause = false;
   }
 
