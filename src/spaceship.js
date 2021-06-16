@@ -425,7 +425,7 @@ class player {
 }
 
   updateHealth(){
-    if(this.health==0){
+    if(this.health<=0){
       //console.log(this.health);
       this.dead = true;
       this.prod.visible = false;
