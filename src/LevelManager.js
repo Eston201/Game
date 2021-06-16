@@ -1,4 +1,5 @@
 import {Level1} from './level1.js'
+import {Level2} from './level2.js'
 import {Level3} from './level3.js'
 // export {Manager}
 var LV1 = document.getElementById("Level1");
@@ -10,10 +11,10 @@ LV1.onclick = function(){
   let lv1 = new Level1();
 }
 //for later
-// LV2.onclick = function(){
-//   document.getElementById('div').style.display = 'none';
-//   const lv2 = new Level2();
-// }
+LV2.onclick = function(){
+   document.getElementById('div').style.display = 'none';
+   const lv2 = new Level2();
+ }
 
 LV3.onclick = function(){
   document.getElementById('div').style.display = 'none';
