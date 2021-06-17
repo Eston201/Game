@@ -27,10 +27,6 @@ class Level3 {
       //get the pause menu in the html file
       this.pauseMenu=document.getElementById('pauseMenu');
 
-
-
-
-
       this.frameNo=0;
       //debugging
       this.gui = new dat.GUI();
@@ -124,8 +120,6 @@ class Level3 {
         this.previousFrame = t;
       }
 
-
-
       this.RAF();
       if(this.animate){
 
@@ -142,15 +136,6 @@ class Level3 {
   }
   // update the scene/ objects /player..etc
   Update(timeElapsed) {
-    // if(this.pause){
-    //
-    //   this.pauseMenu.style.visibility = "visible";
-    //
-    //   return;
-    // }
-    // else{
-    //   this.pauseMenu.style.visibility = "hidden";
-    // }
 
     const timeElapsedS = timeElapsed * 0.001;
     //update the players ship
@@ -158,9 +143,9 @@ class Level3 {
     this.particle.update(timeElapsedS);
     if(this.particle.particles.position.z<10000){
 
-      // this.myRocket.ring1.rotation.y += 0.05;
-      // this.myRocket.ring2.rotation.x += 0.1;
-      // this.myRocket.shooter.rotation.z+=0.1;
+      this.myRocket.ring1.rotation.y += 0.05;
+      this.myRocket.ring2.rotation.x += 0.1;
+      this.myRocket.shooter.rotation.z+=0.1;
     }
 
     //exiting...all the animations of stuff goes here
@@ -185,21 +170,27 @@ class Level3 {
     else{
       this.pauseMenu.style.visibility = "hidden";
     }
+
     const timeElapsedS = timeElapsed * 0.001;
     //remove particles animation over
     this.scene.remove(this.particle.particles);
-    //update players ship
 
+    //so we dont waste time making the objects visibile over again when its already vissible
     if(this.frameNo==0){
       this.SolarSystem.makeVisible();
       this.Boss.makeVisible();
     }
+    //update players ship
     this.myRocket.Update(timeElapsedS);
-    this.Boss.Update();
+    //is boss is alive animate
+    if(this.Boss.isAlive){
+      this.Boss.Update();
+    }
+
       this.frameNo++
 
   }
-
+  //create particles an add them to the scene
   particles(){
     this.particle = new Particles({
       scene:this.scene,
@@ -208,8 +199,11 @@ class Level3 {
 
   }
 
+  //flash the screen with white plane geo
   whiteflash(){
     this.flashgeo = new THREE.PlaneBufferGeometry(2,2,1,1);
+    //use a shader material to get the vertices of plane to match the viewport
+    //2 2 because of clip coordinates
     this.flashmat = new THREE.ShaderMaterial({
     transparent:true,
     uniforms:{
@@ -224,6 +218,7 @@ class Level3 {
     this.flash.visible=false;
     this.scene.add(this.flash)
   }
+
   //load all the models
   loadobjects(){
 
@@ -253,18 +248,13 @@ class Level3 {
 
       } );
   }
-  bossvisibile(){
-    this.Boss.visible=true;
-    this.gui.add(this.Boss.position,'x').min(-1000000).max(1000000).step(0.1).name('Boss X');
-    this.gui.add(this.Boss.position,'y').min(-1000000).max(1000000).step(0.1).name('Boss Y');
-    this.gui.add(this.Boss.position,'z').min(-1000000).max(1000000).step(0.1).name('Boss Z');
-  }
 
   loadBoss(){
 
     this.Boss = new Boss({
       scene: this.scene,
-      camera: this.camera
+      camera: this.camera,
+      target: this.myRocket.prod
     })
 
   }

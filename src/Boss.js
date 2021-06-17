@@ -12,6 +12,8 @@ class Boss {
     this.loader = new GLTFLoader();
     this.health = 1000;
     this.isAlive = true;
+    this.target = params.target;
+
     this.LoadBoss();
 
   }
@@ -21,15 +23,16 @@ class Boss {
       this.Boss=gltf.scene;
       //set the scale,position and visibility(for later)
       this.Boss.scale.set(5,5,5);
-      this.Boss.position.set(0,0,-1000);
+      this.Boss.position.set(0,0,-3000);
       this.Boss.visible=false;
       this.params.scene.add( this.Boss );
      });
   }
   makeVisible(){
-    this.Boss.visible=true;;
+    this.Boss.visible=true;
   }
-  Update(){
 
+  Update(){
+    this.Boss.lookAt(this.target.position);
   }
 }
