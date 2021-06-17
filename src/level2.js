@@ -420,7 +420,7 @@ updateHealthBoxes(){
   }
 
   updateGreatLight(){ // stay 300 units ahead of player until reachedGoal
-    if(!this.reachedGoal){
+    if(!this.torusreachedGoal){
     this.torus.position.set(0,0,this.myRocket.prod.position.z-300);
 
     //light and cone continuously follow torus
