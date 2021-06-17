@@ -10,7 +10,7 @@ body {
 }
 
 h1 {
-    top: -100px;
+    top: -150px;
     left: -50px;
     text-align: center;
     position: relative;
@@ -147,7 +147,7 @@ button::after {
 
 button {
     position: relative;
-    height: 120%;
+    height: 100%;
     top: 150px;
     left: 110px;
     box-sizing: border-box;
@@ -182,7 +182,7 @@ button:hover {
 .center {
    margin: 0;
    position: absolute;
-   top: 50%;
+   top: 30%;
    left: 50%;
    z-index: 1;
    background-size: cover;
