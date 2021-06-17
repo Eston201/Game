@@ -251,7 +251,7 @@ class enemy {
 
 
   updateHealth(){
-    if(this.health==0){
+    if(this.health<=0){
       this.enemy.visible = false;
       this.dead = true;
       this.params.scene.remove(this.enemy);
