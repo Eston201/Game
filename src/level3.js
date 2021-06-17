@@ -5,7 +5,8 @@ import {SolarSystem} from './SolarSystem.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {Particles} from './particles.js'
 import {GLTFLoader} from '../js/GLTFLoader.js';
-import * as dat from '../js/dat.gui.module.js'
+import * as dat from '../js/dat.gui.module.js';
+import {Boss} from './Boss.js'
 export{Level3}
 
 class Level3 {
@@ -14,6 +15,22 @@ class Level3 {
   }
 
   init(){
+
+      this.pause = false;
+      this.GameOver = false;
+      this.keyboard = new THREEx.KeyboardState(); // for capturing key presses
+
+      //listens for Esc to pause the game
+      window.addEventListener("keydown", (e)=>{
+        this.isPaused(e);
+      }, true);
+      //get the pause menu in the html file
+      this.pauseMenu=document.getElementById('pauseMenu');
+
+
+
+
+
       this.frameNo=0;
       //debugging
       this.gui = new dat.GUI();
@@ -53,6 +70,9 @@ class Level3 {
       directionalLight2.position.set(0,-40,0)
       this.scene.add( directionalLight2 );
 
+      const light = new THREE.AmbientLight( 0x404040,5); // soft white light
+      this.scene.add( light );
+
       this.loader = new GLTFLoader();
 
       this.loadobjects();
@@ -65,10 +85,22 @@ class Level3 {
       //load the thruster sound
       this.ThrusterSound();
       this.loadBoss();
-      //debugging
+
+      this.btnResume = document.getElementById("Resume");
+      this.btnResume.onclick =()=>{
+          //set pause to false to resume animation
+          this.pause=false;
+      }
+
+      var Restart = document.getElementById("Restart");
+            Restart.onclick = ()=>{
+            this.RestartLevel();
+      }
+
       this.previousFrame = null;//used for counting frames to get delta times
       this.RAF();
   }
+
 
   LoadPlayer(){
     this.myRocket = new player(this.params);
@@ -77,6 +109,7 @@ class Level3 {
     this.rearcamera.lookAt(this.myRocket.prod.position);
     this.myRocket.prod.add(this.rearcamera);
     this.myRocket.prod.add(this.frontcamera);
+    this.Quart
   }
 
   OnWindowResize(){
@@ -125,9 +158,9 @@ class Level3 {
     this.particle.update(timeElapsedS);
     if(this.particle.particles.position.z<10000){
 
-      this.myRocket.ring1.rotation.y += 0.05;
-      this.myRocket.ring2.rotation.x += 0.1;
-      this.myRocket.shooter.rotation.z+=0.1;
+      // this.myRocket.ring1.rotation.y += 0.05;
+      // this.myRocket.ring2.rotation.x += 0.1;
+      // this.myRocket.shooter.rotation.z+=0.1;
     }
 
     //exiting...all the animations of stuff goes here
@@ -143,19 +176,26 @@ class Level3 {
   }
 
   Updates(timeElapsed){
+    if(this.pause){
+
+      this.pauseMenu.style.visibility = "visible";
+
+      return;
+    }
+    else{
+      this.pauseMenu.style.visibility = "hidden";
+    }
     const timeElapsedS = timeElapsed * 0.001;
     //remove particles animation over
     this.scene.remove(this.particle.particles);
     //update players ship
-    this.myRocket.Update(timeElapsedS);
+
     if(this.frameNo==0){
       this.SolarSystem.makeVisible();
-      this.Boss.visible=true;
-      this.gui.add(this.Boss.position,'x').min(-1000000).max(1000000).step(0.1).name('Boss X');
-      this.gui.add(this.Boss.position,'y').min(-1000000).max(1000000).step(0.1).name('Boss Y');
-      this.gui.add(this.Boss.position,'z').min(-1000000).max(1000000).step(0.1).name('Boss Z');
+      this.Boss.makeVisible();
     }
-
+    this.myRocket.Update(timeElapsedS);
+    this.Boss.Update();
       this.frameNo++
 
   }
@@ -213,17 +253,34 @@ class Level3 {
 
       } );
   }
+  bossvisibile(){
+    this.Boss.visible=true;
+    this.gui.add(this.Boss.position,'x').min(-1000000).max(1000000).step(0.1).name('Boss X');
+    this.gui.add(this.Boss.position,'y').min(-1000000).max(1000000).step(0.1).name('Boss Y');
+    this.gui.add(this.Boss.position,'z').min(-1000000).max(1000000).step(0.1).name('Boss Z');
+  }
 
   loadBoss(){
-    this.loader.load( '../resources/Boss/scene.gltf',( gltf ) =>{
-      this.Boss=gltf.scene;
-      //set the scale,position and visibility(for later)
-      this.Boss.scale.set(20,50,20);
-      this.Boss.position.set(-1000,-250,-4000);
-      this.Boss.visible=false;
-      this.params.scene.add( this.Boss );
 
-     });
+    this.Boss = new Boss({
+      scene: this.scene,
+      camera: this.camera
+    })
+
   }
+  //check  if user pauses and stops animation in loop
+  isPaused(e){
+    if(e.keyCode==27){
+      this.pause = !this.pause;
+    }
+  }
+
+  RestartLevel(){    //clear the scene then reload everything
+   // this.scene.clear();
+   this.pause=false;
+   this.myRocket.prod.position.set(0,0,0);
+
+ }
+
 
 };
