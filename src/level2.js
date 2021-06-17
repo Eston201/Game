@@ -27,10 +27,13 @@ class Level2 {
     }, true);
     //get the pause menu in the html file
     this.pauseMenu=document.getElementById('pauseMenu');
+    this.gameOverMenu=document.getElementById('GameOverMenu');
+    this.reachedGoalMenu=document.getElementById('ReachedGoalMenu');
 
     this.scene = new THREE.Scene();
     this.portal;
-    this.reachedGoal = false;
+    this.torusreachedGoal = false;  //check if great light source has reached goal
+    this.playerReachedGoal = false;  // check if the player has reached the goal
     this.enemyplanes = [];
     this.delay = 0;  // delay before spawning new enemyplane
     this.delay2 = 0;  //delay before spawning incoming space object
@@ -113,6 +116,16 @@ class Level2 {
      Restart.onclick = ()=>{
       this.RestartLevel();
   }
+  var RestartfromGameOver = document.getElementById("restart1");
+  RestartfromGameOver.onclick=()=>{
+    //this.gameOver = false;
+    this.RestartLevel();
+  }
+
+  var RestartfromReachedGoal = document.getElementById("restart2");
+  RestartfromReachedGoal.onclick=()=>{
+  this.RestartLevel();
+  }
   this.loadIntro();
 
  this.RAF();
@@ -167,7 +180,12 @@ class Level2 {
   }
 
   LoadPlayer(){
-    this.myRocket = new player(this.params);
+    const params = {
+      camera: this.camera,
+      scene: this.scene,
+      enemyplanes: this.enemyplanes
+    }
+    this.myRocket = new player(params);
     this.myRocket.setLaserColor(0xff8d78)
     this.myRocket.setMaxHealth(25);
     this.rearcamera.position.set(this.myRocket.prod.position.x, this.myRocket.prod.position.y+20, this.myRocket.prod.position.z-70);
@@ -242,7 +260,21 @@ class Level2 {
   else{
     this.pauseMenu.style.visibility = "hidden";
   }
+  if(this.GameOver){
+    this.gameOverMenu.style.visibility = "visible";
 
+    return;
+  }
+  else{
+    this.gameOverMenu.style.visibility = "hidden";
+  }
+  if(this.playerReachedGoal){
+    this.reachedGoalMenu.style.visibility = "visible";
+
+    return;
+  }else{
+    this.reachedGoalMenu.style.visibility = "hidden";
+  }
     const timeElapsedS = timeElapsed * 0.001;
     //update the players ship
     if (this.myRocket) {
@@ -412,11 +444,18 @@ updateHealthBoxes(){
     if(this.myRocket.dead){
       this.GameOver = true;
     }
+    if(this.myRocket.prod.position.z < (this.portal.position.z)){  // if player missed portal, game over
+      this.GameOver = true;
+    }
   }
 
   checkIfReachedGoal(){
     if(is_collision(this.torus,this.portal,3)){
-        this.reachedGoal = true;
+        this.torusreachedGoal = true;                    //check if great light has reached goal
+    }
+    var distToPortal = this.myRocket.prod.position.z - this.portal.position.z;
+    if(is_collision(this.myRocket.prod, this.portal, 80) && Math.abs(distToPortal) < 5.5){ //check if player has reached goal
+      this.playerReachedGoal = true;                       
     }
   }
 
@@ -502,17 +541,22 @@ updateHealthBoxes(){
     this.loadIntro();
     this.delay = 0;
     this.delay2 = 0;
-     const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
-     directionalLight.position.set(0,10,0)
-     this.scene.add( directionalLight );
-     const amblight = new THREE.AmbientLight(0x404040 ,2);
-     this.scene.add(amblight);
-     this.scene.add(this.portal);
-     this.LoadPlayer();
-     this.loadGreatLight();
-     this.loadPlanets();
-     this.enemyplanes = []; this.enemyplanes.length = 0; 
-     this.pause = false;
+    this.pause = false;
+    this.GameOver = false;
+    this.torusreachedGoal = false;
+    this.playerReachedGoal = false;
+    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
+    directionalLight.position.set(0,10,0)
+    this.scene.add( directionalLight );
+    const amblight = new THREE.AmbientLight(0x404040 ,2);
+    this.scene.add(amblight);
+    this.scene.add(this.portal);
+    this.enemyplanes = []; this.enemyplanes.length = 0;
+    this.objects = []; this.objects.length = 0;
+    this.LoadPlayer();
+    this.loadGreatLight();
+    this.loadPlanets();
+    this.placePortal();
   }
 
 
