@@ -27,10 +27,13 @@ class Level1 {
     }, true);
     //get the pause menu in the html file
     this.pauseMenu=document.getElementById('pauseMenu');
+    this.gameOverMenu=document.getElementById('GameOverMenu');
+    this.reachedGoalMenu=document.getElementById('ReachedGoalMenu');
 
     this.scene = new THREE.Scene();
     this.portal;
-    this.reachedGoal = false;
+    this.torusreachedGoal = false;  // check if great light source has reached the goal
+    this.playerReachedGoal = false;  // check if player has reached the goal
     this.enemyplanes = [];
     this.delay = 0;  // delay before spawning new enemyplane
     this.delay2 = 0;  //delay before spawning incoming space object
@@ -66,6 +69,7 @@ class Level1 {
       scene: this.scene,
       enemyplanes: this.enemyplanes
     }
+
     this.planetArr = [];
     this.loadPlanets();
 
@@ -113,6 +117,17 @@ class Level1 {
      Restart.onclick = ()=>{
       this.RestartLevel();
   }
+
+  var RestartfromGameOver = document.getElementById("restart1");
+  RestartfromGameOver.onclick=()=>{
+    //this.gameOver = false;
+    this.RestartLevel();
+  }
+
+  var RestartfromReachedGoal = document.getElementById("restart2");
+  RestartfromReachedGoal.onclick=()=>{
+  this.RestartLevel();
+  }
  this.loadIntro();
  this.RAF();
 
@@ -137,7 +152,7 @@ loadIntro(){
       } );
       const tgeometry2 = new THREE.TextGeometry( 'Void Axis', {
         font: font,
-        size: 80,
+        size: 100,
         height: 5,
         curveSegments: 12,
         bevelEnabled: false,
@@ -156,9 +171,7 @@ loadIntro(){
   } );
 }
 
-
-
-  newPlanet(texture){
+newPlanet(texture){
     const params = {
       camera: this.camera,
       scene: this.scene,
@@ -168,7 +181,12 @@ loadIntro(){
   }
 
   LoadPlayer(){
-    this.myRocket = new player(this.params);
+    const params = {
+      camera: this.camera,
+      scene: this.scene,
+      enemyplanes: this.enemyplanes
+    }
+    this.myRocket = new player(params);
     this.rearcamera.position.set(this.myRocket.prod.position.x, this.myRocket.prod.position.y+20, this.myRocket.prod.position.z-70);
     this.frontcamera.position.set(this.myRocket.prod.position.x, this.myRocket.prod.position.y, this.myRocket.prod.position.z-30);
     this.rearcamera.lookAt(this.myRocket.prod.position);
@@ -206,9 +224,9 @@ loadIntro(){
       this.updateHealthBoxes();
       if(!this.pause){
         //console.log(this.myRocket.health);
-        this.updateSpaceObjects();
-        this.checkIfReachedGoal();
+       // this.updateSpaceObjects();
         this.checkPlayerHealth();
+        this.checkIfReachedGoal();
         this.updateGreatLight();
         this.spawnEnemies();
         this.updateEnemyPlanes();
@@ -238,6 +256,22 @@ loadIntro(){
   }
   else{
     this.pauseMenu.style.visibility = "hidden";
+  }
+
+  if(this.GameOver){
+    this.gameOverMenu.style.visibility = "visible";
+
+    return;
+  }
+  else{
+    this.gameOverMenu.style.visibility = "hidden";
+  }
+  if(this.playerReachedGoal){
+    this.reachedGoalMenu.style.visibility = "visible";
+
+    return;
+  }else{
+    this.reachedGoalMenu.style.visibility = "hidden";
   }
 
     const timeElapsedS = timeElapsed * 0.001;
@@ -355,7 +389,7 @@ updateHealthBoxes(){
   }
 
   updateGreatLight(){ // stay 300 units ahead of player until reachedGoal
-    if(!this.reachedGoal){
+    if(!this.torusreachedGoal){
     this.torus.position.set(0,0,this.myRocket.prod.position.z-300);
 
     //light and cone continuously follow torus
@@ -379,11 +413,18 @@ updateHealthBoxes(){
     if(this.myRocket.dead){
       this.GameOver = true;
     }
+    if(this.myRocket.prod.position.z < (this.portal.position.z)){  // if player missed portal, game over
+      this.GameOver = true;
+    }
   }
 
   checkIfReachedGoal(){
     if(is_collision(this.torus,this.portal,3)){
-        this.reachedGoal = true;
+        this.torusreachedGoal = true;                    //check if great light has reached goal
+    }
+    var distToPortal = this.myRocket.prod.position.z - this.portal.position.z;
+    if(is_collision(this.myRocket.prod, this.portal, 80) && Math.abs(distToPortal) < 5.5){ //check if player has reached goal
+      this.playerReachedGoal = true;                       
     }
   }
 
@@ -463,17 +504,23 @@ updateHealthBoxes(){
     this.loadIntro();
     this.delay = 0;
     this.delay2 = 0;
-     const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
-     directionalLight.position.set(0,10,0)
-     this.scene.add( directionalLight );
-     const amblight = new THREE.AmbientLight(0x404040 ,2);
-     this.scene.add(amblight);
-     this.scene.add(this.portal);
-     this.LoadPlayer();
-     this.loadGreatLight();
-     this.loadPlanets();
-     this.enemyplanes = []; this.enemyplanes.length = 0;
-     this.pause = false;
+    this.pause = false;
+    this.GameOver = false;
+    this.torusreachedGoal = false;
+    this.playerReachedGoal = false;
+    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
+    directionalLight.position.set(0,10,0)
+    this.scene.add( directionalLight );
+    const amblight = new THREE.AmbientLight(0x404040 ,2);
+    this.scene.add(amblight);
+    this.scene.add(this.portal);
+    this.enemyplanes = []; this.enemyplanes.length = 0;
+    this.objects = []; this.objects.length = 0;
+    this.LoadPlayer();
+    this.loadGreatLight();
+    this.loadPlanets();
+    this.placePortal();
+    
   }
 
 
