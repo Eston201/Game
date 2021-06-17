@@ -20,6 +20,10 @@ class controls {
       VKey: false,
       BKey: false,
       Lclick:false,
+      ArrowD:false,
+      ArrowU:false,
+      ArrowL:false,
+      ArrowR:false,
       Esc:false
     };
 
@@ -68,6 +72,18 @@ class controls {
       case 27://ESC
         this._keys.Esc = true;
         break;
+      case 40://ArrowD
+        this._keys.ArrowD = true;
+        break;
+      case 38://ArrowU
+        this._keys.ArrowU = true;
+        break;
+      case 37://ArrowL
+        this._keys.ArrowL = true;
+        break;
+      case 39://ArrowR
+        this._keys.ArrowR = true;
+        break;
     }
   }
 
@@ -109,6 +125,18 @@ class controls {
       case 27://ESC
           this._keys.Esc = false;
           break;
+      case 40://ArrowD
+        this._keys.ArrowD = false;
+        break;
+      case 38://ArrowU
+        this._keys.ArrowU = false;
+        break;
+      case 37://ArrowL
+        this._keys.ArrowL = false;
+        break;
+      case 39://ArrowR
+        this._keys.ArrowR = false;
+        break;
     }
   }
   onDocumentMouseDown(event){

@@ -22,13 +22,14 @@
 			const controls = new OrbitControls( camera,renderer.domElement );
       // this.camera.position.set( 0,0,0 );
       camera.position.set( 0,50, 0);
+			camera.lookAt(0,0,0);
       controls.update()
 			const loader = new GLTFLoader();
 			loader.load( './resources/spacecraft by thomas mattia/Boss2.gltf',( gltf ) =>{
-	      const Boss=gltf.scene;
+	      const Boss=gltf.scene
 	      //set the scale,position and visibility(for later)
 	      // Boss.scale.set(10,25,10);
-	      Boss.position.set(0,0,0);
+
 
 	      scene.add( Boss );
 

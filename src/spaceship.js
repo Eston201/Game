@@ -17,7 +17,7 @@ class player {
     this. beams = [];
     this.laserColor = "cyan";
     this.controller = new controls();
-    this.maxHealth = 20;     //set max health player can have here 
+    this.maxHealth = 20;     //set max health player can have here
     this.dead = false; //check whether dead or alive
     this.setMaxHealth = function(maxHealth){
       this.maxHealth = maxHealth;
@@ -210,9 +210,10 @@ class player {
 
           this.EngineSound.setBuffer( b2 );
           this.EngineSound.setVolume( 0.5);
-          // this.EngineSound.setLoop(true)
+          this.EngineSound.setLoop(true)
           this.EngineSound.setPlaybackRate(0.3);
           //play the engine sound
+          this.EngineSound.play();
 
 
       } );
@@ -231,9 +232,9 @@ class player {
     //get the direction the plane is facing to make the plane move forward
     var direction = new THREE.Vector3( 0, 0, -1 ).applyQuaternion( this.prod.quaternion ).normalize();
     //default speed when not pressing W
-    // this.prod.position.add(direction.multiplyScalar(2))
+    this.prod.position.add(direction.multiplyScalar(0.5));
 
-    this.EngineSound.play();
+
     //controls for the plane on key press using imported controlls class
     //movement for aircaft
     //if mouse left click button is pressed
@@ -251,7 +252,7 @@ class player {
     }
 
     // if A key is pressed
-    if (this.controller._keys.left) {
+    if (this.controller._keys.left || this.controller._keys.ArrowL) {
       //set the maximum/target angle to rotate the plane
       this.steerAngleTarget = Math.PI / 2.5;
       //lerp is interploating so that we get a smooth rotation to the target angle
@@ -271,7 +272,7 @@ class player {
     }
 
     // if D key is pressed
-    if (this.controller._keys.right) {
+    if (this.controller._keys.right || this.controller._keys.ArrowR) {
       //set the maximum/target angle to rotate the plane
       this.steerAngleTarget = -Math.PI / 2.5;
       //lerp is interploating so that we get a smooth rotation to the target angle
@@ -320,7 +321,7 @@ class player {
     // }
 
     //if space bar is pressed make plane go up
-    if(this.controller._keys.space && !this.controller._keys.shift ){
+    if((this.controller._keys.space || this.controller._keys.ArrowU ) && (!this.controller._keys.shift || !this.controller._keys.ArrowD) ){
 
       // rotate plane up
       gsap.to(this.aircraft.rotation,{duration:0.8,delay:0,x:2});
@@ -332,7 +333,7 @@ class player {
 
 
 
-    if(this.controller._keys.shift && !this.controller._keys.space){
+    if((this.controller._keys.shift || this.controller._keys.ArrowD) && (!this.controller._keys.space || !this.controller._keys.ArrowU)){
       // rotate plane down
       gsap.to(this.aircraft.rotation,{duration:0.8,delay:0,x:0});
       //decrease vertical position
@@ -342,7 +343,7 @@ class player {
 
     //put plane back into orignal rotation state if we are not moving up or down
     //DO NOT CHANGE
-    if(!this.controller._keys.space ){
+    if(!this.controller._keys.space && !this.controller._keys.ArrowU ){
       gsap.to(this.aircraft.rotation,{duration:0.8,delay:0,x:1.5});
     }
 
