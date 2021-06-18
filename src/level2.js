@@ -18,7 +18,7 @@ class Level2 {
   init(){
 
     this.pause = false;
-    this.GameOver = false;  
+    this.GameOver = false;
     this.keyboard = new THREEx.KeyboardState(); // for capturing key presses
 
     //listens for Esc to pause the game
@@ -112,20 +112,6 @@ class Level2 {
      this.pause=false;
    }
 
-  var Restart = document.getElementById("Restart");
-     Restart.onclick = ()=>{
-      this.RestartLevel();
-  }
-  var RestartfromGameOver = document.getElementById("restart1");
-  RestartfromGameOver.onclick=()=>{
-    //this.gameOver = false;
-    this.RestartLevel();
-  }
-
-  var RestartfromReachedGoal = document.getElementById("restart2");
-  RestartfromReachedGoal.onclick=()=>{
-  this.RestartLevel();
-  }
   this.loadIntro();
 
  this.RAF();
@@ -146,7 +132,7 @@ class Level2 {
     const loader1 = new FontLoader();
     let myscene = this;
     loader1.load( '/resources/fonts/helvetiker_regular.typeface.json', function ( font ) {
-    
+
         const tgeometry = new THREE.TextGeometry( 'Alternate Universe', {
             font: font,
             size: 80,
@@ -203,7 +189,7 @@ class Level2 {
     return new enemy(params);
 
   }
-  
+
 
   OnWindowResize(){
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -223,7 +209,7 @@ class Level2 {
       this.Updates(t - this.previousFrame);
       // this.updatecamera();
       this.torus.rotateY(Math.PI/100);
-      
+
       this.updateHealthBoxes();
       if(!this.pause && !this.GameOver){
         //console.log(this.myRocket.health);
@@ -245,7 +231,7 @@ class Level2 {
         this.renderer.render(this.scene,this.camera);
       }
       this.previousFrame = t;
-      
+
 
     });
   }
@@ -325,9 +311,9 @@ class Level2 {
   loadPlanets(){
 
     for(var z = -10000; z < 20000; z = z + 1000){
-      var texture = Math.floor(Math.random() * (4 - 1) + 1); 
-      var x = Math.floor(Math.random() * (2500 - (-2500)) + (-2500)); 
-      var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000)); 
+      var texture = Math.floor(Math.random() * (4 - 1) + 1);
+      var x = Math.floor(Math.random() * (2500 - (-2500)) + (-2500));
+      var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000));
       var planetObject = this.newPlanet(texture);
       planetObject.planet.position.set(x,y,-z);
       planetObject.addBelt();
@@ -336,7 +322,7 @@ class Level2 {
   }
 
   updateSpaceObjects(){
-    
+
     //console.log(this.delay2);
       if(this.delay2 == 1000){
         let randomNum = Math.floor(Math.random() * (2 - 0) + 0);
@@ -370,7 +356,7 @@ class Level2 {
         else if(object.type == 1){  //cone
             object.position.set(object.position.x,object.position.y,object.position.z+7);
         }
-        
+
     }
   }
 
@@ -455,7 +441,7 @@ updateHealthBoxes(){
     }
     var distToPortal = this.myRocket.prod.position.z - this.portal.position.z;
     if(is_collision(this.myRocket.prod, this.portal, 80) && Math.abs(distToPortal) < 5.5){ //check if player has reached goal
-      this.playerReachedGoal = true;                       
+      this.playerReachedGoal = true;
     }
   }
 
@@ -502,12 +488,12 @@ updateHealthBoxes(){
         this.myRocket.prod.position.set(this.myRocket.prod.position.x-50, this.myRocket.prod.position.y-100, this.myRocket.prod.position.z+150);
       }
     }
-    
+
   }
 
   spawnEnemies(){  // delay to set a delay before spawning a new enemy
-    if(this.delay == 1000){  // spawn new enemy 
-      let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between 
+    if(this.delay == 1000){  // spawn new enemy
+      let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between
       var enemyPlane = this.spawnEnemyShip();
       enemyPlane.setLaserSpeed(0.9);
       enemyPlane.setLaserColor(0x1adb74)
@@ -533,32 +519,11 @@ updateHealthBoxes(){
     this.portal = new Portal(0);
     this.portal.rotateX(Math.PI/2);
     this.portal.scale.set(2,2,2);
-    this.portal.position.set(0,0,-20000);  //set portal position if you change this remember to change other stuff 
+    this.portal.position.set(0,0,-20000);  //set portal position if you change this remember to change other stuff
     this.scene.add(this.portal);           //                                            like healthboxes positions
   }
 
-  RestartLevel(){    //clear the scene then reload everything
-    this.scene.clear();
-    this.loadIntro();
-    this.delay = 0;
-    this.delay2 = 0;
-    this.pause = false;
-    this.GameOver = false;
-    this.torusreachedGoal = false;
-    this.playerReachedGoal = false;
-    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
-    directionalLight.position.set(0,10,0)
-    this.scene.add( directionalLight );
-    const amblight = new THREE.AmbientLight(0x404040 ,2);
-    this.scene.add(amblight);
-    this.scene.add(this.portal);
-    this.enemyplanes = []; this.enemyplanes.length = 0;
-    this.objects = []; this.objects.length = 0;
-    this.LoadPlayer();
-    this.loadGreatLight();
-    this.loadPlanets();
-    this.placePortal();
-  }
+
 
 
 };

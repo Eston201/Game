@@ -106,20 +106,6 @@ class Level3 {
      this.pause=false;
    }
 
-  var Restart = document.getElementById("Restart");
-     Restart.onclick = ()=>{
-      this.RestartLevel();
-  }
-  var RestartfromGameOver = document.getElementById("restart1");
-  RestartfromGameOver.onclick=()=>{
-    //this.gameOver = false;
-    this.RestartLevel();
-  }
-
-  var RestartfromReachedGoal = document.getElementById("restart2");
-  RestartfromReachedGoal.onclick=()=>{
-  this.RestartLevel();
-  }
 
  this.RAF();
 
@@ -352,6 +338,7 @@ class Level3 {
 
   const timeElapsedS = timeElapsed * 0.001;
   if(this.FramNo==0){
+    this.scene.remove(this.particle.particles);
     this.makeVisible();
     this.FramNo++;
   }
@@ -511,23 +498,33 @@ updateHealthBoxes(){
   }
 }
 
+  makeVisible(){
+    for (var i = 0; i < this.planetArr.length; i++) {
+      this.planetArr[i].planet.visible=true;
+      this.planetArr[i].planet.children[0].visible=true;
+    }
+    this.scene.add(this.GreatLight);
+    this.scene.add( this.torus );
+    this.scene.add( this.cone );
+  }
+
   loadGreatLight(){   // spot light, transparent cone and spinning torus
     this.GreatLight = new THREE.SpotLight( 0xffffff, 10, 5000, Math.PI/3 );
     this.GreatLight.position.set(0,50,-100);
-    this.scene.add(this.GreatLight);
+
 
     const geometry = new THREE.TorusGeometry( 10, 3, 16, 100 );
     const material = new THREE.MeshPhongMaterial( { color: 0x6f00de , opacity: 1, transparent: true} );
     this.torus = new THREE.Mesh( geometry, material );
     this.torus.position.set(0,0,-100);
-    this.scene.add( this.torus );
+
     this.GreatLight.target = this.torus;
 
     const coneGeometry = new THREE.ConeGeometry( 100, 10000, 50, 32 );
     const coneMaterial = new THREE.MeshPhongMaterial( {color: 0xffffff, opacity: 0.3, transparent: true } );
     this.cone = new THREE.Mesh( coneGeometry, coneMaterial );
     this.cone.position.set(0,50,-100);
-    this.scene.add( this.cone );
+
   }
 
   updateGreatLight(){ // stay 300 units ahead of player until reachedGoal
@@ -639,12 +636,7 @@ updateHealthBoxes(){
     }
   }
 
-  makeVisible(){
-    for (var i = 0; i < this.planetArr.length; i++) {
-      this.planetArr[i].planet.visible=true;
-      this.planetArr[i].planet.children[0].visible=true;
-    }
-  }
+
   placeEarth(){  //set earth location
     this.earth = this.newPlanet(0);  //earth
     this.earth.planet.scale.set(2,2,2);

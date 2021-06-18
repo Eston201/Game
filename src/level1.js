@@ -18,7 +18,7 @@ class Level1 {
   init(){
 
     this.pause = false;
-    this.GameOver = false;  
+    this.GameOver = false;
     this.keyboard = new THREEx.KeyboardState(); // for capturing key presses
 
     //listens for Esc to pause the game
@@ -114,32 +114,18 @@ class Level1 {
      this.pause=false;
    }
 
-  var Restart = document.getElementById("Restart");
-     Restart.onclick = ()=>{
-      this.RestartLevel();
-  }
 
-  var RestartfromGameOver = document.getElementById("restart1");
-  RestartfromGameOver.onclick=()=>{
-    //this.gameOver = false;
-    this.RestartLevel();
-  }
-
-  var RestartfromReachedGoal = document.getElementById("restart2");
-  RestartfromReachedGoal.onclick=()=>{
-  this.RestartLevel();
-  }
  this.loadIntro();
  this.RAF();
 
-  
+
 }
 
 loadIntro(){
   const loader1 = new FontLoader();
   let myscene = this;
   loader1.load( '/resources/fonts/helvetiker_regular.typeface.json', function ( font ) {
-  
+
       const tgeometry = new THREE.TextGeometry( 'Milky Way Galaxy', {
           font: font,
           size: 80,
@@ -163,7 +149,7 @@ loadIntro(){
         bevelSegments: 5
     } );
     var mat = new THREE.MeshLambertMaterial({color:0x44cee3});
-    
+
     var textmesh = new THREE.Mesh(tgeometry,mat);
     textmesh.position.set(-300,0,-400);
     var textmesh2 = new THREE.Mesh(tgeometry2,mat)
@@ -322,7 +308,7 @@ newPlanet(texture){
   }
 
   updateSpaceObjects(){
-    
+
     //console.log(this.delay2);
       if(this.delay2 == 500){
 
@@ -426,7 +412,7 @@ updateHealthBoxes(){
     }
     var distToPortal = this.myRocket.prod.position.z - this.portal.position.z;
     if(is_collision(this.myRocket.prod, this.portal, 80) && Math.abs(distToPortal) < 5.5){ //check if player has reached goal
-      this.playerReachedGoal = true;                       
+      this.playerReachedGoal = true;
     }
   }
 
@@ -468,7 +454,7 @@ updateHealthBoxes(){
         this.myRocket.prod.position.set(this.myRocket.prod.position.x-50, this.myRocket.prod.position.y-100, this.myRocket.prod.position.z+150);
       }
     }
-    
+
   }
 
   spawnEnemies(){  // delay to set a delay before spawning a new enemy
@@ -501,29 +487,7 @@ updateHealthBoxes(){
     this.scene.add(this.portal);           //                                            like healthboxes positions
   }
 
-  RestartLevel(){    //clear the scene then reload everything
-    this.scene.clear();
-    this.loadIntro();
-    this.delay = 0;
-    this.delay2 = 0;
-    this.pause = false;
-    this.GameOver = false;
-    this.torusreachedGoal = false;
-    this.playerReachedGoal = false;
-    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
-    directionalLight.position.set(0,10,0)
-    this.scene.add( directionalLight );
-    const amblight = new THREE.AmbientLight(0x404040 ,2);
-    this.scene.add(amblight);
-    this.scene.add(this.portal);
-    this.enemyplanes = []; this.enemyplanes.length = 0;
-    this.objects = []; this.objects.length = 0;
-    this.LoadPlayer();
-    this.loadGreatLight();
-    this.loadPlanets();
-    this.placePortal();
-    
-  }
+
 
 
 };
