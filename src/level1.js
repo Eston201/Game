@@ -110,21 +110,25 @@ class Level1 {
    this.btnResume.onclick =()=>{
      //set pause to false to resume animation
      this.pause=false;
+     document.body.style.cursor = 'none';
    }
 
    var Restart = document.getElementById("Restart");
      Restart.onclick = ()=>{
       this.RestartLevel();
+      document.body.style.cursor = 'none';
   }
   var RestartfromGameOver = document.getElementById("restart1");
   RestartfromGameOver.onclick=()=>{
     //this.gameOver = false;
     this.RestartLevel();
+    document.body.style.cursor = 'none';
   }
 
   var RestartfromReachedGoal = document.getElementById("restart2");
   RestartfromReachedGoal.onclick=()=>{
   this.RestartLevel();
+  document.body.style.cursor = 'none';
   }
 
 
@@ -224,7 +228,6 @@ newPlanet(texture){
       // this.updatecamera();
       this.updateHealthBoxes();
       if(!this.pause && !this.GameOver){
-        //console.log(this.myRocket.health);
         this.updateSpaceObjects();
         this.checkPlayerHealth();
         this.checkIfReachedGoal();
@@ -251,6 +254,7 @@ newPlanet(texture){
   //update the scene/ objects /player..etc
   Updates(timeElapsed) {
     if(this.pause){
+      document.body.style.cursor = 'default';
       this.pauseMenu.style.visibility = "visible";
 
       return;
@@ -260,6 +264,7 @@ newPlanet(texture){
   }
 
   if(this.GameOver){
+    document.body.style.cursor = 'default';
     this.gameOverMenu.style.visibility = "visible";
 
     return;
@@ -268,6 +273,7 @@ newPlanet(texture){
     this.gameOverMenu.style.visibility = "hidden";
   }
   if(this.playerReachedGoal){
+    document.body.style.cursor = 'default';
     this.reachedGoalMenu.style.visibility = "visible";
 
     return;
@@ -322,10 +328,7 @@ newPlanet(texture){
 
   updateSpaceObjects(){
 
-    //console.log(this.delay2);
       if(this.delay2 == 500){
-
-      console.log("object created");
       for(var i = 0; i < 3; i++){
       var cyl = this.createCylinder(15000);  // set timeout/lifetime
       cyl.position.set(this.myRocket.prod.position.x+250-(i * 250), this.myRocket.prod.position.y, this.myRocket.prod.position.z-600+ (i*200));
@@ -334,7 +337,6 @@ newPlanet(texture){
         this.delay2 = 0;
      }
      this.delay2 ++;
-    //console.log(this.objects.length);
     for(var index = 0; index < this.objects.length; index = index+1){
         var object = this.objects[index];
         if(!object.isalive){
@@ -433,7 +435,6 @@ updateHealthBoxes(){
     for(var index=0; index< this.planetArr.length; index++){       //collide with planets
       var p = this.planetArr[index];
       if(is_collision(this.myRocket.prod, p.planet, 250)){
-       // console.log("hit planet");
         this.myRocket.dead = true;
         this.GameOver = true;
       }
@@ -454,7 +455,6 @@ updateHealthBoxes(){
       var healthbox = this.healthboxes[i];
       if(is_collision(healthbox, this.myRocket.prod, 30)){
         this.myRocket.refillHealth();  // replenish health
-        console.log(this.myRocket.health);
         healthbox.visible = false;
       }
     }
