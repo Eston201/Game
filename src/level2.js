@@ -112,6 +112,22 @@ class Level2 {
      this.pause=false;
    }
 
+   var Restart = document.getElementById("Restart");
+     Restart.onclick = ()=>{
+      this.RestartLevel();
+  }
+  var RestartfromGameOver = document.getElementById("restart1");
+  RestartfromGameOver.onclick=()=>{
+    //this.gameOver = false;
+    this.RestartLevel();
+  }
+
+  var RestartfromReachedGoal = document.getElementById("restart2");
+  RestartfromReachedGoal.onclick=()=>{
+  this.RestartLevel();
+  }
+
+
   this.loadIntro();
 
  this.RAF();
@@ -521,6 +537,30 @@ updateHealthBoxes(){
     this.portal.scale.set(2,2,2);
     this.portal.position.set(0,0,-20000);  //set portal position if you change this remember to change other stuff
     this.scene.add(this.portal);           //                                            like healthboxes positions
+  }
+
+  RestartLevel(){    //clear the scene then reload everything
+    this.scene.clear();
+    this.loadIntro();
+    this.delay = 0;
+    this.delay2 = 0;
+    this.pause = false;
+    this.GameOver = false;
+    this.torusreachedGoal = false;
+    this.playerReachedGoal = false;
+    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
+    directionalLight.position.set(0,10,0)
+    this.scene.add( directionalLight );
+    const amblight = new THREE.AmbientLight(0x404040 ,2);
+    this.scene.add(amblight);
+    this.scene.add(this.portal);
+    this.enemyplanes = []; this.enemyplanes.length = 0;
+    this.objects = []; this.objects.length = 0;
+    this.planetArr = []; this.planetArr.length = 0;
+    this.LoadPlayer();
+    this.loadGreatLight();
+    this.loadPlanets();
+    this.placePortal();
   }
 
 

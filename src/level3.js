@@ -106,6 +106,21 @@ class Level3 {
      this.pause=false;
    }
 
+   var Restart = document.getElementById("Restart");
+     Restart.onclick = ()=>{
+      this.RestartLevel();
+  }
+  var RestartfromGameOver = document.getElementById("restart1");
+  RestartfromGameOver.onclick=()=>{
+    //this.gameOver = false;
+    this.RestartLevel();
+  }
+
+  var RestartfromReachedGoal = document.getElementById("restart2");
+  RestartfromReachedGoal.onclick=()=>{
+  this.RestartLevel();
+  }
+
 
  this.RAF();
 
@@ -173,16 +188,16 @@ class Level3 {
   }
 
   loadScene(){
-
+        
     //kinda like a skybox but better
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
-      '../resources/skybox/Level3/space_ft.png',
-     '../resources/skybox/Level3/space_bk.png',
-     '../resources/skybox/Level3/space_up.png',
-     '../resources/skybox/Level3/space_dn.png',
-     '../resources/skybox/Level3/space_rt.png',
-     '../resources/skybox/Level3/space_lf.png', 
+     '../resources/skybox/wrath_ft.jpg',
+     '../resources/skybox/wrath_bk.jpg',
+     '../resources/skybox/wrath_up.jpg',
+     '../resources/skybox/wrath_dn.jpg',
+     '../resources/skybox/wrath_rt.jpg',
+     '../resources/skybox/wrath_lf.jpg',
    ]);
    this.scene.background = texture;
   }
@@ -259,11 +274,11 @@ class Level3 {
         this.updateHealthBoxes();
         if(!this.pause && !this.GameOver){
             //console.log(this.myRocket.health);
-           // this.updateSpaceObjects();
+            this.updateSpaceObjects();
             this.checkIfReachedGoal();
             this.checkPlayerHealth();
             this.updateGreatLight();
-           // this.spawnEnemies();
+            this.spawnEnemies();
             this.updateEnemyPlanes();
             this.checkCollision();
         }
@@ -614,7 +629,7 @@ updateHealthBoxes(){
   }
 
   spawnEnemies(){  // delay to set a delay before spawning a new enemy
-    if(this.delay == 1000){  // spawn new enemy
+    if(this.delay == 900){  // spawn new enemy
       let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between
       var enemyPlane = this.spawnEnemyShip();
       enemyPlane.setLaserSpeed(0.9);
@@ -659,13 +674,17 @@ updateHealthBoxes(){
     const amblight = new THREE.AmbientLight(0x404040 ,2);
     this.scene.add(amblight);
     this.scene.add(this.earth.planet);
+    this.planetArr = []; this.planetArr.length = 0;
     this.enemyplanes = []; this.enemyplanes.length = 0;
     this.objects = []; this.objects.length = 0;
     this.LoadPlayer();
     this.loadGreatLight();
     this.loadPlanets();
     this.placeEarth();
+    this.makeVisible();
   }
 
+ 
 
 };
+
