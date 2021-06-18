@@ -238,7 +238,7 @@ class player {
     //controls for the plane on key press using imported controlls class
     //movement for aircaft
     //if mouse left click button is pressed
-    if (this.controller._keys.Lclick ) {
+    if (this.controller._keys.Lclick || this.controller._keys.space ) {   // use space or left mouse to shoot
       //fire lasers
       this.shootLaser();
       this.LaserSound.play();
@@ -320,8 +320,8 @@ class player {
     //   this.params.camera.lookAt( this.enemy.position.x,this.enemy.position.y+10,this.enemy.position.z+25 );
     // }
 
-    //if space bar is pressed make plane go up
-    if((this.controller._keys.space || this.controller._keys.ArrowU ) && (!this.controller._keys.shift || !this.controller._keys.ArrowD) ){
+    //if space bar is pressed make plane go up // this.controller._keys.space ||
+    if(( this.controller._keys.ArrowU ) && (!this.controller._keys.shift || !this.controller._keys.ArrowD) ){
 
       // rotate plane up
       gsap.to(this.aircraft.rotation,{duration:0.8,delay:0,x:2});
@@ -330,6 +330,23 @@ class player {
       this.prod.position.y+=direction.y;
 
     }
+
+    if (this.controller._keys.ArrowL) {  // left arrow performs 180 turn about Y axis 
+      gsap.to(this.prod.rotation,{duration:1,delay:0.1,y:Math.PI/2});
+      //reset the angle otherwise gsap wont work on key press again
+      this.prod.rotation.y = 0;
+      //this.tcamera.rotateY(Math.PI);
+      //this.params.camera.rotateY(Math.PI);
+   }
+
+    //if E key is pressed
+    if (this.controller._keys.ArrowR ) {  // right arrow perform -180 turn about  axis
+     gsap.to(this.prod.rotation,{duration:1,delay:0.1,y:-Math.PI/2});
+     //reset the angle otherwise gsap wont work on key press again
+     this.prod.rotation.y = 0;
+     //this.tcamera.rotateY(Math.PI);
+     //this.params.camera.rotateY(Math.PI);
+   }
 
 
 
@@ -343,7 +360,7 @@ class player {
 
     //put plane back into orignal rotation state if we are not moving up or down
     //DO NOT CHANGE
-    if(!this.controller._keys.space && !this.controller._keys.ArrowU ){
+    if(!this.controller._keys.ArrowU ){ // !this.controller._keys.space && 
       gsap.to(this.aircraft.rotation,{duration:0.8,delay:0,x:1.5});
     }
 
