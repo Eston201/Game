@@ -20,9 +20,9 @@ class Level3 {
   init(){
 
     this.pause = false;
-    this.GameOver = false;  
+    this.GameOver = false;
     this.keyboard = new THREEx.KeyboardState(); // for capturing key presses
-
+    this.FramNo=0;
     //listens for Esc to pause the game
     window.addEventListener("keydown", (e)=>{
       this.isPaused(e);
@@ -31,7 +31,7 @@ class Level3 {
     this.pauseMenu=document.getElementById('pauseMenu');
     this.gameOverMenu=document.getElementById('GameOverMenu');
     this.reachedGoalMenu=document.getElementById('ReachedGoalMenu');
-    
+
     this.animate = true;
     this.scene = new THREE.Scene();
     this.earth;                       //our final goal
@@ -75,8 +75,6 @@ class Level3 {
     this.planetArr = [];
     this.loadPlanets();
 
-    const axesHelper = new THREE.AxesHelper( 5 );
-   this.scene.add( axesHelper );
    //Lights
    //directionalLight
    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
@@ -141,7 +139,7 @@ class Level3 {
     const loader1 = new FontLoader();
     let myscene = this;
     loader1.load( '/resources/fonts/helvetiker_regular.typeface.json', function ( font ) {
-    
+
         const tgeometry = new THREE.TextGeometry( 'The Great Void', {
             font: font,
             size: 80,
@@ -189,7 +187,7 @@ class Level3 {
   }
 
   loadScene(){
-        
+
     //kinda like a skybox but better
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
@@ -247,7 +245,7 @@ class Level3 {
     return new enemy(params);
 
   }
-  
+
 
   OnWindowResize(){
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -260,7 +258,7 @@ class Level3 {
       if (this.previousFrame === null) {
         this.previousFrame = t;
       }
-    
+
       this.RAF();
       if(this.animate){
 
@@ -271,7 +269,7 @@ class Level3 {
        }
         // this.updatecamera();
        this.torus.rotateY(Math.PI/100);
-            
+
         this.updateHealthBoxes();
         if(!this.pause && !this.GameOver){
             //console.log(this.myRocket.health);
@@ -292,9 +290,9 @@ class Level3 {
         else{
             this.renderer.render(this.scene,this.camera);
         }
-     
+
       this.previousFrame = t;
-      
+
 
     });
   }
@@ -353,6 +351,11 @@ class Level3 {
   }
 
   const timeElapsedS = timeElapsed * 0.001;
+  if(this.FramNo==0){
+    this.makeVisible();
+    this.FramNo++;
+  }
+
     //update the players ship
     if (this.myRocket) {
       this.myRocket.Update(timeElapsedS);
@@ -431,18 +434,20 @@ class Level3 {
   loadPlanets(){
 
     for(var z = -10000; z < 20000; z = z + 1000){
-      var texture = Math.floor(Math.random() * (9 - 1) + 1); 
-      var x = Math.floor(Math.random() * (2500 - (-2500)) + (-2500)); 
-      var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000)); 
+      var texture = Math.floor(Math.random() * (9 - 1) + 1);
+      var x = Math.floor(Math.random() * (2500 - (-2500)) + (-2500));
+      var y = Math.floor(Math.random() * (2000 - (-2000)) + (-2000));
       var planetObject = this.newPlanet(texture);
       planetObject.planet.position.set(x,y,-z);
       planetObject.addBelt();
+      planetObject.planet.children[0].visible=false;
+      planetObject.planet.visible=false;
       this.planetArr.push(planetObject);
      }
   }
 
   updateSpaceObjects(){
-    
+
     //console.log(this.delay2);
       if(this.delay2 == 1000){
         let randomNum = Math.floor(Math.random() * (2 - 0) + 0);
@@ -476,7 +481,7 @@ class Level3 {
         else if(object.type == 1){  //cone
             object.position.set(object.position.x,object.position.y,object.position.z+20);
         }
-        
+
     }
   }
 
@@ -561,7 +566,7 @@ updateHealthBoxes(){
     }
     var distToearth = this.myRocket.prod.position.z - this.earth.planet.position.z;
     if(is_collision(this.myRocket.prod, this.earth.planet, 300)){ //check if player has reached goal
-      this.playerReachedGoal = true;                       
+      this.playerReachedGoal = true;
     }
   }
 
@@ -608,12 +613,12 @@ updateHealthBoxes(){
         this.myRocket.prod.position.set(this.myRocket.prod.position.x-50, this.myRocket.prod.position.y-100, this.myRocket.prod.position.z+150);
       }
     }
-    
+
   }
 
   spawnEnemies(){  // delay to set a delay before spawning a new enemy
-    if(this.delay == 1000){  // spawn new enemy 
-      let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between 
+    if(this.delay == 1000){  // spawn new enemy
+      let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between
       var enemyPlane = this.spawnEnemyShip();
       enemyPlane.setLaserSpeed(0.9);
       enemyPlane.setLaserColor(0x0055de)
@@ -634,11 +639,16 @@ updateHealthBoxes(){
     }
   }
 
-
+  makeVisible(){
+    for (var i = 0; i < this.planetArr.length; i++) {
+      this.planetArr[i].planet.visible=true;
+      this.planetArr[i].planet.children[0].visible=true;
+    }
+  }
   placeEarth(){  //set earth location
     this.earth = this.newPlanet(0);  //earth
     this.earth.planet.scale.set(2,2,2);
-    this.earth.planet.position.set(0,0,-25000);  //set earth position if you change this remember to change other stuff 
+    this.earth.planet.position.set(0,0,-25000);  //set earth position if you change this remember to change other stuff
     this.scene.add(this.earth.planet);           //                                            like healthboxes positions
   }
 
