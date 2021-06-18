@@ -24,10 +24,30 @@ class Planet {
   const bluetext = new THREE.TextureLoader().load(
       'resources/textures/blue.jpg'
     );
+  const browntext = new THREE.TextureLoader().load(
+      'resources/textures/woodText.jpg'
+  );
+  const redtext = new THREE.TextureLoader().load(
+    'resources/textures/redrops.jpg'
+  );
+  const whitishtext = new THREE.TextureLoader().load(
+    'resources/textures/whitish.jpg'
+  );
+  const blueishtext = new THREE.TextureLoader().load(
+    'resources/textures/blueish.jpg'
+  );
+  const aridtext = new THREE.TextureLoader().load(
+    'resources/textures/arid2_ft.jpg'
+  );
   const tarr = [earthtext,
       marstext,
       magmatext,
-      bluetext
+      bluetext,
+      browntext,
+      redtext,
+      whitishtext,
+      blueishtext,
+      aridtext
   ];
 
   const pgeo = new THREE.SphereGeometry(150,80,80);
