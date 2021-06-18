@@ -32,8 +32,8 @@ class Level1 {
 
     this.scene = new THREE.Scene();
     this.portal;
-    this.torusreachedGoal = false;  // check if great light source has reached the goal
-    this.playerReachedGoal = false;  // check if player has reached the goal
+    this.torusreachedGoal = false;
+    this.playerReachedGoal = false;
     this.enemyplanes = [];
     this.delay = 0;  // delay before spawning new enemyplane
     this.delay2 = 0;  //delay before spawning incoming space object
@@ -42,6 +42,7 @@ class Level1 {
     this.frontcamera = new THREE.PerspectiveCamera(100, window.innerWidth/window.innerHeight,0.1, 1500);  //press v
     this.objects = []; //objects in space except planet
     this.healthboxes = [];
+    this.loadedHealthBar = false; // check if health score been loaded;
 
     this.renderer = new THREE.WebGLRenderer({antialias:true});
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -131,7 +132,7 @@ class Level1 {
  this.loadIntro();
  this.RAF();
 
-
+  
 }
 
 loadIntro(){
@@ -162,6 +163,7 @@ loadIntro(){
         bevelSegments: 5
     } );
     var mat = new THREE.MeshLambertMaterial({color:0x44cee3});
+    
     var textmesh = new THREE.Mesh(tgeometry,mat);
     textmesh.position.set(-300,0,-400);
     var textmesh2 = new THREE.Mesh(tgeometry2,mat)
@@ -222,9 +224,9 @@ newPlanet(texture){
       this.Updates(t - this.previousFrame);
       // this.updatecamera();
       this.updateHealthBoxes();
-      if(!this.pause){
+      if(!this.pause && !this.GameOver){
         //console.log(this.myRocket.health);
-       // this.updateSpaceObjects();
+        this.updateSpaceObjects();
         this.checkPlayerHealth();
         this.checkIfReachedGoal();
         this.updateGreatLight();
