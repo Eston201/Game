@@ -87,8 +87,6 @@ class Level1 {
 
    this.scene.background = texture;
 
-   const axesHelper = new THREE.AxesHelper( 5 );
-   this.scene.add( axesHelper );
    //Lights
    //directionalLight
    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
