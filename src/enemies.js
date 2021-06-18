@@ -15,6 +15,7 @@ class enemy {
     this.params = params;
     this.beams = [];
     this.laserColor = 0x9934eb;
+    this.laserSpeed = 0.6;
     this.controller = new controls();
     this.maxHealth = 20;     //set max health player can have here 
     this.setMaxHealth = function(maxHealth){
@@ -30,6 +31,9 @@ class enemy {
     }
     this.setLaserColor = function(color){
       this.laserColor = color;
+    }
+    this.setLaserSpeed = function(speed){
+      this.laserSpeed = speed;
     }
     this.variant = Math.floor(Math.random() * (4 - 1) + 1);   // random number between 3 and 1 to determine which hunt variant to use
     console.log("variant: ", this.variant);
@@ -237,7 +241,7 @@ class enemy {
 		  var directionVector = target.sub(beam.position.clone()).normalize();
 		  beam.lookAt(this.target.position);
       beam.rotateX(Math.PI/2);
-		  beam.translateOnAxis(directionVector,moveDistance*0.6);
+		  beam.translateOnAxis(directionVector,moveDistance*this.laserSpeed);
 
 		  if(is_collision(beam,this.target,6)){
               this.params.target.takeDamage(1);  //specify damage
