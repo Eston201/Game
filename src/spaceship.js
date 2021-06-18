@@ -31,7 +31,7 @@ class player {
     this.healthBar.value = this.health;
     this.healthBar.max = this.maxHealth;
     this.takeDamage = function(damage){
-      this.health = this.health - damage;      
+      this.health = this.health - damage;
       this.healthBar.value -= damage;
     }
     this.refillHealth = function(){
@@ -240,7 +240,7 @@ class player {
     //get the direction the plane is facing to make the plane move forward
     var direction = new THREE.Vector3( 0, 0, -1 ).applyQuaternion( this.prod.quaternion ).normalize();
     //default speed when not pressing W
-    this.prod.position.add(direction.multiplyScalar(0.5));
+    this.prod.position.add(direction.multiplyScalar(0.2));
 
 
     //controls for the plane on key press using imported controlls class
@@ -291,7 +291,7 @@ class player {
       this.prod.position.x+=moveDistance;
     }
 
-    if (this.controller._keys.ArrowL) {  // left arrow 
+    if (this.controller._keys.ArrowL) {  // left arrow
       gsap.to(this.prod.rotation,{duration:1,delay:0.1,y:Math.PI/2});
       //reset the angle otherwise gsap wont work on key press again
    }

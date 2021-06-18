@@ -87,8 +87,6 @@ class Level2 {
 
    this.scene.background = texture;
 
-   const axesHelper = new THREE.AxesHelper( 5 );
-   this.scene.add( axesHelper );
    //Lights
    //directionalLight
    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
@@ -112,21 +110,25 @@ class Level2 {
    this.btnResume.onclick =()=>{
      //set pause to false to resume animation
      this.pause=false;
+     document.body.style.cursor = 'none';
    }
 
    var Restart = document.getElementById("Restart");
      Restart.onclick = ()=>{
       this.RestartLevel();
+      document.body.style.cursor = 'none';
   }
   var RestartfromGameOver = document.getElementById("restart1");
   RestartfromGameOver.onclick=()=>{
     //this.gameOver = false;
     this.RestartLevel();
+    document.body.style.cursor = 'none';
   }
 
   var RestartfromReachedGoal = document.getElementById("restart2");
   RestartfromReachedGoal.onclick=()=>{
   this.RestartLevel();
+  document.body.style.cursor = 'none';
   }
 
 
@@ -271,13 +273,14 @@ class Level2 {
   Updates(timeElapsed) {
     if(this.pause){
       this.pauseMenu.style.visibility = "visible";
-
+      document.body.style.cursor = 'default';
       return;
   }
   else{
     this.pauseMenu.style.visibility = "hidden";
   }
   if(this.GameOver){
+    document.body.style.cursor = 'default';
     this.gameOverMenu.style.visibility = "visible";
 
     return;
@@ -286,6 +289,7 @@ class Level2 {
     this.gameOverMenu.style.visibility = "hidden";
   }
   if(this.playerReachedGoal){
+    document.body.style.cursor = 'default';
     this.reachedGoalMenu.style.visibility = "visible";
 
     return;

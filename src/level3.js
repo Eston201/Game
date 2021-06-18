@@ -107,21 +107,25 @@ class Level3 {
    this.btnResume.onclick =()=>{
      //set pause to false to resume animation
      this.pause=false;
+     document.body.style.cursor = 'none';
    }
 
    var Restart = document.getElementById("Restart");
      Restart.onclick = ()=>{
       this.RestartLevel();
+      document.body.style.cursor = 'none';
   }
   var RestartfromGameOver = document.getElementById("restart1");
   RestartfromGameOver.onclick=()=>{
     //this.gameOver = false;
     this.RestartLevel();
+    document.body.style.cursor = 'none';
   }
 
   var RestartfromReachedGoal = document.getElementById("restart2");
   RestartfromReachedGoal.onclick=()=>{
   this.RestartLevel();
+  document.body.style.cursor = 'none';
   }
 
 
@@ -191,7 +195,7 @@ class Level3 {
   }
 
   loadScene(){
-        
+
     //kinda like a skybox but better
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
@@ -349,13 +353,14 @@ class Level3 {
   Updates(timeElapsed) {
     if(this.pause){
       this.pauseMenu.style.visibility = "visible";
-
+      document.body.style.cursor = 'default';
       return;
   }
   else{
     this.pauseMenu.style.visibility = "hidden";
   }
   if(this.GameOver){
+    document.body.style.cursor = 'default';
     this.gameOverMenu.style.visibility = "visible";
 
     return;
@@ -364,6 +369,7 @@ class Level3 {
     this.gameOverMenu.style.visibility = "hidden";
   }
   if(this.playerReachedGoal){
+    document.body.style.cursor = 'default';
     this.reachedGoalMenu.style.visibility = "visible";
 
     return;
@@ -722,7 +728,6 @@ updateHealthBoxes(){
     this.loadHealthBoxes();
   }
 
- 
+
 
 };
-

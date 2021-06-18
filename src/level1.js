@@ -113,21 +113,25 @@ class Level1 {
    this.btnResume.onclick =()=>{
      //set pause to false to resume animation
      this.pause=false;
+     document.body.style.cursor = 'none';
    }
 
    var Restart = document.getElementById("Restart");
      Restart.onclick = ()=>{
       this.RestartLevel();
+      document.body.style.cursor = 'none';
   }
   var RestartfromGameOver = document.getElementById("restart1");
   RestartfromGameOver.onclick=()=>{
     //this.gameOver = false;
     this.RestartLevel();
+    document.body.style.cursor = 'none';
   }
 
   var RestartfromReachedGoal = document.getElementById("restart2");
   RestartfromReachedGoal.onclick=()=>{
   this.RestartLevel();
+  document.body.style.cursor = 'none';
   }
 
 
@@ -270,6 +274,7 @@ newPlanet(texture){
   //update the scene/ objects /player..etc
   Updates(timeElapsed) {
     if(this.pause){
+      document.body.style.cursor = 'default';
       this.pauseMenu.style.visibility = "visible";
 
       return;
@@ -279,6 +284,7 @@ newPlanet(texture){
   }
 
   if(this.GameOver){
+    document.body.style.cursor = 'default';
     this.gameOverMenu.style.visibility = "visible";
 
     return;
@@ -287,6 +293,7 @@ newPlanet(texture){
     this.gameOverMenu.style.visibility = "hidden";
   }
   if(this.playerReachedGoal){
+    document.body.style.cursor = 'default';
     this.reachedGoalMenu.style.visibility = "visible";
 
     return;
