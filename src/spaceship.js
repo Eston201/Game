@@ -12,12 +12,16 @@ class player {
 
 
   createplayer(params){
+    this.healthText = document.getElementById("healthText");
+    this.healthText.style.display = "flex";
+    this.healthBar = document.getElementById("health");
+    this.healthBar.style.visibility = "visible";
     this.params = params;
     this.enemyplanes = this.params.enemyplanes;     // keep track of enemies
     this. beams = [];
     this.laserColor = "cyan";
     this.controller = new controls();
-    this.maxHealth = 20;     //set max health player can have here
+    this.maxHealth = 40;     //set max health player can have here
     this.dead = false; //check whether dead or alive
     this.setMaxHealth = function(maxHealth){
       this.maxHealth = maxHealth;
@@ -25,10 +29,12 @@ class player {
     }
     this.health = this.maxHealth;
     this.takeDamage = function(damage){
-      this.health = this.health - damage;
+      this.health = this.health - damage;      
+      this.healthBar.value -= damage;
     }
     this.refillHealth = function(){
       this.health = this.maxHealth;
+      this.healthBar.value = this.maxHealth;
     }
     this.setLaserColor = function(color){
       this.laserColor = color;
