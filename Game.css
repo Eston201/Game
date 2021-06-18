@@ -253,6 +253,29 @@ button:hover {
   visibility: hidden;
 }
 
+#info{
+  position: absolute;
+  top: 10px;
+  width: 100%;
+  text-align: center;
+  z-index: 100;
+  display:block;
+  visibility: hidden;
+  left: -280px;
+
+}
+
+#healthText{
+  position: absolute;
+  top: 8px;
+  width: 100%;
+  text-align: center;
+  z-index: 100;
+  display:block;
+  display: none;
+
+}
+
 .content{
     /* z-index: 1; */
     /* position:relative; */
