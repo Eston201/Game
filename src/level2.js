@@ -225,7 +225,7 @@ class Level2 {
       this.torus.rotateY(Math.PI/100);
       
       this.updateHealthBoxes();
-      if(!this.pause){
+      if(!this.pause && !this.GameOver){
         //console.log(this.myRocket.health);
         this.updateSpaceObjects();
         this.checkIfReachedGoal();
@@ -509,6 +509,7 @@ updateHealthBoxes(){
     if(this.delay == 1000){  // spawn new enemy 
       let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between 
       var enemyPlane = this.spawnEnemyShip();
+      enemyPlane.setLaserSpeed(0.9);
       enemyPlane.setLaserColor(0x1adb74)
       enemyPlane.enemy.position.set(this.myRocket.prod.position.x + randomNum, this.myRocket.prod.position.y, this.myRocket.prod.position.z);
       this.enemyplanes.push(enemyPlane);
