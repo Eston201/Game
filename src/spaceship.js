@@ -21,13 +21,15 @@ class player {
     this. beams = [];
     this.laserColor = "cyan";
     this.controller = new controls();
-    this.maxHealth = 40;     //set max health player can have here
+    this.maxHealth = 20;     //set max health player can have here
     this.dead = false; //check whether dead or alive
     this.setMaxHealth = function(maxHealth){
       this.maxHealth = maxHealth;
       this.health = this.maxHealth;
     }
     this.health = this.maxHealth;
+    this.healthBar.value = this.health;
+    this.healthBar.max = this.maxHealth;
     this.takeDamage = function(damage){
       this.health = this.health - damage;      
       this.healthBar.value -= damage;
@@ -258,7 +260,7 @@ class player {
     }
 
     // if A key is pressed
-    if (this.controller._keys.left || this.controller._keys.ArrowL) {
+    if (this.controller._keys.left) {
       //set the maximum/target angle to rotate the plane
       this.steerAngleTarget = Math.PI / 2.5;
       //lerp is interploating so that we get a smooth rotation to the target angle
@@ -278,7 +280,7 @@ class player {
     }
 
     // if D key is pressed
-    if (this.controller._keys.right || this.controller._keys.ArrowR) {
+    if (this.controller._keys.right ) {
       //set the maximum/target angle to rotate the plane
       this.steerAngleTarget = -Math.PI / 2.5;
       //lerp is interploating so that we get a smooth rotation to the target angle
@@ -288,6 +290,17 @@ class player {
       this.prod.rotation.y-=rotateAngle;
       this.prod.position.x+=moveDistance;
     }
+
+    if (this.controller._keys.ArrowL) {  // left arrow 
+      gsap.to(this.prod.rotation,{duration:1,delay:0.1,y:Math.PI/2});
+      //reset the angle otherwise gsap wont work on key press again
+   }
+
+    //if E key is pressed
+    if (this.controller._keys.ArrowR ) {  // right arrow
+     gsap.to(this.prod.rotation,{duration:1,delay:0.1,y:-Math.PI/2});
+     //reset the angle otherwise gsap wont work on key press again
+   }
 
     //need a better barrel roll
 
@@ -366,7 +379,7 @@ class player {
     this.updateBeam(moveDistance);//update beams position in world
     this.tcamera.Update(delta);//update the camera to follow plane
     this.updateHealth();
-
+    //this.healthBar.value = (this.health/this.maxHealth)*100
 
   }
 
