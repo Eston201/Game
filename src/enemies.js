@@ -36,7 +36,6 @@ class enemy {
       this.laserSpeed = speed;
     }
     this.variant = Math.floor(Math.random() * (4 - 1) + 1);   // random number between 3 and 1 to determine which hunt variant to use
-    console.log("variant: ", this.variant);
     this.dead = false;
     this.enemy = new THREE.Object3D();
     this.target = this.params.target.prod;

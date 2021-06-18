@@ -24,6 +24,7 @@ class Level2 {
     //listens for Esc to pause the game
     window.addEventListener("keydown", (e)=>{
       this.isPaused(e);
+      this.changeCameraMode(e);
     }, true);
     //get the pause menu in the html file
     this.pauseMenu=document.getElementById('pauseMenu');
@@ -36,10 +37,11 @@ class Level2 {
     this.playerReachedGoal = false;  // check if the player has reached the goal
     this.enemyplanes = [];
     this.delay = 0;  // delay before spawning new enemyplane
-    this.delay2 = 0;  //delay before spawning incoming space object
+    this.delay2 = 400;  //delay before spawning incoming space object
     this.camera = new THREE.PerspectiveCamera(90, window.innerWidth/window.innerHeight,0.1, 5000);
     this.rearcamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);  // press b
-    this.frontcamera = new THREE.PerspectiveCamera(100, window.innerWidth/window.innerHeight,0.1, 1500);  //press v
+    this.frontcamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);  //press v
+    this.cameraMode = 0;  //third person
     this.objects = []; //objects in space except planet
     this.healthboxes = [];
 
@@ -206,6 +208,16 @@ class Level2 {
 
   }
 
+  changeCameraMode(e){
+    if(e.keyCode==86){            //if V is pressed change camera mode
+      if(this.cameraMode == 0){
+        this.cameraMode = 1;
+      }
+      else if(this.cameraMode == 1){
+        this.cameraMode = 0;
+      }
+    }
+  }
 
   OnWindowResize(){
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -228,7 +240,6 @@ class Level2 {
 
       this.updateHealthBoxes();
       if(!this.pause && !this.GameOver){
-        //console.log(this.myRocket.health);
         this.updateSpaceObjects();
         this.checkIfReachedGoal();
         this.checkPlayerHealth();
@@ -237,19 +248,23 @@ class Level2 {
         this.updateEnemyPlanes();
         this.checkCollision();
       }
-      if(this.keyboard.pressed("b")){
-      this.renderer.render(this.scene, this.rearcamera);
-      }
-      else if(this.keyboard.pressed("v")){
-        this.renderer.render(this.scene, this.frontcamera);
-      }
-      else{
-        this.renderer.render(this.scene,this.camera);
-      }
+      this.renderScene();
       this.previousFrame = t;
 
 
     });
+  }
+
+  renderScene(){
+    if(this.cameraMode == 0){
+      this.renderer.render(this.scene,this.camera);
+    }
+    else if(this.cameraMode == 1){
+      this.renderer.render(this.scene, this.frontcamera);
+    }
+    if(this.keyboard.pressed("b")){
+      this.renderer.render(this.scene, this.rearcamera);
+    }
   }
 
   //update the scene/ objects /player..etc
@@ -338,12 +353,8 @@ class Level2 {
   }
 
   updateSpaceObjects(){
-
-    //console.log(this.delay2);
       if(this.delay2 == 1000){
         let randomNum = Math.floor(Math.random() * (2 - 0) + 0);
-        console.log(randomNum);
-      console.log("object created");
       for(var i = 0; i < 4; i++){
           if(randomNum == 0){
             var cyl = this.createCylinder(30000);  // set timeout/lifetime
@@ -359,7 +370,6 @@ class Level2 {
         this.delay2 = 0;
      }
      this.delay2 ++;
-    //console.log(this.objects.length);
     for(var index = 0; index < this.objects.length; index = index+1){
         var object = this.objects[index];
         if(!object.isalive){
@@ -380,13 +390,13 @@ class Level2 {
   loadHealthBoxes(){
     // cube to guide the player to goal
     const geometry = new THREE.BoxGeometry(50,50,50);
-    const material = new THREE.MeshPhongMaterial( { color: 0x48e2f0 ,opacity: 0.6, transparent: true} );
+    const material = new THREE.MeshPhongMaterial( { color: 0x48e2f0 ,opacity: 0.7, transparent: true} );
     var healthBox1 = new THREE.Mesh( geometry, material );
-    healthBox1.position.set(0,-300,-5000);
+    healthBox1.position.set(0,-200,-5000);
     var healthBox2 = new THREE.Mesh( geometry, material );
-    healthBox2.position.set(200,300,-10000);
+    healthBox2.position.set(200,200,-10000);
     var healthBox3 = new THREE.Mesh( geometry, material );
-    healthBox3.position.set(200,300,-15000);
+    healthBox3.position.set(200,200,-15000);
     this.scene.add( healthBox1 );
     this.scene.add( healthBox2 );
     this.scene.add( healthBox3)
@@ -464,8 +474,7 @@ updateHealthBoxes(){
   checkCollision(){
     for(var index=0; index< this.planetArr.length; index++){       //collide with planets
       var p = this.planetArr[index];
-      if(is_collision(this.myRocket.prod, p.planet, 250)){
-       // console.log("hit planet");
+      if(is_collision(this.myRocket.prod, p.planet, 150)){
         this.myRocket.dead = true;
         this.GameOver = true;
       }
@@ -486,7 +495,6 @@ updateHealthBoxes(){
       var healthbox = this.healthboxes[i];
       if(is_collision(healthbox, this.myRocket.prod, 30)){
         this.myRocket.refillHealth();  // replenish health
-        console.log(this.myRocket.health);
         healthbox.visible = false;
       }
     }
@@ -512,7 +520,8 @@ updateHealthBoxes(){
       let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between
       var enemyPlane = this.spawnEnemyShip();
       enemyPlane.setLaserSpeed(0.9);
-      enemyPlane.setLaserColor(0x1adb74)
+      enemyPlane.setLaserColor(0x1adb74);
+      enemyPlane.setMaxHealth(25);
       enemyPlane.enemy.position.set(this.myRocket.prod.position.x + randomNum, this.myRocket.prod.position.y, this.myRocket.prod.position.z);
       this.enemyplanes.push(enemyPlane);
       this.delay = 0;
@@ -543,7 +552,7 @@ updateHealthBoxes(){
     this.scene.clear();
     this.loadIntro();
     this.delay = 0;
-    this.delay2 = 0;
+    this.delay2 = 400;
     this.pause = false;
     this.GameOver = false;
     this.torusreachedGoal = false;
@@ -561,6 +570,7 @@ updateHealthBoxes(){
     this.loadGreatLight();
     this.loadPlanets();
     this.placePortal();
+    this.loadHealthBoxes();
   }
 
 

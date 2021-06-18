@@ -26,6 +26,7 @@ class Level3 {
     //listens for Esc to pause the game
     window.addEventListener("keydown", (e)=>{
       this.isPaused(e);
+      this.changeCameraMode(e);
     }, true);
     //get the pause menu in the html file
     this.pauseMenu=document.getElementById('pauseMenu');
@@ -37,12 +38,14 @@ class Level3 {
     this.earth;                       //our final goal
     this.torusreachedGoal = false;  //check if great light source has reached goal
     this.playerReachedGoal = false;  // check if the player has reached the goal
+    this.atDeathZone = false;
     this.enemyplanes = [];
     this.delay =  0;  // delay before spawning new enemyplane
     this.delay2 = 0;  //delay before spawning incoming space object
     this.camera = new THREE.PerspectiveCamera(90, window.innerWidth/window.innerHeight,0.1, 5000);
     this.rearcamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);  // press b
-    this.frontcamera = new THREE.PerspectiveCamera(100, window.innerWidth/window.innerHeight,0.1, 1500);  //press v
+    this.frontcamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);  //press v
+    this.cameraMode = 0;  //third person
     this.objects = []; //objects in space except planet
     this.healthboxes = [];
 
@@ -210,7 +213,7 @@ class Level3 {
     }
     this.myRocket = new player(params);
     this.myRocket.setLaserColor(0xdecc00)
-    this.myRocket.setMaxHealth(30);
+    this.myRocket.setMaxHealth(32);
     this.rearcamera.position.set(this.myRocket.prod.position.x, this.myRocket.prod.position.y+20, this.myRocket.prod.position.z-70);
     this.frontcamera.position.set(this.myRocket.prod.position.x, this.myRocket.prod.position.y, this.myRocket.prod.position.z-30);
     this.rearcamera.lookAt(this.myRocket.prod.position);
@@ -247,6 +250,18 @@ class Level3 {
 
   }
 
+  changeCameraMode(e){
+    if(e.keyCode==86){            //if V is pressed change camera mode
+      if(this.cameraMode == 0){
+        this.cameraMode = 1;
+      }
+      else if(this.cameraMode == 1){
+        this.cameraMode = 0;
+      }
+    }
+  }
+
+
 
   OnWindowResize(){
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -273,7 +288,6 @@ class Level3 {
 
         this.updateHealthBoxes();
         if(!this.pause && !this.GameOver){
-            //console.log(this.myRocket.health);
             this.updateSpaceObjects();
             this.checkIfReachedGoal();
             this.checkPlayerHealth();
@@ -281,21 +295,27 @@ class Level3 {
             this.spawnEnemies();
             this.updateEnemyPlanes();
             this.checkCollision();
+                                           //check if player has reached death zone
+            //this.atDeathZone = this.myRocket.prod.position.z < this.earth.planet.position.z/2;
+            this.atDeathZone = this.myRocket.prod.position.z < -1000;
         }
-        if(this.keyboard.pressed("b")){
-            this.renderer.render(this.scene, this.rearcamera);
-        }
-        else if(this.keyboard.pressed("v")){
-            this.renderer.render(this.scene, this.frontcamera);
-        }
-        else{
-            this.renderer.render(this.scene,this.camera);
-        }
-
+       this.renderScene();
       this.previousFrame = t;
 
 
     });
+  }
+
+  renderScene(){
+    if(this.cameraMode == 0){
+      this.renderer.render(this.scene,this.camera);
+    }
+    else if(this.cameraMode == 1){
+      this.renderer.render(this.scene, this.frontcamera);
+    }
+    if(this.keyboard.pressed("b")){
+      this.renderer.render(this.scene, this.rearcamera);
+    }
   }
 
   Update(timeElapsed) {
@@ -450,27 +470,41 @@ class Level3 {
 
   updateSpaceObjects(){
 
-    //console.log(this.delay2);
-      if(this.delay2 == 1000){
+      if(this.delay2 == 1100){
         let randomNum = Math.floor(Math.random() * (2 - 0) + 0);
-        console.log(randomNum);
-      console.log("object created");
       for(var i = 0; i < 4; i++){
           if(randomNum == 0){          //cylinder
-            var cyl = this.createCylinder(30000);  // set timeout/lifetime
+            if(this.atDeathZone){
+              var cyl = this.createCylinder(40000);  // set timeout/lifetime
+              cyl.position.set(this.myRocket.prod.position.x+300-(i * 300), this.myRocket.prod.position.y, this.myRocket.prod.position.z-600+ (i*200));
+              var cyl2 = this.createCylinder(40000);  // set timeout/lifetime
+              cyl2.position.set(this.myRocket.prod.position.x+300-(i * 300), this.myRocket.prod.position.y-40, this.myRocket.prod.position.z-800+ (i*200));
+            }
+            else{
+            var cyl = this.createCylinder(40000);  // set timeout/lifetime
             cyl.position.set(this.myRocket.prod.position.x+300-(i * 300), this.myRocket.prod.position.y, this.myRocket.prod.position.z-600+ (i*200));
-          }
+            }
+        }
           else if(randomNum == 1){  //cone
-             var cone = this.createCone(30000);
-             cone.rotateX(Math.PI/2);
-             cone.position.set(this.myRocket.prod.position.x+300-(i * 300), this.myRocket.prod.position.y, this.myRocket.prod.position.z-2000+ (i*200));
+            if(this.atDeathZone){
+              var cone = this.createCone(40000);
+            cone.rotateX(Math.PI/4);
+            cone.position.set(this.myRocket.prod.position.x+300-(i * 300), this.myRocket.prod.position.y-1000, this.myRocket.prod.position.z-1400+ (i*200));
+            var cone2 = this.createCone(40000);
+            cone2.rotateX(Math.PI/4);
+            cone2.position.set(this.myRocket.prod.position.x+300-(i * 300), this.myRocket.prod.position.y-1000, this.myRocket.prod.position.z-1600+ (i*200));
+            }
+            else{
+            var cone = this.createCone(40000);
+            cone.rotateX(Math.PI/2);
+            cone.position.set(this.myRocket.prod.position.x+300-(i * 300), this.myRocket.prod.position.y, this.myRocket.prod.position.z-2000+ (i*200));
           }
+        }
     }
 
         this.delay2 = 0;
      }
      this.delay2 ++;
-    //console.log(this.objects.length);
     for(var index = 0; index < this.objects.length; index = index+1){
         var object = this.objects[index];
         if(!object.isalive){
@@ -481,10 +515,15 @@ class Level3 {
         object.position.set(object.position.x,object.position.y,object.position.z+1.1);
         }
         else if(object.type == 1){  //cone
+          if(this.atDeathZone){
+            object.position.set(object.position.x,object.position.y+7,object.position.z+7);
+          }
+          else{
             object.position.set(object.position.x,object.position.y,object.position.z+20);
+          }
+          
         }
-
-    }
+     }
   }
 
 
@@ -493,11 +532,11 @@ class Level3 {
     const geometry = new THREE.BoxGeometry(50,50,50);
     const material = new THREE.MeshPhongMaterial( { color: 0x48e2f0 ,opacity: 0.6, transparent: true} );
     var healthBox1 = new THREE.Mesh( geometry, material );
-    healthBox1.position.set(0,-300,-5000);
+    healthBox1.position.set(0,-200,-5000);
     var healthBox2 = new THREE.Mesh( geometry, material );
-    healthBox2.position.set(200,300,-10000);
+    healthBox2.position.set(200,200,-11000);
     var healthBox3 = new THREE.Mesh( geometry, material );
-    healthBox3.position.set(200,300,-15000);
+    healthBox3.position.set(200,200,-17000);
     this.scene.add( healthBox1 );
     this.scene.add( healthBox2 );
     this.scene.add( healthBox3)
@@ -585,8 +624,7 @@ updateHealthBoxes(){
   checkCollision(){
     for(var index=0; index< this.planetArr.length; index++){       //collide with planets
       var p = this.planetArr[index];
-      if(is_collision(this.myRocket.prod, p.planet, 250)){
-       // console.log("hit planet");
+      if(is_collision(this.myRocket.prod, p.planet, 150)){
         this.myRocket.dead = true;
         this.GameOver = true;
       }
@@ -607,7 +645,6 @@ updateHealthBoxes(){
       var healthbox = this.healthboxes[i];
       if(is_collision(healthbox, this.myRocket.prod, 30)){
         this.myRocket.refillHealth();  // replenish health
-        console.log(this.myRocket.health);
         healthbox.visible = false;
       }
     }
@@ -682,6 +719,7 @@ updateHealthBoxes(){
     this.loadPlanets();
     this.placeEarth();
     this.makeVisible();
+    this.loadHealthBoxes();
   }
 
  

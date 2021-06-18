@@ -20,11 +20,13 @@ class Level1 {
     this.pause = false;
     this.GameOver = false;
     this.keyboard = new THREEx.KeyboardState(); // for capturing key presses
-
+    
     //listens for Esc to pause the game
     window.addEventListener("keydown", (e)=>{
       this.isPaused(e);
-    }, true);
+      this.changeCameraMode(e);
+   }, true);
+
     //get the pause menu in the html file
     this.pauseMenu=document.getElementById('pauseMenu');
     this.gameOverMenu=document.getElementById('GameOverMenu');
@@ -39,7 +41,8 @@ class Level1 {
     this.delay2 = 0;  //delay before spawning incoming space object
     this.camera = new THREE.PerspectiveCamera(90, window.innerWidth/window.innerHeight,0.1, 5000);
     this.rearcamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);  // press b
-    this.frontcamera = new THREE.PerspectiveCamera(100, window.innerWidth/window.innerHeight,0.1, 1500);  //press v
+    this.frontcamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1, 1500);  //press v
+    this.cameraMode = 0;  //third person
     this.objects = []; //objects in space except planet
     this.healthboxes = [];
     this.loadedHealthBar = false; // check if health score been loaded;
@@ -87,8 +90,6 @@ class Level1 {
 
    this.scene.background = texture;
 
-   const axesHelper = new THREE.AxesHelper( 5 );
-   this.scene.add( axesHelper );
    //Lights
    //directionalLight
    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
@@ -206,6 +207,17 @@ newPlanet(texture){
 
   }
 
+  changeCameraMode(e){
+    if(e.keyCode==86){            //if V is pressed change camera mode
+      if(this.cameraMode == 0){
+        this.cameraMode = 1;
+      }
+      else if(this.cameraMode == 1){
+        this.cameraMode = 0;
+      }
+    }
+  }
+
 
   OnWindowResize(){
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -226,7 +238,6 @@ newPlanet(texture){
       // this.updatecamera();
       this.updateHealthBoxes();
       if(!this.pause && !this.GameOver){
-        //console.log(this.myRocket.health);
         this.updateSpaceObjects();
         this.checkPlayerHealth();
         this.checkIfReachedGoal();
@@ -235,19 +246,25 @@ newPlanet(texture){
         this.updateEnemyPlanes();
         this.checkCollision();
       }
-      if(this.keyboard.pressed("b")){
-      this.renderer.render(this.scene, this.rearcamera);
-      }
-      else if(this.keyboard.pressed("v")){
-        this.renderer.render(this.scene, this.frontcamera);
-      }
-      else{
-        this.renderer.render(this.scene,this.camera);
-      }
+      this.renderScene();
+      
+  
       this.previousFrame = t;
 
 
     });
+  }
+
+  renderScene(){
+    if(this.cameraMode == 0){
+      this.renderer.render(this.scene,this.camera);
+    }
+    else if(this.cameraMode == 1){
+      this.renderer.render(this.scene, this.frontcamera);
+    }
+    if(this.keyboard.pressed("b")){
+      this.renderer.render(this.scene, this.rearcamera);
+    }
   }
 
   //update the scene/ objects /player..etc
@@ -324,19 +341,15 @@ newPlanet(texture){
 
   updateSpaceObjects(){
 
-    //console.log(this.delay2);
       if(this.delay2 == 500){
-
-      console.log("object created");
-      for(var i = 0; i < 3; i++){
-      var cyl = this.createCylinder(15000);  // set timeout/lifetime
-      cyl.position.set(this.myRocket.prod.position.x+250-(i * 250), this.myRocket.prod.position.y, this.myRocket.prod.position.z-600+ (i*200));
+        for(var i = 0; i < 3; i++){
+        var cyl = this.createCylinder(15000);  // set timeout/lifetime
+        cyl.position.set(this.myRocket.prod.position.x+250-(i * 250), this.myRocket.prod.position.y, this.myRocket.prod.position.z-600+ (i*200));
     }
 
         this.delay2 = 0;
      }
      this.delay2 ++;
-    //console.log(this.objects.length);
     for(var index = 0; index < this.objects.length; index = index+1){
         var object = this.objects[index];
         if(!object.isalive){
@@ -412,6 +425,7 @@ updateHealthBoxes(){
       this.pause = !this.pause;
     }
   }
+  
   checkPlayerHealth(){  //check if player is dead
     if(this.myRocket.dead){
       this.GameOver = true;
@@ -434,8 +448,7 @@ updateHealthBoxes(){
   checkCollision(){
     for(var index=0; index< this.planetArr.length; index++){       //collide with planets
       var p = this.planetArr[index];
-      if(is_collision(this.myRocket.prod, p.planet, 250)){
-       // console.log("hit planet");
+      if(is_collision(this.myRocket.prod, p.planet, 150)){
         this.myRocket.dead = true;
         this.GameOver = true;
       }
@@ -456,7 +469,6 @@ updateHealthBoxes(){
       var healthbox = this.healthboxes[i];
       if(is_collision(healthbox, this.myRocket.prod, 30)){
         this.myRocket.refillHealth();  // replenish health
-        console.log(this.myRocket.health);
         healthbox.visible = false;
       }
     }
@@ -476,6 +488,7 @@ updateHealthBoxes(){
     if(this.delay == 1000){  // spawn new enemy
       let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between
       var enemyPlane = this.spawnEnemyShip();
+      enemyPlane.setMaxHealth(25);
       enemyPlane.enemy.position.set(this.myRocket.prod.position.x + randomNum, this.myRocket.prod.position.y, this.myRocket.prod.position.z);
       this.enemyplanes.push(enemyPlane);
       this.delay = 0;
@@ -524,10 +537,8 @@ updateHealthBoxes(){
     this.loadGreatLight();
     this.loadPlanets();
     this.placePortal();
+    this.loadHealthBoxes();
   }
-
-
-
 
 };
 
