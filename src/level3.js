@@ -177,12 +177,12 @@ class Level3 {
     //kinda like a skybox but better
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
-     '../resources/skybox/inter_ft.png',
-     '../resources/skybox/inter_bk.png',
-     '../resources/skybox/inter_up.png',
-     '../resources/skybox/inter_dn.png',
-     '../resources/skybox/inter_rt.png',
-     '../resources/skybox/inter_lf.png',
+      '../resources/skybox/Level3/space_ft.png',
+     '../resources/skybox/Level3/space_bk.png',
+     '../resources/skybox/Level3/space_up.png',
+     '../resources/skybox/Level3/space_dn.png',
+     '../resources/skybox/Level3/space_rt.png',
+     '../resources/skybox/Level3/space_lf.png', 
    ]);
    this.scene.background = texture;
   }
