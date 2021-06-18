@@ -261,13 +261,13 @@ button:hover {
   z-index: 100;
   display:block;
   visibility: hidden;
-  left: -280px;
+  left: -40%;
 
 }
 
 #healthText{
   position: absolute;
-  top: 8px;
+  top: 1.2%;
   width: 100%;
   text-align: center;
   z-index: 100;
