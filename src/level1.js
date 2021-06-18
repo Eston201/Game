@@ -20,7 +20,7 @@ class Level1 {
     this.pause = false;
     this.GameOver = false;
     this.keyboard = new THREEx.KeyboardState(); // for capturing key presses
-    
+
     //listens for Esc to pause the game
     window.addEventListener("keydown", (e)=>{
       this.isPaused(e);
@@ -251,8 +251,8 @@ newPlanet(texture){
         this.checkCollision();
       }
       this.renderScene();
-      
-  
+
+
       this.previousFrame = t;
 
 
@@ -430,9 +430,12 @@ updateHealthBoxes(){
   isPaused(e){
     if(e.keyCode==27){
       this.pause = !this.pause;
+      if(this.pause==false){
+        document.body.style.cursor = 'none';
+      }
     }
   }
-  
+
   checkPlayerHealth(){  //check if player is dead
     if(this.myRocket.dead){
       this.GameOver = true;
