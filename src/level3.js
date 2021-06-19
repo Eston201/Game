@@ -300,8 +300,8 @@ class Level3 {
             this.updateEnemyPlanes();
             this.checkCollision();
                                            //check if player has reached death zone
-            //this.atDeathZone = this.myRocket.prod.position.z < this.earth.planet.position.z/2;
-            this.atDeathZone = this.myRocket.prod.position.z < -1000;
+            this.atDeathZone = this.myRocket.prod.position.z < this.earth.planet.position.z/2;
+            //this.atDeathZone = this.myRocket.prod.position.z < -1000;
         }
        this.renderScene();
       this.previousFrame = t;
