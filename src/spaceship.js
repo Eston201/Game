@@ -453,5 +453,13 @@ class player {
     }
   }
 
+  respawn(){   //respawn rocket. Typically called when restarting a level
+    this.prod.visible = true;
+    this.dead = false;
+    this.refillHealth();
+    this.prod.position.copy(new THREE.Vector3(0,0,0));  // my rocket goes to (0,0,0)
+    this.params.scene.add(this.prod);
+  }
+
 
 };

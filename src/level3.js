@@ -80,13 +80,13 @@ class Level3 {
 
    //Lights
    //directionalLight
-   const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
-   directionalLight.position.set(0,1000,0)
-   this.scene.add( directionalLight );
+   this.directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
+   this.directionalLight.position.set(0,1000,0)
+   this.scene.add(this.directionalLight );
 
    //AmbientLight
-   const amblight = new THREE.AmbientLight(0x404040 ,2);
-   this.scene.add(amblight);
+   this.amblight = new THREE.AmbientLight(0x404040 ,2);
+   this.scene.add(this.amblight);
 
       //particles
    this.particles();
@@ -479,7 +479,7 @@ class Level3 {
       if(this.delay2 == 1100){
         let randomNum = Math.floor(Math.random() * (2 - 0) + 0);
       for(var i = 0; i < 4; i++){
-          if(randomNum == 0){          //cylinder
+          if(randomNum == 2){          //cylinder
             if(this.atDeathZone){
               var cyl = this.createCylinder(40000);  // set timeout/lifetime
               cyl.position.set(this.myRocket.prod.position.x+300-(i * 300), this.myRocket.prod.position.y, this.myRocket.prod.position.z-600+ (i*200));
@@ -491,7 +491,7 @@ class Level3 {
             cyl.position.set(this.myRocket.prod.position.x+300-(i * 300), this.myRocket.prod.position.y, this.myRocket.prod.position.z-600+ (i*200));
             }
         }
-          else if(randomNum == 1){  //cone
+          else if(randomNum >= 0){  //cone
             if(this.atDeathZone){
               var cone = this.createCone(40000);
             cone.rotateX(Math.PI/4);
@@ -499,6 +499,9 @@ class Level3 {
             var cone2 = this.createCone(40000);
             cone2.rotateX(Math.PI/4);
             cone2.position.set(this.myRocket.prod.position.x+300-(i * 300), this.myRocket.prod.position.y-1000, this.myRocket.prod.position.z-1600+ (i*200));
+            var cone3 = this.createCone(40000);
+            cone3.rotateX(Math.PI/4);
+            cone3.position.set(this.myRocket.prod.position.x+300-(i * 300), this.myRocket.prod.position.y-1000, this.myRocket.prod.position.z-1200+ (i*200));
             }
             else{
             var cone = this.createCone(40000);
@@ -522,7 +525,7 @@ class Level3 {
         }
         else if(object.type == 1){  //cone
           if(this.atDeathZone){
-            object.position.set(object.position.x,object.position.y+7,object.position.z+7);
+            object.position.set(object.position.x,object.position.y+10,object.position.z+10);
           }
           else{
             object.position.set(object.position.x,object.position.y,object.position.z+20);
@@ -673,7 +676,13 @@ updateHealthBoxes(){
 
   spawnEnemies(){  // delay to set a delay before spawning a new enemy
     if(this.delay == 900){  // spawn new enemy
-      let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between
+      let randomNum = Math.floor(Math.random() * (500 - (-500)) + (-500));   // random number between 500 and -500
+      if(randomNum < 50 && randomNum > 0){  //dont spawn too close to my rocket
+        randomNum += 50;
+      }
+      else if(randomNum < 0 && randomNum > -50){  // dont spawn too close to my rocket
+        randomNum -= 50;
+      }
       var enemyPlane = this.spawnEnemyShip();
       enemyPlane.setLaserSpeed(0.9);
       enemyPlane.setLaserColor(0x0055de)
@@ -705,28 +714,38 @@ updateHealthBoxes(){
   RestartLevel(){    //clear the scene then reload everything
     this.scene.clear();
     this.loadIntro();
+    this.myRocket.respawn();   // respawn 
     this.delay = 0;
     this.delay2 = 0;
     this.pause = false;
     this.GameOver = false;
     this.torusreachedGoal = false;
     this.playerReachedGoal = false;
-    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
-    directionalLight.position.set(0,10,0)
-    this.scene.add( directionalLight );
-    const amblight = new THREE.AmbientLight(0x404040 ,2);
-    this.scene.add(amblight);
+    this.scene.add(this.directionalLight );
+    this.scene.add(this.amblight);
     this.scene.add(this.earth.planet);
-    this.planetArr = []; this.planetArr.length = 0;
-    this.enemyplanes = []; this.enemyplanes.length = 0;
-    this.objects = []; this.objects.length = 0;
-    this.LoadPlayer();
-    this.loadGreatLight();
-    this.loadPlanets();
-    this.placeEarth();
-    this.makeVisible();
-    this.loadHealthBoxes();
+    this.resetGreatLightPosition();
+    this.enemyplanes.splice(0,this.enemyplanes.length);  //remove all current enemy planes from list
+    this.objects.splice(0,this.objects.length);          // remove all current space junk from list
+    for(var i = 0; i < this.planetArr.length; i++){ // add every planet back to scene
+      let p = this.planetArr[i];
+      this.scene.add(p.planet);
+    }
+    for(var i = 0; i < this.healthboxes.length; i++){  // add all health boxes back to scene
+      let healthbox = this.healthboxes[i];
+      this.scene.add(healthbox);
+    }
   }
+
+  resetGreatLightPosition(){
+    this.torus.position.set(0,0,this.myRocket.prod.position.z-300);
+    this.GreatLight.position.set(this.torus.position.x,this.torus.position.y+100,this.torus.position.z);
+    this.cone.position.set(this.torus.position.x,this.torus.position.y,this.torus.position.z);
+    this.scene.add(this.torus);
+    this.scene.add(this.GreatLight);
+    this.scene.add(this.cone);
+  }
+
 
 
 

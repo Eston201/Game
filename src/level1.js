@@ -16,6 +16,7 @@ class Level1 {
   }
 
   init(){
+    
 
     this.pause = false;
     this.GameOver = false;
@@ -46,6 +47,8 @@ class Level1 {
     this.objects = []; //objects in space except planet
     this.healthboxes = [];
     this.loadedHealthBar = false; // check if health score been loaded;
+
+    
 
     this.renderer = new THREE.WebGLRenderer({antialias:true});
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -92,13 +95,13 @@ class Level1 {
 
    //Lights
    //directionalLight
-   const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
-   directionalLight.position.set(0,1000,0)
-   this.scene.add( directionalLight );
+   this.directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
+   this.directionalLight.position.set(0,1000,0)
+   this.scene.add(this.directionalLight);
 
    //AmbientLight
-   const amblight = new THREE.AmbientLight(0x404040 ,2);
-   this.scene.add(amblight);
+   this.amblight = new THREE.AmbientLight(0x404040 ,2);
+   this.scene.add(this.amblight);
 
    this.placePortal();  //set position of portal
    this.LoadPlayer();
@@ -134,11 +137,8 @@ class Level1 {
   document.body.style.cursor = 'none';
   }
 
-
- this.loadIntro();
- this.RAF();
-
-
+  this.loadIntro();
+   this.RAF();
 }
 
 loadIntro(){
@@ -221,8 +221,7 @@ newPlanet(texture){
       }
     }
   }
-
-
+ 
   OnWindowResize(){
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.camera.aspect=window.innerWidth/window.innerHeight;
@@ -231,6 +230,7 @@ newPlanet(texture){
 
   RAF() {
     requestAnimationFrame((t) => {
+      
       if (this.previousFrame === null) {
         this.previousFrame = t;
       }
@@ -493,7 +493,13 @@ updateHealthBoxes(){
 
   spawnEnemies(){  // delay to set a delay before spawning a new enemy
     if(this.delay == 1000){  // spawn new enemy
-      let randomNum = Math.floor(Math.random() * (500 - 100) + 100);   // random number between
+      let randomNum = Math.floor(Math.random() * (500 - (-500)) + (-500));   // random number between 500 and -500
+      if(randomNum < 50 && randomNum > 0){  //dont spawn too close to my rocket
+        randomNum += 50;
+      }
+      else if(randomNum < 0 && randomNum > -50){  // dont spawn too close to my rocket
+        randomNum -= 50;
+      }
       var enemyPlane = this.spawnEnemyShip();
       enemyPlane.setMaxHealth(25);
       enemyPlane.enemy.position.set(this.myRocket.prod.position.x + randomNum, this.myRocket.prod.position.y, this.myRocket.prod.position.z);
@@ -525,27 +531,39 @@ updateHealthBoxes(){
   RestartLevel(){    //clear the scene then reload everything
     this.scene.clear();
     this.loadIntro();
+    this.myRocket.respawn();   // respawn 
     this.delay = 0;
     this.delay2 = 0;
     this.pause = false;
     this.GameOver = false;
     this.torusreachedGoal = false;
     this.playerReachedGoal = false;
-    const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
-    directionalLight.position.set(0,10,0)
-    this.scene.add( directionalLight );
-    const amblight = new THREE.AmbientLight(0x404040 ,2);
-    this.scene.add(amblight);
+    this.scene.add(this.directionalLight );
+    this.scene.add(this.amblight);
     this.scene.add(this.portal);
-    this.enemyplanes = []; this.enemyplanes.length = 0;
-    this.objects = []; this.objects.length = 0;
-    this.planetArr = []; this.planetArr.length = 0;
-    this.LoadPlayer();
-    this.loadGreatLight();
-    this.loadPlanets();
-    this.placePortal();
-    this.loadHealthBoxes();
+    this.resetGreatLightPosition();
+    this.enemyplanes.splice(0,this.enemyplanes.length);  //remove all current enemy planes from list
+    this.objects.splice(0,this.objects.length);          // remove all current space junk from list
+    for(var i = 0; i < this.planetArr.length; i++){ // add every planet back to scene
+      let p = this.planetArr[i];
+      this.scene.add(p.planet);
+    }
+    for(var i = 0; i < this.healthboxes.length; i++){  // add all health boxes back to scene
+      let healthbox = this.healthboxes[i];
+      this.scene.add(healthbox);
+    }
   }
+
+  resetGreatLightPosition(){
+    this.torus.position.set(0,0,this.myRocket.prod.position.z-300);
+    this.GreatLight.position.set(this.torus.position.x,this.torus.position.y+100,this.torus.position.z);
+    this.cone.position.set(this.torus.position.x,this.torus.position.y,this.torus.position.z);
+    this.scene.add(this.torus);
+    this.scene.add(this.GreatLight);
+    this.scene.add(this.cone);
+  }
+
+  
 
 };
 
