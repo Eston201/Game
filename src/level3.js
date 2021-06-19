@@ -530,7 +530,7 @@ class Level3 {
           else{
             object.position.set(object.position.x,object.position.y,object.position.z+20);
           }
-          
+
         }
      }
   }
@@ -609,6 +609,9 @@ updateHealthBoxes(){
   isPaused(e){
     if(e.keyCode==27){
       this.pause = !this.pause;
+      if(this.pause==false){
+        document.body.style.cursor = 'none';
+      }
     }
   }
   checkPlayerHealth(){  //check if player is dead
